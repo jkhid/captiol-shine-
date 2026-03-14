@@ -14,7 +14,7 @@ const categories = [
       { name: "Deep Clean", detail: "Top-to-bottom reset, inside appliances & baseboards" },
       { name: "Move-In / Move-Out", detail: "Every cabinet, drawer, and corner — spotless" },
     ],
-    cta: { label: "See Residential Pricing", href: "/pricing" },
+    cta: { label: "See Residential Pricing", href: "/pricing?service=residential" },
     accent: "bg-navy",
   },
   {
@@ -28,7 +28,7 @@ const categories = [
       { name: "Linen & Bed Making", detail: "Fresh setup ready for next guest" },
       { name: "Restock & Trash Check", detail: "Essentials verified, trash removed" },
     ],
-    cta: { label: "Book a Turnover", href: "/book" },
+    cta: { label: "See Airbnb Pricing", href: "/pricing?service=airbnb" },
     accent: "bg-gold",
   },
   {
@@ -42,7 +42,7 @@ const categories = [
       { name: "Retail & Lobby Cleaning", detail: "High-traffic areas and storefronts" },
       { name: "Recurring Contracts", detail: "Daily, weekly, or custom schedules" },
     ],
-    cta: { label: "Request a Quote", href: "/pricing#commercial" },
+    cta: { label: "Request a Quote", href: "/pricing?service=commercial" },
     accent: "bg-navy",
   },
   {
@@ -56,7 +56,7 @@ const categories = [
       { name: "Window & Glass Polish", detail: "Labels, film, and smudges removed" },
       { name: "Final Inspection Clean", detail: "Walkthrough-ready before handoff" },
     ],
-    cta: { label: "Request a Quote", href: "/pricing#construction" },
+    cta: { label: "Request a Quote", href: "/pricing?service=construction" },
     accent: "bg-charcoal",
   },
 ];
