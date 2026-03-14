@@ -21,10 +21,23 @@ export const metadata: Metadata = {
   },
   description:
     "Arlington's trusted cleaning service — transparent pricing, eco-friendly products, and a team that treats your home like their own.",
+  icons: {
+    icon: "/capitol_shine_logo.png",
+    shortcut: "/capitol_shine_logo.png",
+    apple: "/capitol_shine_logo.png",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
     siteName: "Capitol Shine",
+    images: [
+      {
+        url: "/capitol_shine_logo.png",
+        width: 512,
+        height: 512,
+        alt: "Capitol Shine — Professional Cleaning Services",
+      },
+    ],
   },
 };
 
