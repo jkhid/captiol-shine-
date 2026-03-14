@@ -30,6 +30,7 @@ export interface BookingState {
   unit: string;
   hearAbout: string;
   referralCode: string;
+  promoCode: string;
   agreeTerms: boolean;
   submitted: boolean;
   errors: Record<string, string>;
@@ -63,6 +64,7 @@ const initialState: BookingState = {
   unit: "",
   hearAbout: "",
   referralCode: "",
+  promoCode: "",
   agreeTerms: false,
   submitted: false,
   errors: {},
@@ -128,12 +130,14 @@ function BookingWizardInner() {
 
   useEffect(() => {
     const ref = searchParams.get("ref");
-    if (ref) {
-      dispatch({ type: "SET_FIELD", field: "referralCode", value: ref.toUpperCase() });
-    }
+    if (ref) dispatch({ type: "SET_FIELD", field: "referralCode", value: ref.toUpperCase() });
+    const promo = searchParams.get("promo");
+    if (promo) dispatch({ type: "SET_FIELD", field: "promoCode", value: promo.toUpperCase() });
   }, [searchParams]);
 
-  const price = estimatePrice(state.service, state.bedrooms, state.frequency, state.addOns);
+  const basePrice = estimatePrice(state.service, state.bedrooms, state.frequency, state.addOns);
+  const promoDiscount = state.promoCode.toUpperCase() === "FIRST30" ? 30 : 0;
+  const price = Math.max(0, basePrice - promoDiscount);
 
   const handleNext = () => {
     const errors = validateStep(state);

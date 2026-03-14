@@ -136,13 +136,22 @@ export default function ContactConfirm({ state, dispatch, price }: Props) {
         </div>
       </div>
 
-      <InputField
-        id="referralCode"
-        label="Referral Code"
-        value={state.referralCode}
-        onChange={set("referralCode") as (v: string) => void}
-        placeholder="Optional"
-      />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <InputField
+          id="promoCode"
+          label="Promo Code"
+          value={state.promoCode}
+          onChange={(v) => dispatch({ type: "SET_FIELD", field: "promoCode", value: v.toUpperCase() })}
+          placeholder="e.g. FIRST30"
+        />
+        <InputField
+          id="referralCode"
+          label="Referral Code"
+          value={state.referralCode}
+          onChange={set("referralCode") as (v: string) => void}
+          placeholder="Optional"
+        />
+      </div>
 
       {/* Summary */}
       <Card className="bg-off-white border-0">
@@ -168,6 +177,12 @@ export default function ContactConfirm({ state, dispatch, price }: Props) {
             <div className="flex justify-between">
               <span className="text-charcoal/70">Add-ons</span>
               <span className="font-medium text-right">{state.addOns.join(", ")}</span>
+            </div>
+          )}
+          {state.promoCode.toUpperCase() === "FIRST30" && (
+            <div className="flex justify-between text-cta-green">
+              <span>Promo (FIRST30)</span>
+              <span className="font-medium">−$30</span>
             </div>
           )}
           <div className="flex justify-between pt-2 border-t border-gray-200">

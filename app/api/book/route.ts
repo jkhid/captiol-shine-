@@ -29,6 +29,7 @@ const BookingSchema = z.object({
   instructions: z.string().max(1000).optional(),
   hearAbout:    z.string().max(80).optional(),
   referralCode: z.string().max(40).optional(),
+  promoCode:    z.string().max(40).optional(),
 });
 
 // ── HTML escaping ─────────────────────────────────────────────────────────────
@@ -68,11 +69,28 @@ export async function POST(req: NextRequest) {
   const fullAddress = body.unit ? `${body.address}, ${body.unit}` : body.address;
   const addOns = body.addOns ?? [];
 
+  // Validate promo code — FIRST30 is only valid for first-time customers
+  const supabaseAdmin = createAdminClient();
+  let promoDiscount = 0;
+  if (body.promoCode?.toUpperCase() === "FIRST30") {
+    const { data: prior } = await supabaseAdmin
+      .from("bookings")
+      .select("id")
+      .eq("email", body.email.toLowerCase())
+      .neq("status", "cancelled")
+      .limit(1)
+      .single();
+    if (prior) {
+      return NextResponse.json({ error: "Promo code FIRST30 is only valid for your first booking." }, { status: 400 });
+    }
+    promoDiscount = 30;
+  }
+
   // Server-side price computation — never trust client-supplied price
-  const price = estimatePrice(body.service, body.bedrooms, body.frequency ?? "one-time", addOns);
+  const price = Math.max(0, estimatePrice(body.service, body.bedrooms, body.frequency ?? "one-time", addOns) - promoDiscount);
 
   // 1. Save booking to Supabase
-  const { data, error } = await createAdminClient()
+  const { data, error } = await supabaseAdmin
     .from("bookings")
     .insert({
       customer_name: body.name,

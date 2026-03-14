@@ -42,7 +42,10 @@
       "Bash(ls -la \"/Users/jk/Desktop/capitol-shine/app/admin/\\(protected\\)/\")",
       "Bash(ls -la \"/Users/jk/Desktop/capitol-shine/app/\\(public\\)/\")",
       "Bash(git init:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git remote:*)",
+      "Bash(git push:*)"
     ]
   }
 }
