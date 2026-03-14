@@ -16,7 +16,7 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
   title: {
-    default: "Capitol Shine | Premium Home Cleaning in Arlington, VA",
+    default: "Capitol Shine | Professional Cleaning Services in Arlington, VA",
     template: "%s | Capitol Shine",
   },
   description:
