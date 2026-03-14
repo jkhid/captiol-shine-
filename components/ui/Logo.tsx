@@ -7,9 +7,9 @@ export default function Logo({ className = "" }: { className?: string }) {
       <Image
         src="/capitol_shine_logo.png"
         alt="Capitol Shine"
-        width={140}
-        height={52}
-        className="h-11 w-auto"
+        width={180}
+        height={68}
+        className="h-14 w-auto"
         priority
       />
     </Link>
