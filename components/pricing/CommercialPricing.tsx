@@ -26,7 +26,8 @@ export default function CommercialPricing() {
                 <tr className="border-b-2 border-navy/10">
                   <th className="text-left py-3 pr-6 font-semibold text-charcoal/60 w-1/3">Space Size</th>
                   <th className="py-3 px-4 font-semibold text-navy text-center">Weekly</th>
-                  <th className="py-3 px-4 font-semibold text-navy text-center">Biweekly</th>
+                  <th className="py-3 px-4 font-semibold text-navy text-center">2x / Week</th>
+                  <th className="py-3 px-4 font-semibold text-navy text-center">3x+ / Daily</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -41,8 +42,11 @@ export default function CommercialPricing() {
                       <span className="text-xs text-charcoal/50 block">/visit</span>
                     </td>
                     <td className="py-4 px-4 text-center">
-                      <span className="text-xl font-bold text-navy">${tier.biweeklyPrice}</span>
+                      <span className="text-xl font-bold text-navy">${tier.twiceWeeklyPrice}</span>
                       <span className="text-xs text-charcoal/50 block">/visit</span>
+                    </td>
+                    <td className="py-4 px-4 text-center">
+                      <a href="#quote" className="text-sm font-semibold text-gold hover:underline">Get a quote</a>
                     </td>
                   </tr>
                 ))}
@@ -88,7 +92,7 @@ export default function CommercialPricing() {
           </div>
 
           {/* Quote form */}
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 md:p-8 max-w-2xl">
+          <div id="quote" className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 md:p-8 max-w-2xl">
             <h3 className="font-display text-xl font-bold text-navy mb-1">
               Get a free estimate
             </h3>

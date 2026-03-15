@@ -107,13 +107,13 @@ export interface CommercialTier {
   name: string;
   sqft: string;
   weeklyPrice: number;
-  biweeklyPrice: number;
+  twiceWeeklyPrice: number;
 }
 
 export const COMMERCIAL_TIERS: CommercialTier[] = [
-  { key: "small",  name: "Small Office",  sqft: "Under 1,500 sq ft",   weeklyPrice: 180, biweeklyPrice: 220 },
-  { key: "medium", name: "Medium Office", sqft: "1,500 – 3,000 sq ft", weeklyPrice: 320, biweeklyPrice: 390 },
-  { key: "large",  name: "Large Office",  sqft: "3,000 – 5,000 sq ft", weeklyPrice: 550, biweeklyPrice: 680 },
+  { key: "small",  name: "Small Office",  sqft: "Under 1,500 sq ft",   weeklyPrice: 180, twiceWeeklyPrice: 160 },
+  { key: "medium", name: "Medium Office", sqft: "1,500 – 3,000 sq ft", weeklyPrice: 320, twiceWeeklyPrice: 290 },
+  { key: "large",  name: "Large Office",  sqft: "3,000 – 5,000 sq ft", weeklyPrice: 550, twiceWeeklyPrice: 500 },
 ];
 
 export const COMMERCIAL_INCLUDED = [
