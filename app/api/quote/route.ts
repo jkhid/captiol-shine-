@@ -13,6 +13,7 @@ const QuoteSchema = z.object({
   serviceType: z.enum(["commercial", "construction"]),
   spaceType:   z.string().max(60).optional(),
   sqft:        z.string().max(20).optional(),
+  frequency:   z.string().max(60).optional(),
   timeline:    z.string().max(100).optional(),
   notes:       z.string().max(1000).optional(),
 });
@@ -45,6 +46,7 @@ export async function POST(req: NextRequest) {
     service_type: body.serviceType,
     space_type:   body.spaceType || null,
     sqft:         body.sqft || null,
+    frequency:    body.frequency || null,
     timeline:     body.timeline || null,
     notes:        body.notes || null,
     status:       "new",
@@ -74,6 +76,7 @@ export async function POST(req: NextRequest) {
     <tr><td style="padding:8px 12px 8px 0;color:#888;font-size:13px;white-space:nowrap">Service</td><td style="padding:8px 0;font-size:14px;font-weight:600">${esc(serviceLabel)}</td></tr>
     ${body.spaceType ? `<tr><td style="padding:8px 12px 8px 0;color:#888;font-size:13px;white-space:nowrap">Space / Project Type</td><td style="padding:8px 0;font-size:14px;font-weight:600">${esc(body.spaceType)}</td></tr>` : ""}
     ${body.sqft ? `<tr><td style="padding:8px 12px 8px 0;color:#888;font-size:13px;white-space:nowrap">Sq Footage</td><td style="padding:8px 0;font-size:14px;font-weight:600">${esc(body.sqft)}</td></tr>` : ""}
+    ${body.frequency ? `<tr><td style="padding:8px 12px 8px 0;color:#888;font-size:13px;white-space:nowrap">Frequency</td><td style="padding:8px 0;font-size:14px;font-weight:600">${esc(body.frequency)}</td></tr>` : ""}
     ${body.timeline ? `<tr><td style="padding:8px 12px 8px 0;color:#888;font-size:13px;white-space:nowrap">Timeline</td><td style="padding:8px 0;font-size:14px;font-weight:600">${esc(body.timeline)}</td></tr>` : ""}
   </table>
   ${body.notes ? `<div style="margin-top:16px;padding:12px;background:#f5f5f5;border-radius:8px;font-size:13px;color:#555"><strong>Notes:</strong> ${esc(body.notes)}</div>` : ""}
