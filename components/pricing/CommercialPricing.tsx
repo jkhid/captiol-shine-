@@ -52,8 +52,8 @@ export default function CommercialPricing() {
                 ))}
               </tbody>
             </table>
-            <p className="text-xs text-charcoal/40 mt-3">
-              Prices are starting rates. Final pricing confirmed after free walk-through.
+            <p className="text-sm text-charcoal/70 mt-3 font-medium">
+              * Prices are estimates only — final rate may be lower or higher depending on space condition, layout, and specific needs. Confirmed after a free walk-through.
             </p>
           </div>
 
