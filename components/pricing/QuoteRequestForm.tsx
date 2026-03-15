@@ -11,18 +11,20 @@ interface QuoteFormState {
   phone: string;
   spaceType: string;
   sqft: string;
+  frequency: string;
   timeline: string;
   notes: string;
 }
 
 const COMMERCIAL_SPACE_TYPES = ["Office", "Retail", "Medical / Dental", "Warehouse", "Other"];
+const COMMERCIAL_FREQUENCIES = ["Weekly", "2x / Week", "3x / Week", "Daily (M–F)", "Not sure yet"];
 const CONSTRUCTION_PROJECT_TYPES = ["New Construction", "Gut Renovation", "Partial Renovation", "Other"];
 const TIMELINES = ["ASAP", "Within 2 weeks", "1 month", "2–3 months", "Just planning ahead"];
 
 export default function QuoteRequestForm({ serviceType }: { serviceType: ServiceType }) {
   const [form, setForm] = useState<QuoteFormState>({
     name: "", email: "", phone: "",
-    spaceType: "", sqft: "", timeline: "", notes: "",
+    spaceType: "", sqft: "", frequency: "", timeline: "", notes: "",
   });
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
@@ -102,6 +104,18 @@ export default function QuoteRequestForm({ serviceType }: { serviceType: Service
           <input className={inputClass} value={form.sqft} onChange={set("sqft")} placeholder="e.g. 2,000" maxLength={20} />
         </div>
       </div>
+
+      {serviceType === "commercial" && (
+        <div>
+          <label className={labelClass}>Desired cleaning frequency</label>
+          <select className={inputClass} value={form.frequency} onChange={set("frequency")}>
+            <option value="">Select…</option>
+            {COMMERCIAL_FREQUENCIES.map((f) => (
+              <option key={f} value={f}>{f}</option>
+            ))}
+          </select>
+        </div>
+      )}
 
       <div>
         <label className={labelClass}>Timeline</label>
