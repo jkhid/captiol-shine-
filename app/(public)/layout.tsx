@@ -13,6 +13,7 @@ const localBusinessSchema = {
   "email": "hello@capitolshine.co",
   "image": "https://capitolshine.co/updated_logo.png",
   "priceRange": "$$",
+  "openingHours": "Mo-Su 00:00-23:59",
   "address": {
     "@type": "PostalAddress",
     "streetAddress": "1805 Key Blvd",
