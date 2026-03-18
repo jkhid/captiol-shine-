@@ -13,12 +13,14 @@ const ServiceMap = dynamic(() => import("@/components/areas/ServiceMap"), {
 });
 
 export const metadata: Metadata = {
-  title: "Service Areas",
+  title: "Service Areas — Arlington, McLean, Alexandria & Northern Virginia",
   description:
-    "Capitol Shine serves Arlington, McLean, Alexandria, Falls Church, and surrounding Northern Virginia neighborhoods.",
+    "Capitol Shine provides professional cleaning in Arlington, McLean, Alexandria, Falls Church, Rosslyn, Clarendon, Ballston, Crystal City, and surrounding Northern Virginia neighborhoods.",
   openGraph: {
-    title: "Service Areas | Capitol Shine",
-    description: "Proudly serving Arlington and Northern Virginia neighborhoods.",
+    title: "Service Areas — Arlington, McLean, Alexandria & Northern Virginia | Capitol Shine",
+    description:
+      "Professional cleaning in Arlington, McLean, Alexandria, Falls Church, and surrounding Northern Virginia communities.",
+    url: "https://capitolshine.co/areas",
   },
 };
 

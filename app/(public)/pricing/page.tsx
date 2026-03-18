@@ -8,15 +8,45 @@ import CommercialPricing from "@/components/pricing/CommercialPricing";
 import ConstructionPricing from "@/components/pricing/ConstructionPricing";
 import PricingFAQ from "@/components/pricing/FAQ";
 
-export const metadata: Metadata = {
-  title: "Services & Pricing",
-  description:
-    "Cleaning services for Arlington, VA — residential, Airbnb, commercial, and post-construction. Transparent pricing with no hidden fees.",
-  openGraph: {
-    title: "Services & Pricing | Capitol Shine",
-    description: "Residential, Airbnb, commercial & construction cleaning in Arlington, VA.",
+const SERVICE_META: Record<string, { title: string; description: string }> = {
+  residential: {
+    title: "Residential Cleaning Prices — Arlington, VA",
+    description:
+      "Flat-rate house cleaning in Arlington, VA. Standard cleans from $119, deep cleans from $249. No contracts, no hidden fees. Book online in 60 seconds.",
+  },
+  airbnb: {
+    title: "Airbnb & Short-Term Rental Cleaning — Arlington, VA",
+    description:
+      "Same-day Airbnb and vacation rental turnover cleaning in Arlington and Northern Virginia. Flat-rate pricing by bedroom count, starting at $85.",
+  },
+  commercial: {
+    title: "Commercial Office Cleaning — Arlington & Northern Virginia",
+    description:
+      "Recurring office and retail cleaning in Arlington, VA. Weekly and 2x-per-week rates. Free walk-through estimate. Flexible scheduling including after hours.",
+  },
+  construction: {
+    title: "Post-Construction Cleaning — Arlington & Northern Virginia",
+    description:
+      "Post-construction cleanup in Northern Virginia. Rough clean, final clean, and touch-up before owner walkthrough. All jobs quoted on-site.",
   },
 };
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: { service?: string };
+}): Promise<Metadata> {
+  const key = searchParams.service && SERVICE_META[searchParams.service]
+    ? searchParams.service
+    : "residential";
+  const { title, description } = SERVICE_META[key];
+  const url = `https://capitolshine.co/pricing${key !== "residential" ? `?service=${key}` : ""}`;
+  return {
+    title,
+    description,
+    openGraph: { title: `${title} | Capitol Shine`, description, url },
+  };
+}
 
 const TABS = [
   { key: "residential",  label: "Residential",   icon: Home,      description: "Standard, Deep & Move-In/Out" },

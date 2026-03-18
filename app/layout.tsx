@@ -15,6 +15,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://capitolshine.co"),
   title: {
     default: "Capitol Shine | Professional Cleaning Services in Arlington, VA",
     template: "%s | Capitol Shine",
@@ -33,6 +34,11 @@ export const metadata: Metadata = {
         alt: "Capitol Shine — Professional Cleaning Services",
       },
     ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@capitolshine",
+    images: ["/updated_logo.png"],
   },
 };
 
