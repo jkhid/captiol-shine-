@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@next/third-parties": "^16.2.0",
     "@supabase/supabase-js": "^2.98.0",
     "@turf/turf": "^7.3.4",
     "@types/leaflet": "^1.9.21",
