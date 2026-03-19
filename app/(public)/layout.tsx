@@ -4,14 +4,14 @@ import Footer from "@/components/nav/Footer";
 const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  "@id": "https://capitolshinecleaning.co",
+  "@id": "https://capitolshinecleaners.com",
   "name": "Capitol Shine",
   "legalName": "Capitol Home Services LLC",
   "description": "Professional cleaning services in Arlington, VA — residential, Airbnb turnover, commercial, and post-construction cleaning.",
-  "url": "https://capitolshinecleaning.co",
+  "url": "https://capitolshinecleaners.com",
   "telephone": "+17033759132",
-  "email": "hello@capitolshinecleaning.co",
-  "image": "https://capitolshinecleaning.co/updated_logo.png",
+  "email": "hello@capitolshinecleaners.com",
+  "image": "https://capitolshinecleaners.com/updated_logo.png",
   "priceRange": "$$",
   "openingHours": "Mo-Su 00:00-23:59",
   "address": {

@@ -2,7 +2,7 @@ export const COMPANY = {
   name: "Capitol Shine",
   tagline: "The standard your home deserves.",
   phone: "703-375-9132",
-  email: "hello@capitolshinecleaning.co",
+  email: "hello@capitolshinecleaners.com",
   address: "Arlington, VA",
 } as const;
 

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://capitolshinecleaning.co/sitemap.xml
+Sitemap: https://capitolshinecleaners.com/sitemap.xml

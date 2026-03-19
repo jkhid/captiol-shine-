@@ -1,6 +1,6 @@
 import { MetadataRoute } from "next";
 
-const BASE = "https://capitolshinecleaning.co";
+const BASE = "https://capitolshinecleaners.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
