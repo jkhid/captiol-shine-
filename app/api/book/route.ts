@@ -122,8 +122,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Failed to save booking." }, { status: 500 });
   }
 
-  const ownerEmail  = process.env.OWNER_EMAIL ?? "hello@capitolshine.co";
-  const fromAddress = "Capitol Shine <bookings@capitolshine.co>";
+  const ownerEmail  = process.env.OWNER_EMAIL ?? "hello@capitolshinecleaning.co";
+  const fromAddress = "Capitol Shine <bookings@capitolshinecleaning.co>";
 
   // 2. Send owner notification email
   try {

@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Failed to save quote request." }, { status: 500 });
   }
 
-  const ownerEmail  = process.env.OWNER_EMAIL ?? "hello@capitolshine.co";
+  const ownerEmail  = process.env.OWNER_EMAIL ?? "hello@capitolshinecleaning.co";
   const fromAddress = "Capitol Shine <onboarding@resend.dev>";
 
   // 2. Notify owner via email

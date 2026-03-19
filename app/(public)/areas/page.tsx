@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     title: "Service Areas — Arlington, McLean, Alexandria & Northern Virginia | Capitol Shine",
     description:
       "Professional cleaning in Arlington, McLean, Alexandria, Falls Church, and surrounding Northern Virginia communities.",
-    url: "https://capitolshine.co/areas",
+    url: "https://capitolshinecleaning.co/areas",
   },
 };
 

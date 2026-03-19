@@ -45,7 +45,10 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git remote:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(git config:*)",
+      "Bash(find /Users/jk/Desktop/capitol-shine -type d -name \"\\(public\\)\")",
+      "Bash(xargs sed:*)"
     ]
   }
 }

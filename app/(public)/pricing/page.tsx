@@ -40,7 +40,7 @@ export async function generateMetadata({
     ? searchParams.service
     : "residential";
   const { title, description } = SERVICE_META[key];
-  const url = `https://capitolshine.co/pricing${key !== "residential" ? `?service=${key}` : ""}`;
+  const url = `https://capitolshinecleaning.co/pricing${key !== "residential" ? `?service=${key}` : ""}`;
   return {
     title,
     description,

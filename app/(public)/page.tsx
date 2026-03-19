@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     title: "House Cleaning Service in Arlington, VA | Capitol Shine",
     description:
       "Arlington's trusted house cleaning service. Transparent pricing, eco-friendly, licensed & insured.",
-    url: "https://capitolshine.co",
+    url: "https://capitolshinecleaning.co",
   },
 };
 

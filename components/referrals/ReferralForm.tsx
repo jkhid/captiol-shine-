@@ -13,7 +13,7 @@ export default function ReferralForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const referralLink = code ? `capitolshine.co/book?ref=${code}` : "";
+  const referralLink = code ? `capitolshinecleaning.co/book?ref=${code}` : "";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

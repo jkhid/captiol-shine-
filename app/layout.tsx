@@ -15,7 +15,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://capitolshine.co"),
+  metadataBase: new URL("https://capitolshinecleaning.co"),
   title: {
     default: "Capitol Shine | Professional Cleaning Services in Arlington, VA",
     template: "%s | Capitol Shine",
