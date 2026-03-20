@@ -200,6 +200,12 @@ function BookingWizardInner() {
         <p className="mt-4 text-lg text-charcoal/70">
           Pick your details below and we&apos;ll confirm your appointment within 30 minutes.
         </p>
+        <p className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-cta-green">
+          <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+          No payment today — we collect after the job is done
+        </p>
       </div>
       <StepIndicator currentStep={state.step} totalSteps={4} labels={stepLabels} />
 

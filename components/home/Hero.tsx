@@ -35,6 +35,13 @@ export default function Hero() {
             <span className="flex items-center gap-1.5">
               <ThumbsUp size={14} className="text-gold" /> Satisfaction Guaranteed
             </span>
+            <span className="hidden sm:inline text-white/30">·</span>
+            <span className="flex items-center gap-1.5">
+              <svg className="w-3.5 h-3.5 text-gold flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              No payment until after we clean
+            </span>
           </div>
         </div>
       </div>

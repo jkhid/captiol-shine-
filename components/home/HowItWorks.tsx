@@ -4,21 +4,21 @@ import { CalendarCheck, Sparkles, Sofa } from "lucide-react";
 const steps = [
   {
     icon: CalendarCheck,
-    title: "Book Online",
+    title: "Request Online",
     description:
-      "Pick your home size, choose your service, and select a date. Takes 60 seconds.",
+      "Pick your service, home size, and preferred date. Takes 60 seconds — no payment required.",
   },
   {
     icon: Sparkles,
-    title: "We Clean",
+    title: "We Confirm & Clean",
     description:
-      "Our background-checked, trained cleaners arrive on time with eco-friendly supplies.",
+      "We'll reach out to confirm details before your appointment. Then our background-checked team shows up on time.",
   },
   {
     icon: Sofa,
-    title: "You Relax",
+    title: "Pay After. Love It.",
     description:
-      "Come home to spotless. Not happy? We'll re-clean free, no questions asked.",
+      "Payment is collected after the job is done. Not happy? We'll re-clean free, no questions asked.",
   },
 ];
 
