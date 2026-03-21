@@ -48,11 +48,18 @@ export default function Hero() {
 
         {/* Insurance badge */}
         <div className="hidden lg:flex flex-shrink-0 items-center justify-center">
-          <div className="relative w-52 h-52 rounded-full border-2 border-gold/40 flex flex-col items-center justify-center text-center p-6 bg-white/5 backdrop-blur-sm">
-            <Shield size={32} className="text-gold mb-2" />
-            <p className="text-white font-bold text-lg leading-tight">Licensed &amp; Insured</p>
-            <p className="text-gold font-semibold text-sm mt-1">Up to $2M</p>
-            <p className="text-white/60 text-xs mt-2">General Liability</p>
+          <div className="relative flex flex-col items-center justify-center text-center" style={{ width: 200, height: 220 }}>
+            {/* Shield SVG background */}
+            <svg viewBox="0 0 200 220" fill="none" xmlns="http://www.w3.org/2000/svg" className="absolute inset-0 w-full h-full">
+              <path d="M100 8 L186 44 L186 110 C186 158 100 212 100 212 C100 212 14 158 14 110 L14 44 Z" fill="white" fillOpacity="0.06" stroke="rgb(212,175,55)" strokeOpacity="0.5" strokeWidth="2"/>
+            </svg>
+            {/* Content */}
+            <div className="relative z-10 flex flex-col items-center pt-8">
+              <Shield size={34} className="text-gold mb-2" />
+              <p className="text-white font-bold text-base leading-tight">Licensed &amp; Insured</p>
+              <p className="text-gold font-semibold text-sm mt-1">Up to $2M</p>
+              <p className="text-white/60 text-xs mt-1.5">General Liability</p>
+            </div>
           </div>
         </div>
 
