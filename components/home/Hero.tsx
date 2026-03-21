@@ -5,7 +5,8 @@ export default function Hero() {
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-navy via-navy to-navy/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
-        <div className="max-w-3xl">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:gap-16">
+        <div className="max-w-3xl flex-1">
           <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
             A cleaner place.
             <br />
@@ -43,6 +44,18 @@ export default function Hero() {
               No payment until after we clean
             </span>
           </div>
+        </div>
+
+        {/* Insurance badge */}
+        <div className="hidden lg:flex flex-shrink-0 items-center justify-center">
+          <div className="relative w-52 h-52 rounded-full border-2 border-gold/40 flex flex-col items-center justify-center text-center p-6 bg-white/5 backdrop-blur-sm">
+            <Shield size={32} className="text-gold mb-2" />
+            <p className="text-white font-bold text-lg leading-tight">Licensed &amp; Insured</p>
+            <p className="text-gold font-semibold text-sm mt-1">Up to $2M</p>
+            <p className="text-white/60 text-xs mt-2">General Liability</p>
+          </div>
+        </div>
+
         </div>
       </div>
     </section>
