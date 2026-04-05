@@ -8,9 +8,9 @@ import Button from "@/components/ui/Button";
 
 const SERVICE_ITEMS = [
   { href: "/pricing?service=residential",  icon: Home,      label: "Residential",  description: "Standard, Deep & Move-In/Out" },
-  { href: "/pricing?service=airbnb",       icon: Building2, label: "Airbnb / STR", description: "Turnover cleaning for hosts" },
   { href: "/pricing?service=commercial",   icon: Briefcase, label: "Commercial",   description: "Offices & retail spaces" },
   { href: "/pricing?service=construction", icon: HardHat,   label: "Construction", description: "Post-build & renovation" },
+  { href: "/pricing?service=airbnb",       icon: Building2, label: "Airbnb / STR", description: "Turnover cleaning for hosts" },
 ];
 
 const OTHER_LINKS = [
@@ -38,6 +38,7 @@ export default function Navbar() {
   };
 
   return (
+    <>
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         <Logo />
@@ -96,9 +97,11 @@ export default function Navbar() {
         </button>
       </nav>
 
-      {/* Mobile drawer */}
+    </header>
+
+      {/* Mobile drawer — rendered outside <header> to avoid backdrop-filter stacking context breaking fixed positioning on iOS */}
       {mobileOpen && (
-        <div className="md:hidden fixed inset-0 top-16 z-40 bg-white overflow-y-auto">
+        <div className="md:hidden fixed inset-0 top-20 z-40 bg-white overflow-y-auto">
           <div className="flex flex-col p-6 gap-1">
             <Link href="/" onClick={closeMobile} className="text-lg font-medium text-charcoal hover:text-navy py-3 border-b border-gray-100">
               Home
@@ -145,6 +148,6 @@ export default function Navbar() {
           </div>
         </div>
       )}
-    </header>
+    </>
   );
 }

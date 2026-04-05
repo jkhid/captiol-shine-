@@ -7,11 +7,13 @@ import ServiceSelect from "./ServiceSelect";
 import HomeDetails from "./HomeDetails";
 import Schedule from "./Schedule";
 import ContactConfirm from "./ContactConfirm";
+import QuoteRequest from "./QuoteRequest";
 import Button from "@/components/ui/Button";
 import { estimatePrice } from "@/lib/pricing-data";
 
 export interface BookingState {
   step: number;
+  propertyType: string;
   service: string;
   homeType: string;
   bedrooms: number;
@@ -46,6 +48,7 @@ type Action =
 
 const initialState: BookingState = {
   step: 1,
+  propertyType: "",
   service: "",
   homeType: "",
   bedrooms: 2,
@@ -97,7 +100,8 @@ function validateStep(state: BookingState): Record<string, string> {
   const errors: Record<string, string> = {};
   switch (state.step) {
     case 1:
-      if (!state.service) errors.service = "Please select a service.";
+      if (!state.propertyType) errors.service = "Please select a property type.";
+      else if (state.propertyType === "residential" && !state.service) errors.service = "Please select a service.";
       break;
     case 2:
       if (!state.homeType) errors.homeType = "Please select a home type.";
@@ -187,6 +191,25 @@ function BookingWizardInner() {
           We&apos;ll confirm your appointment within 30 minutes.
         </p>
         <p className="text-charcoal/60 text-sm">Check your email for details.</p>
+      </div>
+    );
+  }
+
+  if (state.propertyType === "commercial" || state.propertyType === "postconstruction") {
+    return (
+      <div>
+        <div className="text-center mb-12">
+          <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-navy">
+            Get a custom quote.
+          </h1>
+          <p className="mt-4 text-lg text-charcoal/70">
+            Tell us about your space and we&apos;ll get back to you within a few hours.
+          </p>
+        </div>
+        <QuoteRequest
+          propertyType={state.propertyType}
+          onBack={() => dispatch({ type: "SET_FIELD", field: "propertyType", value: "" })}
+        />
       </div>
     );
   }

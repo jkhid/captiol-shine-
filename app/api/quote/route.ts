@@ -11,6 +11,7 @@ const QuoteSchema = z.object({
   email:       z.string().email().max(254),
   phone:       z.string().min(7).max(20),
   serviceType: z.enum(["commercial", "construction"]),
+  address:     z.string().max(200).optional(),
   spaceType:   z.string().max(60).optional(),
   sqft:        z.string().max(20).optional(),
   frequency:   z.string().max(60).optional(),
@@ -74,6 +75,7 @@ export async function POST(req: NextRequest) {
     <tr><td style="padding:8px 12px 8px 0;color:#888;font-size:13px;white-space:nowrap">Phone</td><td style="padding:8px 0;font-size:14px;font-weight:600"><a href="tel:${esc(body.phone)}">${esc(body.phone)}</a></td></tr>
     <tr><td style="padding:8px 12px 8px 0;color:#888;font-size:13px;white-space:nowrap">Email</td><td style="padding:8px 0;font-size:14px;font-weight:600"><a href="mailto:${esc(body.email)}">${esc(body.email)}</a></td></tr>
     <tr><td style="padding:8px 12px 8px 0;color:#888;font-size:13px;white-space:nowrap">Service</td><td style="padding:8px 0;font-size:14px;font-weight:600">${esc(serviceLabel)}</td></tr>
+    ${body.address ? `<tr><td style="padding:8px 12px 8px 0;color:#888;font-size:13px;white-space:nowrap">Address</td><td style="padding:8px 0;font-size:14px;font-weight:600">${esc(body.address)}</td></tr>` : ""}
     ${body.spaceType ? `<tr><td style="padding:8px 12px 8px 0;color:#888;font-size:13px;white-space:nowrap">Space / Project Type</td><td style="padding:8px 0;font-size:14px;font-weight:600">${esc(body.spaceType)}</td></tr>` : ""}
     ${body.sqft ? `<tr><td style="padding:8px 12px 8px 0;color:#888;font-size:13px;white-space:nowrap">Sq Footage</td><td style="padding:8px 0;font-size:14px;font-weight:600">${esc(body.sqft)}</td></tr>` : ""}
     ${body.frequency ? `<tr><td style="padding:8px 12px 8px 0;color:#888;font-size:13px;white-space:nowrap">Frequency</td><td style="padding:8px 0;font-size:14px;font-weight:600">${esc(body.frequency)}</td></tr>` : ""}
