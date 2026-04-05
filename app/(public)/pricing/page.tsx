@@ -50,8 +50,8 @@ export async function generateMetadata({
 
 const TABS = [
   { key: "residential",  label: "Residential",   icon: Home,      description: "Standard, Deep & Move-In/Out" },
-  { key: "airbnb",       label: "Airbnb / STR",   icon: Building2, description: "Turnover cleaning for hosts" },
   { key: "commercial",   label: "Commercial",     icon: Briefcase, description: "Offices & retail spaces" },
+  { key: "airbnb",       label: "Airbnb / STR",   icon: Building2, description: "Turnover cleaning for hosts" },
   { key: "construction", label: "Construction",   icon: HardHat,   description: "Post-build & renovation" },
 ] as const;
 
