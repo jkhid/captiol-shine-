@@ -14,8 +14,8 @@ const SERVICE_ITEMS = [
 ];
 
 const OTHER_LINKS = [
-  { href: "/areas",     label: "Service Areas" },
-  { href: "/referrals", label: "Referral Program" },
+  { href: "/areas", label: "Service Areas" },
+  { href: "/blog",  label: "Blog" },
 ];
 
 export default function Navbar() {

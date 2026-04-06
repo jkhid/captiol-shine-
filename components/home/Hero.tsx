@@ -1,5 +1,6 @@
+import Link from "next/link";
 import Button from "@/components/ui/Button";
-import { Star, Shield, ThumbsUp } from "lucide-react";
+import { Star, Shield, ThumbsUp, Tag } from "lucide-react";
 
 export default function Hero() {
   return (
@@ -46,20 +47,25 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Insurance badge */}
+        {/* Promo card */}
         <div className="hidden lg:flex flex-shrink-0 items-center justify-center">
-          <div className="relative flex flex-col items-center justify-center text-center" style={{ width: 200, height: 220 }}>
-            {/* Shield SVG background */}
-            <svg viewBox="0 0 200 220" fill="none" xmlns="http://www.w3.org/2000/svg" className="absolute inset-0 w-full h-full">
-              <path d="M100 8 L186 44 L186 110 C186 158 100 212 100 212 C100 212 14 158 14 110 L14 44 Z" fill="white" fillOpacity="0.06" stroke="rgb(212,175,55)" strokeOpacity="0.5" strokeWidth="2"/>
-            </svg>
-            {/* Content */}
-            <div className="relative z-10 flex flex-col items-center pt-8">
-              <Shield size={34} className="text-gold mb-2" />
-              <p className="text-white font-bold text-base leading-tight">Licensed &amp; Insured</p>
-              <p className="text-gold font-semibold text-sm mt-1">Up to $2M</p>
-              <p className="text-white/60 text-xs mt-1.5">General Liability</p>
+          <div className="bg-white rounded-2xl p-6 w-52 text-center shadow-2xl">
+            <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center mx-auto mb-3">
+              <Tag size={18} className="text-gold" />
             </div>
+            <div className="font-display text-5xl font-bold text-navy leading-none">$30</div>
+            <div className="text-xs font-semibold text-charcoal/40 uppercase tracking-widest mt-0.5">off</div>
+            <div className="text-sm font-semibold text-navy mt-2">Your First Cleaning</div>
+            <div className="mt-3 font-mono font-bold text-gold text-sm bg-gold/10 rounded-lg px-3 py-1.5 tracking-wider">
+              FIRST30
+            </div>
+            <div className="text-xs text-charcoal/40 mt-2">Apply code at checkout</div>
+            <Link
+              href="/book?promo=FIRST30"
+              className="mt-4 block text-xs font-semibold text-white bg-navy rounded-xl py-2.5 hover:bg-navy/90 transition-colors"
+            >
+              Claim Offer →
+            </Link>
           </div>
         </div>
 
