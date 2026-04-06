@@ -183,7 +183,7 @@ export default function LandingPage() {
                 className="w-full sm:w-auto flex items-center justify-center gap-2.5 bg-white hover:bg-gray-50 text-navy font-bold text-base px-8 py-4 rounded-xl transition-colors shadow-lg"
               >
                 <CalendarCheck size={18} />
-                Book Online — $30 Off
+                Book Online
               </Link>
             </div>
 
@@ -249,9 +249,9 @@ export default function LandingPage() {
           <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
             <div>
               <p className="text-xs font-semibold text-gold uppercase tracking-widest mb-1">Limited time offer</p>
-              <p className="font-display text-2xl font-bold text-navy">$30 off your first cleaning</p>
+              <p className="font-display text-2xl font-bold text-navy">$30 off for new customers</p>
               <p className="text-charcoal/60 text-sm mt-1">
-                Use code <span className="font-mono font-bold text-gold bg-gold/10 px-2 py-0.5 rounded">FIRST30</span> — applied automatically when you book online.
+                Use code <span className="font-mono font-bold text-gold bg-gold/10 px-2 py-0.5 rounded">FIRST30</span> — mention it when you call or enter it at checkout.
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 shrink-0">
@@ -382,11 +382,11 @@ export default function LandingPage() {
                 className="w-full sm:w-auto flex items-center justify-center gap-2.5 bg-gold hover:bg-gold/90 text-navy font-bold text-base px-8 py-4 rounded-xl transition-colors shadow-md"
               >
                 <CalendarCheck size={18} />
-                Book Online — $30 Off
+                Book Online
               </Link>
             </div>
             <p className="mt-5 text-xs text-charcoal/40">
-              Use code FIRST30 at checkout · No contracts · Satisfaction guaranteed
+              $30 off for new customers — mention it when you call or enter FIRST30 online · No contracts · Satisfaction guaranteed
             </p>
           </div>
         </section>
