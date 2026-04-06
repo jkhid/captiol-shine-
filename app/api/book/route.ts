@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase";
 import { SERVICE_LABELS } from "@/lib/bookings";
-import { estimatePrice, getFirstCleanBasePrice, calcAddOnTotal } from "@/lib/pricing-data";
+import { estimatePrice } from "@/lib/pricing-data";
 import { Resend } from "resend";
 import twilio from "twilio";
 
@@ -87,12 +87,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Server-side price computation — never trust client-supplied price
-  // For recurring bookings, FIRST30 applies to the first-clean base price, not the recurring rate
-  const isRecurring = body.frequency === "weekly" || body.frequency === "biweekly";
-  const firstCleanBase = isRecurring
-    ? getFirstCleanBasePrice(body.service, body.bedrooms) + calcAddOnTotal(addOns)
-    : estimatePrice(body.service, body.bedrooms, body.frequency ?? "one-time", addOns);
-  const price = Math.max(0, firstCleanBase - promoDiscount);
+  const price = Math.max(0, estimatePrice(body.service, body.bedrooms, body.frequency ?? "one-time", addOns) - promoDiscount);
 
   // 1. Save booking to Supabase
   const { data, error } = await supabaseAdmin
