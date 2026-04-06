@@ -4,7 +4,7 @@ import { useState } from "react";
 import { PRICING_TIERS, HOME_SIZE_LABELS, type HomeSize } from "@/lib/pricing-data";
 import PricingCard from "./PricingCard";
 
-const sizes: HomeSize[] = ["apartment", "home", "large"];
+const sizes: HomeSize[] = ["studio", "apartment", "home", "large"];
 
 export default function PricingCalculator() {
   const [selected, setSelected] = useState<HomeSize>("home");

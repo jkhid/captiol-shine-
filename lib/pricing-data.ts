@@ -1,9 +1,10 @@
-export type HomeSize = "apartment" | "home" | "large";
+export type HomeSize = "studio" | "apartment" | "home" | "large";
 
 export const HOME_SIZE_LABELS: Record<HomeSize, string> = {
-  apartment: "Apartment / Condo (1-2 BR)",
-  home: "Home (3 BR / 2 BA)",
-  large: "Large Home (4+ BR)",
+  studio:    "1 Bedroom",
+  apartment: "2 Bedrooms",
+  home:      "3 Bedrooms",
+  large:     "4+ Bedrooms",
 };
 
 export type ServiceTier = "standard_biweekly" | "standard_weekly" | "deep" | "moveinout";
@@ -21,7 +22,7 @@ export const PRICING_TIERS: PricingTier[] = [
     key: "standard_biweekly",
     name: "Standard Clean",
     subtitle: "Biweekly — 10% off",
-    prices: { apartment: 134, home: 179, large: 251 },
+    prices: { studio: 109, apartment: 134, home: 179, large: 251 },
     included: [
       "Dust all surfaces & furniture",
       "Vacuum & mop all floors",
@@ -34,7 +35,7 @@ export const PRICING_TIERS: PricingTier[] = [
     key: "standard_weekly",
     name: "Standard Clean",
     subtitle: "Weekly — 20% off",
-    prices: { apartment: 119, home: 159, large: 223 },
+    prices: { studio: 95, apartment: 119, home: 159, large: 223 },
     included: [
       "Everything in biweekly Standard Clean",
       "Priority scheduling",
@@ -47,7 +48,7 @@ export const PRICING_TIERS: PricingTier[] = [
     key: "deep",
     name: "Deep Clean",
     subtitle: "One-time",
-    prices: { apartment: 249, home: 375, large: 499 },
+    prices: { studio: 199, apartment: 249, home: 375, large: 499 },
     included: [
       "Everything in Standard Clean",
       "Inside oven & microwave",
@@ -59,7 +60,7 @@ export const PRICING_TIERS: PricingTier[] = [
   {
     key: "moveinout",
     name: "Move-In / Move-Out",
-    prices: { apartment: 225, home: 349, large: 499 },
+    prices: { studio: 185, apartment: 225, home: 349, large: 499 },
     included: [
       "Everything in Deep Clean",
       "Inside all cabinets & drawers",
@@ -170,16 +171,22 @@ export const CONSTRUCTION_PHASES = [
 
 // Base standard clean prices (no recurring discount)
 export const STANDARD_BASE_PRICES: Record<HomeSize, number> = {
+  studio:    119,
   apartment: 149,
-  home: 199,
-  large: 279,
+  home:      199,
+  large:     279,
 };
+
+function bedroomsToHomeSize(bedrooms: number): HomeSize {
+  if (bedrooms >= 4) return "large";
+  if (bedrooms >= 3) return "home";
+  if (bedrooms >= 2) return "apartment";
+  return "studio";
+}
 
 // Returns the base price for the first clean (no recurring discount applied)
 export function getFirstCleanBasePrice(service: string, bedrooms: number): number {
-  let homeSize: HomeSize = "apartment";
-  if (bedrooms >= 4) homeSize = "large";
-  else if (bedrooms >= 3) homeSize = "home";
+  const homeSize = bedroomsToHomeSize(bedrooms);
 
   switch (service) {
     case "standard":   return STANDARD_BASE_PRICES[homeSize];
@@ -207,9 +214,7 @@ export function estimatePrice(
   frequency: string,
   addOns: string[]
 ): number {
-  let homeSize: HomeSize = "apartment";
-  if (bedrooms >= 4) homeSize = "large";
-  else if (bedrooms >= 3) homeSize = "home";
+  const homeSize = bedroomsToHomeSize(bedrooms);
 
   let base = 0;
   switch (service) {

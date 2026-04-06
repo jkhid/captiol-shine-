@@ -243,7 +243,7 @@ function BookingWizardInner() {
         {state.step === 1 && <ServiceSelect state={state} dispatch={dispatch} />}
         {state.step === 2 && <HomeDetails state={state} dispatch={dispatch} />}
         {state.step === 3 && <Schedule state={state} dispatch={dispatch} />}
-        {state.step === 4 && <ContactConfirm state={state} dispatch={dispatch} price={price} recurringPrice={recurringPerVisit} />}
+        {state.step === 4 && <ContactConfirm state={state} dispatch={dispatch} price={price} originalPrice={firstCleanBase} recurringPrice={recurringPerVisit} />}
       </div>
 
       {/* Price summary bar — only show from Step 3 onward */}

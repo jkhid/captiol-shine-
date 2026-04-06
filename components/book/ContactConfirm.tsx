@@ -6,6 +6,7 @@ interface Props {
   state: BookingState;
   dispatch: React.Dispatch<{ type: "SET_FIELD"; field: string; value: string | boolean }>;
   price: number;
+  originalPrice: number;
   recurringPrice: number;
 }
 
@@ -58,7 +59,8 @@ function InputField({
   );
 }
 
-export default function ContactConfirm({ state, dispatch, price, recurringPrice }: Props) {
+export default function ContactConfirm({ state, dispatch, price, originalPrice, recurringPrice }: Props) {
+  const hasPromo = state.promoCode.toUpperCase() === "FIRST30";
   const set = (field: string) => (value: string | boolean) =>
     dispatch({ type: "SET_FIELD", field, value });
 
@@ -180,11 +182,17 @@ export default function ContactConfirm({ state, dispatch, price, recurringPrice 
               <span className="font-medium text-right">{state.addOns.join(", ")}</span>
             </div>
           )}
-          {state.promoCode.toUpperCase() === "FIRST30" && (
-            <div className="flex justify-between text-cta-green">
-              <span>Promo (FIRST30)</span>
-              <span className="font-medium">−$30</span>
-            </div>
+          {hasPromo && (
+            <>
+              <div className="flex justify-between text-charcoal/50 text-sm">
+                <span>Original price</span>
+                <span className="line-through">${originalPrice}</span>
+              </div>
+              <div className="flex justify-between text-cta-green">
+                <span>Promo (FIRST30)</span>
+                <span className="font-medium">−$30</span>
+              </div>
+            </>
           )}
           <div className="pt-2 border-t border-gray-200 space-y-1.5">
             <div className="flex justify-between">
