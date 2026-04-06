@@ -9,7 +9,7 @@ import Schedule from "./Schedule";
 import ContactConfirm from "./ContactConfirm";
 import QuoteRequest from "./QuoteRequest";
 import Button from "@/components/ui/Button";
-import { estimatePrice } from "@/lib/pricing-data";
+import { estimatePrice, getFirstCleanBasePrice, calcAddOnTotal } from "@/lib/pricing-data";
 
 export interface BookingState {
   step: number;
@@ -139,9 +139,16 @@ function BookingWizardInner() {
     if (promo) dispatch({ type: "SET_FIELD", field: "promoCode", value: promo.toUpperCase() });
   }, [searchParams]);
 
-  const basePrice = estimatePrice(state.service, state.bedrooms, state.frequency, state.addOns);
+  const isRecurringFreq = state.frequency === "weekly" || state.frequency === "biweekly";
+  const addOnTotal = calcAddOnTotal(state.addOns);
+  const recurringPerVisit = isRecurringFreq
+    ? estimatePrice(state.service, state.bedrooms, state.frequency, state.addOns)
+    : 0;
+  const firstCleanBase = isRecurringFreq
+    ? getFirstCleanBasePrice(state.service, state.bedrooms) + addOnTotal
+    : estimatePrice(state.service, state.bedrooms, state.frequency, state.addOns);
   const promoDiscount = state.promoCode.toUpperCase() === "FIRST30" ? 30 : 0;
-  const price = Math.max(0, basePrice - promoDiscount);
+  const price = Math.max(0, firstCleanBase - promoDiscount);
 
   const handleNext = () => {
     const errors = validateStep(state);
@@ -236,14 +243,31 @@ function BookingWizardInner() {
         {state.step === 1 && <ServiceSelect state={state} dispatch={dispatch} />}
         {state.step === 2 && <HomeDetails state={state} dispatch={dispatch} />}
         {state.step === 3 && <Schedule state={state} dispatch={dispatch} />}
-        {state.step === 4 && <ContactConfirm state={state} dispatch={dispatch} price={price} />}
+        {state.step === 4 && <ContactConfirm state={state} dispatch={dispatch} price={price} recurringPrice={recurringPerVisit} />}
       </div>
 
       {/* Price summary bar — only show from Step 3 onward */}
       {state.step >= 3 && state.service && (
         <div className="mt-8 p-4 rounded-lg bg-navy/5 flex items-center justify-between">
-          <span className="text-sm text-charcoal/70">Estimated Price</span>
-          <span className="text-2xl font-bold text-navy">${price}</span>
+          {isRecurringFreq ? (
+            <>
+              <div>
+                <span className="text-sm text-charcoal/70">First clean</span>
+                {promoDiscount > 0 && (
+                  <span className="ml-2 text-xs font-semibold text-cta-green">FIRST30 applied</span>
+                )}
+              </div>
+              <div className="text-right">
+                <span className="text-2xl font-bold text-navy">${price}</span>
+                <span className="block text-xs text-charcoal/50">then ${recurringPerVisit}/visit</span>
+              </div>
+            </>
+          ) : (
+            <>
+              <span className="text-sm text-charcoal/70">Estimated Price</span>
+              <span className="text-2xl font-bold text-navy">${price}</span>
+            </>
+          )}
         </div>
       )}
 

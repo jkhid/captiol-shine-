@@ -175,6 +175,31 @@ export const STANDARD_BASE_PRICES: Record<HomeSize, number> = {
   large: 279,
 };
 
+// Returns the base price for the first clean (no recurring discount applied)
+export function getFirstCleanBasePrice(service: string, bedrooms: number): number {
+  let homeSize: HomeSize = "apartment";
+  if (bedrooms >= 4) homeSize = "large";
+  else if (bedrooms >= 3) homeSize = "home";
+
+  switch (service) {
+    case "standard":   return STANDARD_BASE_PRICES[homeSize];
+    case "deep":       return PRICING_TIERS[2].prices[homeSize];
+    case "moveinout":  return PRICING_TIERS[3].prices[homeSize];
+    case "airbnb":
+      if (bedrooms >= 3) return 170;
+      if (bedrooms >= 2) return 120;
+      return 85;
+    default: return STANDARD_BASE_PRICES[homeSize];
+  }
+}
+
+export function calcAddOnTotal(addOns: string[]): number {
+  return addOns.reduce((sum, name) => {
+    const addon = ADD_ONS.find((a) => a.name === name);
+    return sum + (addon?.price ?? 0);
+  }, 0);
+}
+
 // Helper to estimate price for the booking form
 export function estimatePrice(
   service: string,

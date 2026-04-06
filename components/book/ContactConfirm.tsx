@@ -6,6 +6,7 @@ interface Props {
   state: BookingState;
   dispatch: React.Dispatch<{ type: "SET_FIELD"; field: string; value: string | boolean }>;
   price: number;
+  recurringPrice: number;
 }
 
 const hearAboutOptions = [
@@ -57,7 +58,7 @@ function InputField({
   );
 }
 
-export default function ContactConfirm({ state, dispatch, price }: Props) {
+export default function ContactConfirm({ state, dispatch, price, recurringPrice }: Props) {
   const set = (field: string) => (value: string | boolean) =>
     dispatch({ type: "SET_FIELD", field, value });
 
@@ -185,9 +186,21 @@ export default function ContactConfirm({ state, dispatch, price }: Props) {
               <span className="font-medium">−$30</span>
             </div>
           )}
-          <div className="flex justify-between pt-2 border-t border-gray-200">
-            <span className="font-bold text-navy">Estimated Total</span>
-            <span className="text-xl font-bold text-navy">${price}</span>
+          <div className="pt-2 border-t border-gray-200 space-y-1.5">
+            <div className="flex justify-between">
+              <span className="font-bold text-navy">
+                {recurringPrice > 0 ? "First clean" : "Estimated Total"}
+              </span>
+              <span className="text-xl font-bold text-navy">${price}</span>
+            </div>
+            {recurringPrice > 0 && (
+              <div className="flex justify-between text-sm">
+                <span className="text-charcoal/50">
+                  Then per visit ({state.frequency})
+                </span>
+                <span className="font-semibold text-charcoal/70">${recurringPrice}</span>
+              </div>
+            )}
           </div>
         </div>
       </Card>
