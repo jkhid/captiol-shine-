@@ -22,7 +22,7 @@ export const PRICING_TIERS: PricingTier[] = [
     key: "standard_biweekly",
     name: "Standard Clean",
     subtitle: "Biweekly — 10% off",
-    prices: { studio: 109, apartment: 134, home: 179, large: 251 },
+    prices: { studio: 130, apartment: 161, home: 202, large: 260 },
     included: [
       "Dust all surfaces & furniture",
       "Vacuum & mop all floors",
@@ -35,7 +35,7 @@ export const PRICING_TIERS: PricingTier[] = [
     key: "standard_weekly",
     name: "Standard Clean",
     subtitle: "Weekly — 20% off",
-    prices: { studio: 95, apartment: 119, home: 159, large: 223 },
+    prices: { studio: 116, apartment: 143, home: 180, large: 231 },
     included: [
       "Everything in biweekly Standard Clean",
       "Priority scheduling",
@@ -48,7 +48,7 @@ export const PRICING_TIERS: PricingTier[] = [
     key: "deep",
     name: "Deep Clean",
     subtitle: "One-time",
-    prices: { studio: 199, apartment: 249, home: 375, large: 499 },
+    prices: { studio: 250, apartment: 300, home: 420, large: 550 },
     included: [
       "Everything in Standard Clean",
       "Inside oven & microwave",
@@ -60,7 +60,7 @@ export const PRICING_TIERS: PricingTier[] = [
   {
     key: "moveinout",
     name: "Move-In / Move-Out",
-    prices: { studio: 185, apartment: 225, home: 349, large: 499 },
+    prices: { studio: 250, apartment: 300, home: 420, large: 550 },
     included: [
       "Everything in Deep Clean",
       "Inside all cabinets & drawers",
@@ -92,9 +92,9 @@ export interface AirbnbTier {
 }
 
 export const AIRBNB_PRICING: AirbnbTier[] = [
-  { name: "Studio / 1 BR", price: 85 },
-  { name: "2 BR", price: 120 },
-  { name: "3+ BR", price: 170 },
+  { name: "Studio / 1 BR", price: 100 },
+  { name: "2 BR", price: 140 },
+  { name: "3+ BR", price: 190 },
 ];
 
 export const AIRBNB_LINEN_ADDON = 30;
@@ -171,10 +171,10 @@ export const CONSTRUCTION_PHASES = [
 
 // Base standard clean prices (no recurring discount)
 export const STANDARD_BASE_PRICES: Record<HomeSize, number> = {
-  studio:    119,
-  apartment: 149,
-  home:      199,
-  large:     279,
+  studio:    145,
+  apartment: 179,
+  home:      225,
+  large:     289,
 };
 
 function bedroomsToHomeSize(bedrooms: number): HomeSize {
@@ -193,9 +193,9 @@ export function getFirstCleanBasePrice(service: string, bedrooms: number): numbe
     case "deep":       return PRICING_TIERS[2].prices[homeSize];
     case "moveinout":  return PRICING_TIERS[3].prices[homeSize];
     case "airbnb":
-      if (bedrooms >= 3) return 170;
-      if (bedrooms >= 2) return 120;
-      return 85;
+      if (bedrooms >= 3) return 190;
+      if (bedrooms >= 2) return 140;
+      return 100;
     default: return STANDARD_BASE_PRICES[homeSize];
   }
 }
@@ -231,9 +231,9 @@ export function estimatePrice(
       base = PRICING_TIERS[3].prices[homeSize];
       break;
     case "airbnb":
-      if (bedrooms >= 3) base = 170;
-      else if (bedrooms >= 2) base = 120;
-      else base = 85;
+      if (bedrooms >= 3) base = 190;
+      else if (bedrooms >= 2) base = 140;
+      else base = 100;
       break;
     default:
       base = PRICING_TIERS[0].prices[homeSize];

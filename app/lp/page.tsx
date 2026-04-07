@@ -53,13 +53,13 @@ const SERVICES = [
     icon: Home,
     name: "Residential Cleaning",
     blurb: "Standard, deep, and move-in/out cleans for apartments and homes across Arlington.",
-    from: "119",
+    from: "116",
   },
   {
     icon: Building2,
     name: "Airbnb & Short-Term Rentals",
     blurb: "Same-day turnovers your guests will notice. Flat-rate pricing, no surprise fees.",
-    from: "85",
+    from: "100",
   },
   {
     icon: Briefcase,
