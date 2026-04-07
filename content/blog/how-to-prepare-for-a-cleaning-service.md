@@ -1,7 +1,7 @@
 ---
 title: "How to Prepare Your Home for a Cleaning Service (And What You Don't Need to Do)"
 description: "A practical guide on what actually helps before your cleaning appointment — and what you can stop stressing about."
-date: "2026-04-07"
+date: "2026-03-28"
 published: true
 category: "Tips & Guides"
 readTime: "5 min read"
