@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Button from "@/components/ui/Button";
-import { Star, Shield, ThumbsUp, Tag } from "lucide-react";
+import { Star, Shield, ThumbsUp, Tag, Phone } from "lucide-react";
 
 export default function Hero() {
   return (
@@ -24,6 +24,13 @@ export default function Hero() {
             <Button href="/book" variant="gold">
               Book a Cleaning
             </Button>
+            <a
+              href="tel:+17033759132"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium border border-white/30 text-white/80 hover:border-white hover:text-white transition-colors"
+            >
+              <Phone size={14} />
+              (703) 375-9132
+            </a>
           </div>
           <div className="mt-8 flex flex-wrap items-center gap-4 text-sm text-white/80">
             <span className="flex items-center gap-1.5">
