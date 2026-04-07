@@ -2,7 +2,7 @@
 title: "What to Look for When Hiring a Commercial Cleaning Company in Northern Virginia"
 description: "Before you sign a commercial cleaning contract, here's what to verify, what questions to ask, and what to watch out for."
 date: "2026-03-15"
-published: false
+published: true
 category: "Commercial"
 readTime: "6 min read"
 ---
