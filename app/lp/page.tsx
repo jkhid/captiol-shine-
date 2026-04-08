@@ -5,6 +5,7 @@ import {
   Phone, Star, Shield, Leaf, Clock, Check,
   CalendarCheck, Sparkles, Home, Building2, HardHat, Briefcase, ArrowRight,
 } from "lucide-react";
+import BookOnlineButton from "@/components/lp/BookOnlineButton";
 
 export const metadata: Metadata = {
   title: "Professional House Cleaning in Arlington, VA — Capitol Shine",
@@ -178,13 +179,10 @@ export default function LandingPage() {
                 <Phone size={18} />
                 Call {PHONE_DISPLAY}
               </a>
-              <Link
+              <BookOnlineButton
                 href={BOOK_URL}
                 className="w-full sm:w-auto flex items-center justify-center gap-2.5 bg-white hover:bg-gray-50 text-navy font-bold text-base px-8 py-4 rounded-xl transition-colors shadow-lg"
-              >
-                <CalendarCheck size={18} />
-                Book Online
-              </Link>
+              />
             </div>
 
             <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm text-white/70">
@@ -261,12 +259,12 @@ export default function LandingPage() {
               >
                 <Phone size={15} /> Call to claim
               </a>
-              <Link
+              <BookOnlineButton
                 href={BOOK_URL}
+                label="Book online"
+                iconSize={15}
                 className="flex items-center justify-center gap-2 bg-gold text-navy font-semibold px-6 py-3 rounded-xl hover:bg-gold/90 transition-colors text-sm"
-              >
-                Book online <ArrowRight size={15} />
-              </Link>
+              />
             </div>
           </div>
         </div>
@@ -377,13 +375,10 @@ export default function LandingPage() {
                 <Phone size={18} />
                 Call {PHONE_DISPLAY}
               </a>
-              <Link
+              <BookOnlineButton
                 href={BOOK_URL}
                 className="w-full sm:w-auto flex items-center justify-center gap-2.5 bg-gold hover:bg-gold/90 text-navy font-bold text-base px-8 py-4 rounded-xl transition-colors shadow-md"
-              >
-                <CalendarCheck size={18} />
-                Book Online
-              </Link>
+              />
             </div>
             <p className="mt-5 text-xs text-charcoal/40">
               $30 off for new customers — mention it when you call or enter FIRST30 online · No contracts · Satisfaction guaranteed
@@ -416,12 +411,12 @@ export default function LandingPage() {
           >
             <Phone size={16} /> Call Now
           </a>
-          <Link
+          <BookOnlineButton
             href={BOOK_URL}
             className="flex-1 flex items-center justify-center gap-2 bg-gold text-navy font-bold text-sm py-3.5 rounded-xl"
-          >
-            <CalendarCheck size={16} /> Book Online
-          </Link>
+            iconSize={16}
+            label="Book Online"
+          />
         </div>
 
       </div>
