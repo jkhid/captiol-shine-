@@ -60,7 +60,6 @@ export default function Schedule({ state, dispatch }: Props) {
           selected={state.date}
           onChange={(date) => dispatch({ type: "SET_FIELD", field: "date", value: date })}
           disablePast
-          disableSundays
         />
         {state.errors.date && (
           <p className="mt-2 text-sm text-red-500">{state.errors.date}</p>
