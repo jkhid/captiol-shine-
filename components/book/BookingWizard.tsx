@@ -171,6 +171,11 @@ function BookingWizardInner() {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error ?? "Something went wrong. Please try again.");
       }
+      if (typeof window !== "undefined" && typeof (window as any).gtag === "function") {
+        (window as any).gtag("event", "conversion", {
+          send_to: "AW-18020726483/EL0tCM6mqZgcENPt-ZBD",
+        });
+      }
       dispatch({ type: "SUBMIT" });
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
