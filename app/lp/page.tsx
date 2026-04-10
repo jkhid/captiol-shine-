@@ -6,6 +6,7 @@ import {
   CalendarCheck, Sparkles, Home, Building2, HardHat, Briefcase, ArrowRight,
 } from "lucide-react";
 import BookOnlineButton from "@/components/lp/BookOnlineButton";
+import CallButton from "@/components/lp/CallButton";
 
 export const metadata: Metadata = {
   title: "Professional House Cleaning in Arlington, VA — Capitol Shine",
@@ -148,13 +149,12 @@ export default function LandingPage() {
                 Capitol <span className="text-gold">Shine</span>
               </span>
             </Link>
-            <a
-              href={`tel:${PHONE}`}
-              className="hidden sm:flex items-center gap-2 text-sm font-semibold text-navy hover:text-gold transition-colors"
-            >
-              <Phone size={15} className="text-gold" />
-              {PHONE_DISPLAY}
-            </a>
+            <CallButton
+              phone={PHONE}
+              iconSize={15}
+              label={PHONE_DISPLAY}
+              className="hidden sm:flex items-center gap-2 text-sm font-semibold text-navy hover:text-gold transition-colors [&>svg]:text-gold"
+            />
           </div>
         </header>
 
@@ -172,13 +172,11 @@ export default function LandingPage() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-              <a
-                href={`tel:${PHONE}`}
+              <CallButton
+                phone={PHONE}
+                label={`Call ${PHONE_DISPLAY}`}
                 className="w-full sm:w-auto flex items-center justify-center gap-2.5 bg-gold hover:bg-gold/90 text-navy font-bold text-base px-8 py-4 rounded-xl transition-colors shadow-lg"
-              >
-                <Phone size={18} />
-                Call {PHONE_DISPLAY}
-              </a>
+              />
               <BookOnlineButton
                 href={BOOK_URL}
                 className="w-full sm:w-auto flex items-center justify-center gap-2.5 bg-white hover:bg-gray-50 text-navy font-bold text-base px-8 py-4 rounded-xl transition-colors shadow-lg"
@@ -253,12 +251,12 @@ export default function LandingPage() {
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 shrink-0">
-              <a
-                href={`tel:${PHONE}`}
+              <CallButton
+                phone={PHONE}
+                iconSize={15}
+                label="Call to claim"
                 className="flex items-center justify-center gap-2 bg-navy text-white font-semibold px-6 py-3 rounded-xl hover:bg-navy/90 transition-colors text-sm"
-              >
-                <Phone size={15} /> Call to claim
-              </a>
+              />
               <BookOnlineButton
                 href={BOOK_URL}
                 label="Book online"
@@ -368,13 +366,11 @@ export default function LandingPage() {
               Book online in 60 seconds or give us a call. We'll confirm your appointment within 30 minutes, and you won't pay a thing until after we clean.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <a
-                href={`tel:${PHONE}`}
+              <CallButton
+                phone={PHONE}
+                label={`Call ${PHONE_DISPLAY}`}
                 className="w-full sm:w-auto flex items-center justify-center gap-2.5 bg-navy hover:bg-navy/90 text-white font-bold text-base px-8 py-4 rounded-xl transition-colors shadow-md"
-              >
-                <Phone size={18} />
-                Call {PHONE_DISPLAY}
-              </a>
+              />
               <BookOnlineButton
                 href={BOOK_URL}
                 className="w-full sm:w-auto flex items-center justify-center gap-2.5 bg-gold hover:bg-gold/90 text-navy font-bold text-base px-8 py-4 rounded-xl transition-colors shadow-md"
@@ -405,12 +401,12 @@ export default function LandingPage() {
 
         {/* ── Sticky mobile CTA ──────────────────────────────────────── */}
         <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 p-3 flex gap-3 shadow-xl">
-          <a
-            href={`tel:${PHONE}`}
+          <CallButton
+            phone={PHONE}
+            iconSize={16}
+            label="Call Now"
             className="flex-1 flex items-center justify-center gap-2 bg-navy text-white font-bold text-sm py-3.5 rounded-xl"
-          >
-            <Phone size={16} /> Call Now
-          </a>
+          />
           <BookOnlineButton
             href={BOOK_URL}
             className="flex-1 flex items-center justify-center gap-2 bg-gold text-navy font-bold text-sm py-3.5 rounded-xl"

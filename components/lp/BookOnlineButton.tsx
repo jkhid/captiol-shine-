@@ -17,10 +17,15 @@ export default function BookOnlineButton({
   label = "Book Online",
 }: Props) {
   const handleClick = () => {
-    if (typeof window !== "undefined" && typeof (window as any).gtag === "function") {
-      (window as any).gtag("event", "conversion", {
+    if (typeof window === "undefined") return;
+    const w = window as any;
+    if (typeof w.gtag === "function") {
+      w.gtag("event", "conversion", {
         send_to: "AW-18020726483/EL0tCM6mqZgcENPt-ZBD",
       });
+    }
+    if (typeof w.fbq === "function") {
+      w.fbq("track", "Lead");
     }
   };
 
