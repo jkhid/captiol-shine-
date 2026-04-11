@@ -1,8 +1,8 @@
 ---
 title: "Move-Out Cleaning Checklist for Arlington Renters"
 description: "A room-by-room checklist covering everything landlords actually inspect — and what most tenants miss."
-date: "2026-03-01"
-published: false
+date: "2026-04-11"
+published: true
 category: "Checklists"
 readTime: "6 min read"
 ---

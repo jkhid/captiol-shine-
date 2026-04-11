@@ -1,8 +1,8 @@
 ---
 title: "How Often Should You Deep Clean Your Home?"
 description: "Most people know they should deep clean more often than they do. Here's a realistic guide to frequency — and the signs that tell you it's overdue."
-date: "2026-02-15"
-published: false
+date: "2026-04-11"
+published: true
 category: "Tips & Guides"
 readTime: "5 min read"
 ---
