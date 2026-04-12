@@ -192,7 +192,7 @@ export default function LandingPage() {
         <section className="bg-gradient-to-b from-navy to-navy/90 text-white py-20 md:py-28 px-4">
           <div className="max-w-3xl mx-auto text-center">
             <p className="text-gold text-sm font-semibold uppercase tracking-widest mb-4">
-              Arlington · McLean · Alexandria · Falls Church
+              Arlington · McLean · Alexandria · Falls Church · & surrounding areas
             </p>
             <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
               Spotless homes across<br className="hidden sm:block" /> Northern Virginia.
