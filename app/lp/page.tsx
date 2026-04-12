@@ -7,15 +7,17 @@ import {
 } from "lucide-react";
 import BookOnlineButton from "@/components/lp/BookOnlineButton";
 import CallButton from "@/components/lp/CallButton";
+import PricingCalculator from "@/components/pricing/PricingCalculator";
+import { FAQAccordion } from "@/components/pricing/FAQ";
 
 export const metadata: Metadata = {
-  title: "Professional House Cleaning in Arlington, VA — Capitol Shine",
+  title: "House Cleaning in Northern Virginia — From $119 | Capitol Shine",
   description:
-    "Arlington's top-rated cleaning service. Transparent pricing, eco-friendly products, licensed & insured. Book online in 60 seconds or call (703) 375-9132. $30 off your first clean.",
+    "5.0-rated house cleaning across Arlington, McLean, Alexandria & Northern Virginia. Flat-rate from $119. Pay only after we're done. 24-hour re-clean promise. Book in 60 seconds.",
   openGraph: {
-    title: "Professional House Cleaning in Arlington, VA — Capitol Shine",
+    title: "House Cleaning in Northern Virginia — From $119 | Capitol Shine",
     description:
-      "Transparent pricing, eco-friendly products, licensed & insured. Book online in 60 seconds or call (703) 375-9132.",
+      "5.0-rated cleaning across Northern Virginia. Flat-rate from $119. Pay only after we're done. 24-hour re-clean promise.",
     url: "https://capitolshinecleaners.com/lp",
   },
   robots: { index: false },
@@ -23,13 +25,41 @@ export const metadata: Metadata = {
 
 const PHONE     = "+17033759132";
 const PHONE_DISPLAY = "(703) 375-9132";
+const SMS_URL   = `sms:${PHONE}?&body=Hi%20Capitol%20Shine!%20I%27d%20like%20a%20quote%20for%20a%20cleaning.`;
 const BOOK_URL  = "/book?promo=FIRST30";
 
 const TRUST_ITEMS = [
   { icon: Star,    label: "5.0 on Google" },
   { icon: Shield,  label: "Licensed & Insured" },
   { icon: Leaf,    label: "Eco-Friendly Products" },
-  { icon: Clock,   label: "No Payment Until After We Clean" },
+  { icon: Clock,   label: "Pay Only After We're Done" },
+];
+
+const LP_FAQS = [
+  {
+    q: "How much will my cleaning actually cost?",
+    a: "Use the estimator above for a starting price based on your home size. Final pricing is confirmed when you book — flat-rate, no surprises, no hourly billing. Most Arlington 2-bedroom apartments fall between $139-$179 for a standard clean.",
+  },
+  {
+    q: "Do I need to be home during the cleaning?",
+    a: "No. Most clients give us a key, lockbox code, or smart lock access. We'll confirm the entry method when you book.",
+  },
+  {
+    q: "Are you licensed, bonded, and insured?",
+    a: "Yes — fully licensed, bonded, and insured up to $2M in Virginia. We provide a certificate of insurance on request.",
+  },
+  {
+    q: "What products do you use? Are they safe for kids and pets?",
+    a: "We use EPA Safer Choice certified, eco-friendly products that are safe for children, pets, and the environment. If you prefer specific products, we'll use what you have on hand.",
+  },
+  {
+    q: "What if I'm not happy with the clean?",
+    a: "Our 24-Hour Re-Clean Promise: if anything isn't right, contact us within 24 hours and we'll come back and re-clean free — no questions, no pushback.",
+  },
+  {
+    q: "How quickly can you come out?",
+    a: "We often have same-week availability across Arlington, McLean, Alexandria, and Falls Church. Book online or call (703) 375-9132 and we'll confirm your slot within 30 minutes.",
+  },
 ];
 
 const STEPS = [
@@ -79,19 +109,19 @@ const SERVICES = [
 
 const TESTIMONIALS = [
   {
-    name: "Jennifer M.",
-    location: "Clarendon, Arlington",
-    body: "I've tried a few cleaning services over the years. Capitol Shine is the only one I've stuck with. They're consistent, easy to communicate with, and they actually clean everything — not just the obvious stuff.",
+    name: "Joshua Kwok",
+    location: "Google Review",
+    body: "They arrived right on time, were super professional and friendly, and left my house sparkling clean from top to bottom. Every surface, floor, and even the hard-to-reach spots were spotless. I've tried a few services before, but this one is by far the best.",
   },
   {
-    name: "Marcus T.",
-    location: "Rosslyn, Arlington",
-    body: "Booked a move-out clean before handing back my keys. Got my full security deposit back. Worth every penny and then some.",
+    name: "Eren Y.",
+    location: "Google Review",
+    body: "Hired Jay and Capitol Shine for a deep clean before we moved out. The kitchen and bathrooms looked brand new. Amazing communication, easy to book, and fair pricing. Really recommend their services!",
   },
   {
-    name: "Priya S.",
-    location: "Crystal City, Arlington",
-    body: "Good value for the quality. My apartment looks noticeably better after each visit, not just tidier. Reliable team, no surprises on pricing.",
+    name: "Dr Prop",
+    location: "Google Review",
+    body: "Capitol Shine handled my weekly cleaning in Arlington and took care of my move-out deep clean when I had to relocate. Great to work with and always made my place spotless!",
   },
 ];
 
@@ -132,7 +162,7 @@ export default function LandingPage() {
             aggregateRating: {
               "@type": "AggregateRating",
               ratingValue: "5.0",
-              reviewCount: "47",
+              reviewCount: "6",
             },
           }),
         }}
@@ -162,16 +192,16 @@ export default function LandingPage() {
         <section className="bg-gradient-to-b from-navy to-navy/90 text-white py-20 md:py-28 px-4">
           <div className="max-w-3xl mx-auto text-center">
             <p className="text-gold text-sm font-semibold uppercase tracking-widest mb-4">
-              Serving Arlington & Northern Virginia
+              Arlington · McLean · Alexandria · Falls Church
             </p>
             <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-              A spotless home.<br className="hidden sm:block" /> No hassle. Guaranteed.
+              Spotless homes across<br className="hidden sm:block" /> Northern Virginia.
             </h1>
             <p className="text-gray-300 text-lg md:text-xl max-w-xl mx-auto mb-10">
-              Arlington's trusted cleaning service — transparent pricing, eco-friendly products, and a team that treats your home like their own.
+              Flat-rate cleaning from <span className="text-white font-semibold">$119</span>. 5.0 on Google, licensed & insured, same team every visit — and you pay only after we&apos;re done.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-5">
               <CallButton
                 phone={PHONE}
                 label={`Call ${PHONE_DISPLAY}`}
@@ -182,6 +212,12 @@ export default function LandingPage() {
                 className="w-full sm:w-auto flex items-center justify-center gap-2.5 bg-white hover:bg-gray-50 text-navy font-bold text-base px-8 py-4 rounded-xl transition-colors shadow-lg"
               />
             </div>
+            <p className="text-sm text-white/60 mb-12">
+              Prefer texting?{" "}
+              <a href={SMS_URL} className="text-gold hover:text-gold/80 underline underline-offset-2">
+                Send us a quick message →
+              </a>
+            </p>
 
             <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm text-white/70">
               {TRUST_ITEMS.map(({ icon: Icon, label }) => (
@@ -302,7 +338,7 @@ export default function LandingPage() {
         <section className="py-16 px-4">
           <div className="max-w-4xl mx-auto">
             <h2 className="font-display text-2xl md:text-3xl font-bold text-navy text-center mb-10">
-              Why Arlington homeowners choose us
+              Why Northern Virginia homeowners choose us
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {WHY_ITEMS.map(({ icon: Icon, label }) => (
@@ -337,6 +373,58 @@ export default function LandingPage() {
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* ── Pricing estimator ──────────────────────────────────────── */}
+        <section className="py-16 px-4 bg-off-white border-y border-gray-100">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-8">
+              <p className="text-xs font-semibold text-gold uppercase tracking-widest mb-2">
+                Instant estimate
+              </p>
+              <h2 className="font-display text-2xl md:text-3xl font-bold text-navy mb-3">
+                See your price in 10 seconds
+              </h2>
+              <p className="text-charcoal/60 max-w-xl mx-auto text-sm md:text-base">
+                Pick your home size below for a starting estimate. Your final flat-rate price is
+                confirmed when you book — no hourly billing, no surprise fees.
+              </p>
+            </div>
+            <PricingCalculator />
+            <p className="text-center text-xs text-charcoal/50 mt-6">
+              Estimates based on typical Northern Virginia homes. Final pricing confirmed at booking.
+            </p>
+          </div>
+        </section>
+
+        {/* ── 24-Hour Re-Clean Promise ──────────────────────────────── */}
+        <section className="py-14 px-4 bg-white">
+          <div className="max-w-3xl mx-auto">
+            <div className="bg-gradient-to-br from-navy to-navy/90 rounded-2xl p-8 md:p-10 text-center border border-gold/20">
+              <div className="inline-flex items-center gap-2 bg-gold/15 text-gold text-xs font-semibold uppercase tracking-widest px-3 py-1.5 rounded-full mb-4">
+                <Shield size={13} />
+                Our Promise
+              </div>
+              <h2 className="font-display text-2xl md:text-3xl font-bold text-white mb-3">
+                The 24-Hour Re-Clean Promise
+              </h2>
+              <p className="text-white/75 text-base md:text-lg max-w-xl mx-auto leading-relaxed">
+                If anything isn&apos;t right when you walk in, tell us within 24 hours and we&apos;ll
+                come back and re-clean it — <span className="text-white font-semibold">free, no
+                questions asked</span>. Simple as that.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* ── FAQ ───────────────────────────────────────────────────── */}
+        <section className="py-16 px-4 bg-off-white">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="font-display text-2xl md:text-3xl font-bold text-navy text-center mb-10">
+              Questions before you book
+            </h2>
+            <FAQAccordion items={LP_FAQS} />
           </div>
         </section>
 
