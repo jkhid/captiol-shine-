@@ -19,6 +19,7 @@ export const metadata: Metadata = {
     description:
       "5.0-rated cleaning across Northern Virginia. Flat-rate from $119. Pay only after we're done. 24-hour re-clean promise.",
     url: "https://capitolshinecleaners.com/lp",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Capitol Shine — House Cleaning in Northern Virginia" }],
   },
   robots: { index: false },
 };
