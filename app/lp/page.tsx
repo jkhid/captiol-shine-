@@ -125,6 +125,12 @@ const TESTIMONIALS = [
   },
 ];
 
+const BEFORE_AFTER = [
+  { room: "Kitchen",     before: "/before-after/Kitchen_Before.jpg",     after: "/before-after/Kitchen_After.jpg" },
+  { room: "Bathroom",    before: "/before-after/Bathroom_Before.jpg",    after: "/before-after/Bathroom_After.jpg" },
+  { room: "Living Room", before: "/before-after/Living_Room_Before.jpg", after: "/before-after/Living_Room_After.jpg" },
+];
+
 const AREAS = [
   "Arlington", "Clarendon", "Rosslyn", "Ballston", "Crystal City",
   "McLean", "Alexandria", "Falls Church", "Pentagon City", "Lyon Village",
@@ -270,6 +276,53 @@ export default function LandingPage() {
                   </div>
                   <h3 className="font-semibold text-navy text-lg mb-2">{step.title}</h3>
                   <p className="text-charcoal/60 text-sm leading-relaxed">{step.body}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Before & after ─────────────────────────────────────────── */}
+        <section className="py-16 px-4 bg-white border-t border-gray-100">
+          <div className="max-w-5xl mx-auto">
+            <h2 className="font-display text-2xl md:text-3xl font-bold text-navy text-center mb-3">
+              See the difference
+            </h2>
+            <p className="text-charcoal/60 text-center mb-10 max-w-xl mx-auto text-sm">
+              Real results from a recent deep clean in Arlington.
+            </p>
+            <div className="space-y-10">
+              {BEFORE_AFTER.map(({ room, before, after }) => (
+                <div key={room}>
+                  <p className="text-xs font-semibold text-charcoal/40 uppercase tracking-widest mb-3 text-center">
+                    {room}
+                  </p>
+                  <div className="grid grid-cols-2 gap-3 md:gap-4">
+                    <div className="relative overflow-hidden rounded-xl">
+                      <div className="absolute top-3 left-3 bg-charcoal/70 text-white text-xs font-semibold px-2.5 py-1 rounded-md z-10">
+                        Before
+                      </div>
+                      <Image
+                        src={before}
+                        alt={`${room} before cleaning`}
+                        width={600}
+                        height={450}
+                        className="w-full h-auto object-cover rounded-xl"
+                      />
+                    </div>
+                    <div className="relative overflow-hidden rounded-xl">
+                      <div className="absolute top-3 left-3 bg-cta-green text-white text-xs font-semibold px-2.5 py-1 rounded-md z-10">
+                        After
+                      </div>
+                      <Image
+                        src={after}
+                        alt={`${room} after cleaning`}
+                        width={600}
+                        height={450}
+                        className="w-full h-auto object-cover rounded-xl"
+                      />
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
