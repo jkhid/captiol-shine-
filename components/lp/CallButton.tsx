@@ -23,6 +23,11 @@ export default function CallButton({
     if (typeof w.fbq === "function") {
       w.fbq("track", "Contact");
     }
+    if (typeof w.gtag === "function") {
+      w.gtag("event", "conversion", {
+        send_to: "AW-18020726483/VgoVCJ_Cx5scENPt-ZBD",
+      });
+    }
   };
 
   return (
