@@ -289,7 +289,7 @@ export default function LandingPage() {
               See the difference
             </h2>
             <p className="text-charcoal/60 text-center mb-10 max-w-xl mx-auto text-sm">
-              Real results from a recent deep clean in Arlington.
+              Real results from a recent clean in Arlington.
             </p>
             <div className="space-y-10">
               {BEFORE_AFTER.map(({ room, before, after }) => (
