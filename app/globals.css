@@ -141,43 +141,79 @@
 }
 .fc-admin .fc-event.cs-event {
   cursor: pointer;
-  padding: 3px 6px;
+  padding: 4px 7px;
   font-size: 12px;
   font-weight: 500;
-  border-left-width: 3px;
-  border-left-style: solid;
-  border-radius: 4px;
+  border-left-width: 3px !important;
+  border-left-style: solid !important;
+  border-radius: 5px;
   margin: 1px 2px;
   transition: transform 0.1s, box-shadow 0.1s;
+  overflow: hidden;
 }
 .fc-admin .fc-event.cs-event:hover {
   transform: translateY(-1px);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
-.fc-admin .fc-event.cs-recurring::before {
-  content: "↻";
-  margin-right: 4px;
+.fc-admin .fc-event.cs-recurring .cs-event-client::before {
+  content: "↻ ";
+  opacity: 0.6;
+}
+.fc-admin .cs-event-inner {
+  line-height: 1.3;
+  overflow: hidden;
+}
+.fc-admin .cs-event-line1 {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.fc-admin .cs-event-line2 {
+  font-size: 10px;
   opacity: 0.7;
+  white-space: nowrap;
+  overflow: hidden;
+  display: flex;
+  gap: 4px;
+}
+.fc-admin .cs-event-status {
+  font-size: 11px;
+  flex-shrink: 0;
+}
+.fc-admin .cs-event-time {
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.fc-admin .cs-event-client {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fc-admin .cs-event-price {
+  font-weight: 600;
+  flex-shrink: 0;
 }
 .fc-admin .fc-event.cs-status-completed {
-  opacity: 0.55;
+  opacity: 0.5;
 }
 .fc-admin .fc-event.cs-status-cancelled {
-  opacity: 0.35;
+  opacity: 0.3;
+}
+.fc-admin .fc-event.cs-status-cancelled .cs-event-client {
   text-decoration: line-through;
 }
 .fc-admin .fc-event.cs-status-no_show {
-  opacity: 0.35;
+  opacity: 0.3;
 }
 .fc-admin .fc-event.cs-status-in_progress {
-  box-shadow: 0 0 0 2px rgba(212, 169, 75, 0.3);
-}
-.fc-admin .fc-event-time {
-  font-weight: 600;
-  margin-right: 4px;
-  opacity: 0.85;
+  box-shadow: 0 0 0 2px rgba(212, 169, 75, 0.35);
 }
 .fc-admin .fc-daygrid-event-dot {
+  display: none;
+}
+.fc-admin .fc-event-time,
+.fc-admin .fc-event-title {
   display: none;
 }
 .fc-admin .fc-timegrid-event {

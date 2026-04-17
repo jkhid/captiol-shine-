@@ -6,7 +6,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin, { type DateClickArg } from "@fullcalendar/interaction";
 import rrulePlugin from "@fullcalendar/rrule";
-import type { EventClickArg, EventInput, EventDropArg } from "@fullcalendar/core";
+import type { EventClickArg, EventInput, EventDropArg, EventContentArg } from "@fullcalendar/core";
 import type { Job } from "@/lib/jobs";
 import { serviceTypeLabel } from "@/lib/jobs";
 import { JobDialog } from "./JobDialog";
@@ -73,6 +73,27 @@ function diffDuration(startT: string, endT: string) {
   const hh = Math.floor(mins / 60);
   const mm = mins % 60;
   return { hours: hh, minutes: mm };
+}
+
+function renderEvent(arg: EventContentArg) {
+  const j = arg.event.extendedProps.job as Job | undefined;
+  const time = arg.timeText;
+  const statusIcon = j ? (STATUS_ICON[j.status] ?? "") : "";
+  const price = j?.price != null ? `$${j.price}` : "";
+
+  return (
+    <div className="cs-event-inner">
+      <div className="cs-event-line1">
+        {statusIcon && <span className="cs-event-status">{statusIcon}</span>}
+        {time && <span className="cs-event-time">{time}</span>}
+        <span className="cs-event-client">{j?.clientName ?? "—"}</span>
+      </div>
+      <div className="cs-event-line2">
+        {j && <span>{serviceTypeLabel(j.serviceType)}</span>}
+        {price && <span className="cs-event-price">{price}</span>}
+      </div>
+    </div>
+  );
 }
 
 export function CalendarView() {
@@ -166,6 +187,8 @@ export function CalendarView() {
           eventClick={handleEventClick}
           dateClick={handleDateClick}
           eventDrop={handleEventDrop}
+          eventDisplay="block"
+          eventContent={renderEvent}
           editable
           nowIndicator
           dayMaxEvents={3}
