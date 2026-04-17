@@ -1,12 +1,11 @@
-import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { authOptions } from "@/lib/auth";
+import { getSessionUser } from "@/lib/supabase-server";
 import AdminShell from "@/components/admin/AdminShell";
 
 export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
-  const session = await getServerSession(authOptions);
-  if (!session) {
+  const user = await getSessionUser();
+  if (!user) {
     redirect("/admin/login");
   }
-  return <AdminShell>{children}</AdminShell>;
+  return <AdminShell userEmail={user.email ?? null}>{children}</AdminShell>;
 }

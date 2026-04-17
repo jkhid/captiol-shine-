@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getSessionUser } from "@/lib/supabase-server";
 import { createAdminClient } from "@/lib/supabase";
 import { rowToBooking } from "@/lib/bookings";
 
 export async function GET() {
-  const session = await getServerSession(authOptions);
-  if (!session) {
+  const user = await getSessionUser();
+  if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

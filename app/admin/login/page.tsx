@@ -1,15 +1,16 @@
 "use client";
 
 import { Suspense, useState } from "react";
-import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import Logo from "@/components/ui/Logo";
 import { Lock } from "lucide-react";
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") ?? "/admin";
+  const next = searchParams.get("next") ?? "/admin";
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -19,18 +20,36 @@ function LoginForm() {
     setLoading(true);
     setError("");
 
-    const result = await signIn("credentials", { password, redirect: false });
+    const supabase = createSupabaseBrowserClient();
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
 
-    if (result?.ok) {
-      router.push(callbackUrl);
-    } else {
-      setError("Incorrect password.");
+    if (signInError) {
+      setError(signInError.message || "Invalid email or password.");
       setLoading(false);
+      return;
     }
+
+    router.push(next);
+    router.refresh();
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <label htmlFor="email" className="block text-sm font-medium text-charcoal mb-1">
+          Email
+        </label>
+        <input
+          id="email"
+          type="email"
+          autoComplete="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
+          placeholder="you@capitolshinecleaners.com"
+        />
+      </div>
       <div>
         <label htmlFor="password" className="block text-sm font-medium text-charcoal mb-1">
           Password
@@ -38,11 +57,12 @@ function LoginForm() {
         <input
           id="password"
           type="password"
+          autoComplete="current-password"
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
-          placeholder="Enter admin password"
+          placeholder="••••••••"
         />
       </div>
       {error && <p className="text-sm text-red-500">{error}</p>}

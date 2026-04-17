@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import BookOnlineButton from "@/components/lp/BookOnlineButton";
 import CallButton from "@/components/lp/CallButton";
+import SaveOfferButton from "@/components/lp/SaveOfferButton";
 import PricingCalculator from "@/components/pricing/PricingCalculator";
 import { FAQAccordion } from "@/components/pricing/FAQ";
 
@@ -127,9 +128,9 @@ const TESTIMONIALS = [
 ];
 
 const BEFORE_AFTER = [
+  { room: "Living Room", before: "/before-after/Living_Room_Before.jpg", after: "/before-after/Living_Room_After.jpg" },
   { room: "Kitchen",     before: "/before-after/Kitchen_Before.jpg",     after: "/before-after/Kitchen_After.jpg" },
   { room: "Bathroom",    before: "/before-after/Bathroom_Before.jpg",    after: "/before-after/Bathroom_After.jpg" },
-  { room: "Living Room", before: "/before-after/Living_Room_Before.jpg", after: "/before-after/Living_Room_After.jpg" },
 ];
 
 const AREAS = [
@@ -283,6 +284,37 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* ── Offer banner ───────────────────────────────────────────── */}
+        <div className="bg-gold/10 border-y border-gold/30 py-8 px-4">
+          <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div>
+              <p className="text-xs font-semibold text-gold uppercase tracking-widest mb-1">Limited time offer</p>
+              <p className="font-display text-2xl font-bold text-navy">$30 off for new customers</p>
+              <p className="text-charcoal/60 text-sm mt-1">
+                Use code <span className="font-mono font-bold text-gold bg-gold/10 px-2 py-0.5 rounded">FIRST30</span> — mention it when you call or enter it at checkout.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3 shrink-0">
+              <CallButton
+                phone={PHONE}
+                iconSize={15}
+                label="Call to claim"
+                className="flex items-center justify-center gap-2 bg-navy text-white font-semibold px-6 py-3 rounded-xl hover:bg-navy/90 transition-colors text-sm"
+              />
+              <BookOnlineButton
+                href={BOOK_URL}
+                label="Book online"
+                iconSize={15}
+                className="flex items-center justify-center gap-2 bg-gold text-navy font-semibold px-6 py-3 rounded-xl hover:bg-gold/90 transition-colors text-sm"
+              />
+              <SaveOfferButton
+                source="lp-offer-banner"
+                className="flex items-center justify-center gap-2 bg-white text-navy font-semibold px-6 py-3 rounded-xl border border-navy/15 hover:border-navy/40 transition-colors text-sm"
+              />
+            </div>
+          </div>
+        </div>
+
         {/* ── Before & after ─────────────────────────────────────────── */}
         <section className="py-16 px-4 bg-white border-t border-gray-100">
           <div className="max-w-5xl mx-auto">
@@ -329,33 +361,6 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
-
-        {/* ── Offer banner ───────────────────────────────────────────── */}
-        <div className="bg-gold/10 border-y border-gold/30 py-8 px-4">
-          <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
-            <div>
-              <p className="text-xs font-semibold text-gold uppercase tracking-widest mb-1">Limited time offer</p>
-              <p className="font-display text-2xl font-bold text-navy">$30 off for new customers</p>
-              <p className="text-charcoal/60 text-sm mt-1">
-                Use code <span className="font-mono font-bold text-gold bg-gold/10 px-2 py-0.5 rounded">FIRST30</span> — mention it when you call or enter it at checkout.
-              </p>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-3 shrink-0">
-              <CallButton
-                phone={PHONE}
-                iconSize={15}
-                label="Call to claim"
-                className="flex items-center justify-center gap-2 bg-navy text-white font-semibold px-6 py-3 rounded-xl hover:bg-navy/90 transition-colors text-sm"
-              />
-              <BookOnlineButton
-                href={BOOK_URL}
-                label="Book online"
-                iconSize={15}
-                className="flex items-center justify-center gap-2 bg-gold text-navy font-semibold px-6 py-3 rounded-xl hover:bg-gold/90 transition-colors text-sm"
-              />
-            </div>
-          </div>
-        </div>
 
         {/* ── Services ───────────────────────────────────────────────── */}
         <section className="py-16 px-4 bg-white">

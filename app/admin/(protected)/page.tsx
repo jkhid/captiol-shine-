@@ -1,73 +1,106 @@
-import { createAdminClient } from "@/lib/supabase";
-import { rowToBooking, getStats } from "@/lib/bookings";
-import type { Booking } from "@/lib/bookings";
-import { DollarSign, CalendarCheck, Repeat, TrendingUp } from "lucide-react";
 import Link from "next/link";
+import { createAdminClient } from "@/lib/supabase";
+import { rowToJob, statusBadgeVariant, statusLabel, formatTime, serviceTypeLabel } from "@/lib/jobs";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/admin/ui/card";
+import { Badge } from "@/components/admin/ui/badge";
+import {
+  CalendarDays,
+  CheckCircle2,
+  DollarSign,
+  TrendingUp,
+  Sparkles,
+  Clock,
+} from "lucide-react";
+import { IntakeQueue } from "@/components/admin/IntakeQueue";
 
-const STATUS_STYLES = {
-  pending: "bg-yellow-100 text-yellow-800",
-  confirmed: "bg-green-100 text-green-800",
-  completed: "bg-gray-100 text-gray-600",
-  cancelled: "bg-red-100 text-red-700",
-};
+export const dynamic = "force-dynamic";
+
+function ymd(d: Date) {
+  const pad = (n: number) => n.toString().padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
 
 export default async function AdminDashboard() {
-  let bookings: Booking[] = [];
-  try {
-    const supabase = createAdminClient();
-    const { data } = await supabase.from("bookings").select("*");
-    bookings = (data ?? []).map(rowToBooking);
-  } catch {
-    // Table may not be created yet or service role key not configured
+  const supabase = createAdminClient();
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const weekEnd = new Date(today);
+  weekEnd.setDate(today.getDate() + 7);
+  const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+  const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+  const [{ data: todayRows }, { data: weekRows }, { data: monthRows }, { data: leads }] = await Promise.all([
+    supabase
+      .from("jobs")
+      .select("*, clients(name), cleaners(name)")
+      .eq("scheduled_date", ymd(today))
+      .order("scheduled_time_start"),
+    supabase
+      .from("jobs")
+      .select("id, status")
+      .gte("scheduled_date", ymd(today))
+      .lte("scheduled_date", ymd(weekEnd))
+      .neq("status", "cancelled"),
+    supabase
+      .from("jobs")
+      .select("id, status, service_type, price, actual_duration_minutes")
+      .gte("scheduled_date", ymd(monthStart))
+      .lte("scheduled_date", ymd(monthEnd)),
+    supabase
+      .from("leads")
+      .select("id, name, email, created_at")
+      .order("created_at", { ascending: false })
+      .limit(5),
+  ]);
+
+  const todayJobs = (todayRows ?? []).map(rowToJob);
+  const upcomingThisWeek = (weekRows ?? []).length;
+
+  const monthJobs = monthRows ?? [];
+  const completedThisMonth = monthJobs.filter((j) => j.status === "completed").length;
+  const revenueThisMonth = monthJobs
+    .filter((j) => j.status === "completed")
+    .reduce((sum, j) => sum + (Number(j.price) || 0), 0);
+  const projectedRevenue = monthJobs
+    .filter((j) => j.status !== "cancelled" && j.status !== "no_show")
+    .reduce((sum, j) => sum + (Number(j.price) || 0), 0);
+
+  // Avg duration by service type from completed jobs (use actual when available, else scheduled fallback skipped)
+  const durationsByService: Record<string, number[]> = {};
+  for (const j of monthJobs) {
+    if (j.status === "completed" && j.actual_duration_minutes) {
+      const k = j.service_type;
+      (durationsByService[k] ||= []).push(j.actual_duration_minutes);
+    }
   }
+  const avgDurations = Object.entries(durationsByService)
+    .map(([k, arr]) => ({ service: k, avg: Math.round(arr.reduce((a, b) => a + b, 0) / arr.length), count: arr.length }))
+    .sort((a, b) => b.count - a.count);
 
-  const stats = getStats(bookings);
-
-  const statCards = [
-    {
-      label: "Revenue This Month",
-      value: `$${stats.totalRevenue.toLocaleString()}`,
-      icon: DollarSign,
-      color: "text-cta-green",
-      bg: "bg-cta-green/10",
-    },
-    {
-      label: "Bookings This Month",
-      value: stats.totalBookings,
-      icon: CalendarCheck,
-      color: "text-navy",
-      bg: "bg-navy/10",
-    },
-    {
-      label: "Upcoming This Week",
-      value: stats.upcomingThisWeek,
-      icon: TrendingUp,
-      color: "text-gold",
-      bg: "bg-gold/10",
-    },
-    {
-      label: "Recurring Clients",
-      value: stats.recurringClients,
-      icon: Repeat,
-      color: "text-purple-600",
-      bg: "bg-purple-100",
-    },
+  const cards = [
+    { label: "Today's jobs", value: todayJobs.length, icon: CalendarDays, color: "text-navy", bg: "bg-navy/10" },
+    { label: "Upcoming this week", value: upcomingThisWeek, icon: TrendingUp, color: "text-gold", bg: "bg-gold/10" },
+    { label: "Completed this month", value: completedThisMonth, icon: CheckCircle2, color: "text-cta-green", bg: "bg-cta-green/10" },
+    { label: "Revenue this month", value: `$${revenueThisMonth.toLocaleString()}`, icon: DollarSign, color: "text-cta-green", bg: "bg-cta-green/10" },
+    { label: "Projected this month", value: `$${projectedRevenue.toLocaleString()}`, icon: DollarSign, color: "text-gold", bg: "bg-gold/10" },
   ];
 
-  const maxService = Math.max(1, ...Object.values(stats.byService));
-  const maxNeighborhood = Math.max(1, ...Object.values(stats.byNeighborhood));
-  const recentBookings = [...bookings]
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-    .slice(0, 5);
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
 
   return (
-    <div className="space-y-8">
-      <h1 className="font-display text-2xl font-bold text-navy">Dashboard</h1>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-navy">{greeting}</h1>
+        <p className="text-sm text-charcoal/50 mt-0.5">
+          {new Date().toLocaleDateString([], { weekday: "long", month: "long", day: "numeric", year: "numeric" })}
+        </p>
+      </div>
 
-      {/* Stat cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {statCards.map((s) => (
-          <div key={s.label} className="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+        {cards.map((s) => (
+          <div key={s.label} className="bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-md hover:border-gray-200 transition-all">
             <div className={`w-10 h-10 rounded-lg ${s.bg} flex items-center justify-center mb-3`}>
               <s.icon size={20} className={s.color} />
             </div>
@@ -77,94 +110,94 @@ export default async function AdminDashboard() {
         ))}
       </div>
 
-      {/* Charts row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* By service */}
-        <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm">
-          <h2 className="font-semibold text-navy mb-5">Bookings by Service</h2>
-          <div className="space-y-3">
-            {Object.entries(stats.byService).map(([label, count]) => (
-              <div key={label}>
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="text-charcoal/70">{label}</span>
-                  <span className="font-semibold text-navy">{count}</span>
-                </div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-navy rounded-full transition-all"
-                    style={{ width: `${(count / maxService) * 100}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card className="lg:col-span-2">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>Today&apos;s schedule</CardTitle>
+            <Link href="/admin/calendar" className="text-sm text-gold hover:underline">View calendar</Link>
+          </CardHeader>
+          <CardContent>
+            {todayJobs.length === 0 ? (
+              <p className="text-sm text-charcoal/50">No jobs scheduled today.</p>
+            ) : (
+              <ul className="space-y-2">
+                {todayJobs.map((j) => {
+                  const borderMap: Record<string, string> = {
+                    scheduled: "border-l-navy",
+                    in_progress: "border-l-amber-400",
+                    completed: "border-l-green-500",
+                    cancelled: "border-l-gray-300",
+                    no_show: "border-l-red-400",
+                  };
+                  return (
+                    <li key={j.id} className={`border-l-[3px] ${borderMap[j.status] ?? "border-l-gray-200"} rounded-lg bg-gray-50/50 hover:bg-gray-50 px-4 py-3 flex items-center justify-between gap-4 transition-colors`}>
+                      <div className="min-w-0">
+                        <Link href={`/admin/jobs/${j.id}`} className="font-medium text-navy hover:underline">
+                          {formatTime(j.scheduledTimeStart)} · {j.clientName ?? "—"}
+                        </Link>
+                        <div className="text-xs text-charcoal/60 mt-0.5">
+                          {serviceTypeLabel(j.serviceType)}
+                          {j.assignedCleanerName ? ` · ${j.assignedCleanerName}` : ""}
+                        </div>
+                      </div>
+                      <Badge variant={statusBadgeVariant(j.status)}>{statusLabel(j.status)}</Badge>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </CardContent>
+        </Card>
 
-        {/* By neighborhood */}
-        <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm">
-          <h2 className="font-semibold text-navy mb-5">Top Neighborhoods</h2>
-          <div className="space-y-3">
-            {Object.entries(stats.byNeighborhood)
-              .sort((a, b) => b[1] - a[1])
-              .slice(0, 6)
-              .map(([name, count]) => (
-                <div key={name}>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-charcoal/70">{name}</span>
-                    <span className="font-semibold text-navy">{count}</span>
-                  </div>
-                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gold rounded-full transition-all"
-                      style={{ width: `${(count / maxNeighborhood) * 100}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-          </div>
-        </div>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="flex items-center gap-2"><Sparkles size={16} className="text-gold" /> Recent leads</CardTitle>
+            <Link href="/admin/leads" className="text-sm text-gold hover:underline">All</Link>
+          </CardHeader>
+          <CardContent>
+            {!leads || leads.length === 0 ? (
+              <p className="text-sm text-charcoal/50">No leads yet.</p>
+            ) : (
+              <ul className="space-y-3">
+                {leads.map((l) => (
+                  <li key={l.id} className="text-sm">
+                    <div className="font-medium text-navy">{l.name}</div>
+                    <div className="text-xs text-charcoal/60 truncate">{l.email}</div>
+                    <div className="text-[11px] text-charcoal/40 mt-0.5">
+                      {new Date(l.created_at).toLocaleDateString()}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Recent bookings */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="font-semibold text-navy">Recent Bookings</h2>
-          <Link href="/admin/bookings" className="text-sm text-gold hover:underline">
-            View all
-          </Link>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-gray-100 text-left text-xs text-charcoal/40 uppercase tracking-wide">
-                <th className="px-6 py-3">Customer</th>
-                <th className="px-6 py-3">Service</th>
-                <th className="px-6 py-3">Date</th>
-                <th className="px-6 py-3">Price</th>
-                <th className="px-6 py-3">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {recentBookings.map((b) => (
-                <tr key={b.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-3">
-                    <div className="font-medium text-charcoal">{b.customerName}</div>
-                    <div className="text-xs text-charcoal/40">{b.neighborhood}</div>
-                  </td>
-                  <td className="px-6 py-3 text-charcoal/70">{b.serviceLabel}</td>
-                  <td className="px-6 py-3 text-charcoal/70">{b.date}</td>
-                  <td className="px-6 py-3 font-semibold text-navy">${b.price}</td>
-                  <td className="px-6 py-3">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${STATUS_STYLES[b.status]}`}>
-                      {b.status}
-                    </span>
-                  </td>
-                </tr>
+      <IntakeQueue />
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2"><Clock size={16} className="text-charcoal/50" /> Average duration by service (this month)</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {avgDurations.length === 0 ? (
+            <p className="text-sm text-charcoal/50">No completed jobs with tracked time yet — start/end jobs to populate benchmarks.</p>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {avgDurations.map((d) => (
+                <div key={d.service} className="rounded-lg border border-gray-100 p-4">
+                  <div className="text-xs text-charcoal/50 uppercase tracking-wide mb-1">
+                    {serviceTypeLabel(d.service as Parameters<typeof serviceTypeLabel>[0])}
+                  </div>
+                  <div className="text-2xl font-bold text-navy">{d.avg} min</div>
+                  <div className="text-[11px] text-charcoal/40 mt-0.5">across {d.count} job{d.count === 1 ? "" : "s"}</div>
+                </div>
               ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

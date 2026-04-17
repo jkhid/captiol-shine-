@@ -11,6 +11,7 @@ export interface Booking {
   serviceLabel: string;
   homeType: string;
   bedrooms: number;
+  bathrooms: string;
   frequency: string;
   date: string;
   timeWindow: string;
@@ -67,6 +68,7 @@ export function rowToBooking(row: Record<string, unknown>): Booking {
     serviceLabel: row.service_label as string,
     homeType: (row.home_type as string) ?? "",
     bedrooms: (row.bedrooms as number) ?? 0,
+    bathrooms: (row.bathrooms as string) ?? "",
     frequency: (row.frequency as string) ?? "one-time",
     date: row.date as string,
     timeWindow: (row.time_window as string) ?? "no-preference",
