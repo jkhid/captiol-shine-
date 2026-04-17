@@ -12,27 +12,42 @@ import { serviceTypeLabel } from "@/lib/jobs";
 import { JobDialog } from "./JobDialog";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
-const STATUS_COLORS: Record<string, { bg: string; border: string; text: string }> = {
-  scheduled: { bg: "#E8EDF7", border: "#1B2A4A", text: "#1B2A4A" },
-  in_progress: { bg: "#FEF4DB", border: "#D4A94B", text: "#7a5d1f" },
-  completed: { bg: "#E3F1EA", border: "#3A7D5C", text: "#1f5939" },
-  cancelled: { bg: "#F1F1F1", border: "#9ca3af", text: "#6b7280" },
-  no_show: { bg: "#FDECEC", border: "#ef4444", text: "#991b1b" },
+const SERVICE_COLORS: Record<string, { bg: string; border: string; text: string }> = {
+  standard:          { bg: "#EEF2FF", border: "#6366f1", text: "#3730a3" },
+  deep:              { bg: "#F0FDFA", border: "#14b8a6", text: "#0f766e" },
+  move_in:           { bg: "#FFF7ED", border: "#f97316", text: "#9a3412" },
+  move_out:          { bg: "#FEF3C7", border: "#f59e0b", text: "#92400e" },
+  airbnb:            { bg: "#FFF1F2", border: "#f43f5e", text: "#9f1239" },
+  commercial:        { bg: "#E8EDF7", border: "#1B2A4A", text: "#1B2A4A" },
+  post_construction: { bg: "#F5F3FF", border: "#8b5cf6", text: "#5b21b6" },
+};
+
+const STATUS_ICON: Record<string, string> = {
+  in_progress: "⏳",
+  completed: "✓",
+  cancelled: "✗",
+  no_show: "⊘",
 };
 
 function jobToEvent(j: Job): EventInput {
   const start = `${j.scheduledDate}T${j.scheduledTimeStart}`;
   const end = `${j.scheduledDate}T${j.scheduledTimeEnd}`;
-  const c = STATUS_COLORS[j.status] ?? STATUS_COLORS.scheduled;
+  const c = SERVICE_COLORS[j.serviceType] ?? SERVICE_COLORS.standard;
+  const statusIcon = STATUS_ICON[j.status] ?? "";
+  const price = j.price != null ? ` · $${j.price}` : "";
 
   const base: EventInput = {
     id: j.id,
-    title: `${j.clientName ?? "—"} · ${serviceTypeLabel(j.serviceType)}`,
+    title: `${statusIcon ? statusIcon + " " : ""}${j.clientName ?? "—"} · ${serviceTypeLabel(j.serviceType)}${price}`,
     extendedProps: { job: j },
     backgroundColor: c.bg,
     borderColor: c.border,
     textColor: c.text,
-    classNames: ["cs-event", j.recurring ? "cs-recurring" : ""].filter(Boolean),
+    classNames: [
+      "cs-event",
+      `cs-status-${j.status}`,
+      j.recurring ? "cs-recurring" : "",
+    ].filter(Boolean),
   };
 
   if (j.recurring && j.recurrenceRule) {

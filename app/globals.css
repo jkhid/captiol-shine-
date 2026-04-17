@@ -61,23 +61,39 @@
   color: #1B2A4A;
   font-weight: 500;
   font-size: 13px;
-  padding: 6px 12px;
+  padding: 6px 14px;
   text-transform: capitalize;
   box-shadow: 0 1px 2px rgba(0,0,0,0.04);
   transition: all 0.15s;
+  border-radius: 8px;
+}
+.fc-admin .fc .fc-button-group {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.fc-admin .fc .fc-button-group > .fc-button {
+  border-radius: 0;
+}
+.fc-admin .fc .fc-button-group > .fc-button:first-child {
+  border-radius: 8px 0 0 8px;
+}
+.fc-admin .fc .fc-button-group > .fc-button:last-child {
+  border-radius: 0 8px 8px 0;
 }
 .fc-admin .fc .fc-button:hover {
   background-color: #f9fafb;
   border-color: #d1d5db;
 }
 .fc-admin .fc .fc-button:focus {
-  box-shadow: 0 0 0 3px rgba(27, 42, 74, 0.15);
+  box-shadow: 0 0 0 3px rgba(27, 42, 74, 0.12);
 }
 .fc-admin .fc .fc-button-primary:not(:disabled).fc-button-active,
 .fc-admin .fc .fc-button-primary:not(:disabled):active {
   background-color: #1B2A4A;
   border-color: #1B2A4A;
   color: #fff;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
 }
 .fc-admin .fc .fc-button-primary:disabled {
   background-color: #f3f4f6;
@@ -88,6 +104,18 @@
 .fc-admin .fc .fc-icon {
   font-size: 14px;
   vertical-align: middle;
+}
+.fc-admin .fc .fc-toolbar .fc-toolbar-chunk:first-child .fc-button {
+  padding: 6px 10px;
+}
+.fc-admin .fc .fc-today-button {
+  font-weight: 600;
+  color: #D4A94B;
+  border-color: #D4A94B40;
+}
+.fc-admin .fc .fc-today-button:hover {
+  background-color: #fef9e8;
+  border-color: #D4A94B;
 }
 .fc-admin .fc-col-header-cell {
   background-color: #fafafa;
@@ -130,6 +158,19 @@
   content: "↻";
   margin-right: 4px;
   opacity: 0.7;
+}
+.fc-admin .fc-event.cs-status-completed {
+  opacity: 0.55;
+}
+.fc-admin .fc-event.cs-status-cancelled {
+  opacity: 0.35;
+  text-decoration: line-through;
+}
+.fc-admin .fc-event.cs-status-no_show {
+  opacity: 0.35;
+}
+.fc-admin .fc-event.cs-status-in_progress {
+  box-shadow: 0 0 0 2px rgba(212, 169, 75, 0.3);
 }
 .fc-admin .fc-event-time {
   font-weight: 600;
