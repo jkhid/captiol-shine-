@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Button from "@/components/ui/Button";
-import { Star, Shield, ThumbsUp, Tag, Phone } from "lucide-react";
+import { Star, Shield, ThumbsUp, Tag, Phone, MessageSquare, Mail } from "lucide-react";
+import { COMPANY } from "@/lib/constants";
 
 export default function Hero() {
   return (
@@ -17,19 +18,36 @@ export default function Hero() {
             Arlington&apos;s trusted cleaning service — transparent pricing, eco-friendly products,
             and a team that treats your home like their own.
           </p>
-          <div className="mt-8 flex flex-wrap gap-4">
+          <div className="mt-8 flex flex-wrap gap-3">
             <Button href="/pricing" variant="outline" className="border-white text-white hover:bg-white hover:text-navy">
               See Our Pricing
             </Button>
             <Button href="/book" variant="gold">
               Book a Cleaning
             </Button>
+          </div>
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <span className="text-white/60 text-sm mr-1">(703) 375-9132</span>
             <a
               href="tel:+17033759132"
-              className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium border border-white/30 text-white/80 hover:border-white hover:text-white transition-colors"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-medium border border-white/25 text-white/85 hover:border-white hover:text-white transition-colors"
             >
-              <Phone size={14} />
-              (703) 375-9132
+              <Phone size={12} />
+              Call
+            </a>
+            <a
+              href="sms:+17033759132"
+              className="hidden [@media(pointer:coarse)]:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-medium border border-white/25 text-white/85 hover:border-white hover:text-white transition-colors"
+            >
+              <MessageSquare size={12} />
+              Text
+            </a>
+            <a
+              href={`mailto:${COMPANY.email}`}
+              className="inline-flex [@media(pointer:coarse)]:hidden items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-medium border border-white/25 text-white/85 hover:border-white hover:text-white transition-colors"
+            >
+              <Mail size={12} />
+              Email
             </a>
           </div>
           <div className="mt-8 flex flex-wrap items-center gap-4 text-sm text-white/80">
