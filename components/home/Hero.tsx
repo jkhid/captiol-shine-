@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Button from "@/components/ui/Button";
-import { Star, Shield, ThumbsUp, Tag, Phone, MessageSquare, Mail } from "lucide-react";
-import { COMPANY } from "@/lib/constants";
+import { Star, Shield, ThumbsUp, Tag, Phone, MessageSquare } from "lucide-react";
+import EmailButton from "@/components/home/EmailButton";
 
 export default function Hero() {
   return (
@@ -42,13 +42,9 @@ export default function Hero() {
               <MessageSquare size={12} />
               Text
             </a>
-            <a
-              href={`mailto:${COMPANY.email}`}
-              className="inline-flex [@media(pointer:coarse)]:hidden items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-medium border border-white/25 text-white/85 hover:border-white hover:text-white transition-colors"
-            >
-              <Mail size={12} />
-              Email
-            </a>
+            <div className="[@media(pointer:coarse)]:hidden">
+              <EmailButton />
+            </div>
           </div>
           <div className="mt-8 flex flex-wrap items-center gap-4 text-sm text-white/80">
             <span className="flex items-center gap-1.5">
