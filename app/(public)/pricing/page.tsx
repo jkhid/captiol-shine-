@@ -135,7 +135,7 @@ export default function PricingPage({
       {service === "commercial"   && <CommercialPricing />}
       {service === "construction" && <ConstructionPricing />}
 
-      <PricingFAQ />
+      <PricingFAQ service={service} />
     </>
   );
 }
