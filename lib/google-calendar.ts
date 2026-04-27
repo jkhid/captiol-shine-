@@ -134,6 +134,16 @@ async function fetchJobWithClient(jobId: string): Promise<JobWithClient | null> 
   };
 }
 
+function jobToDeterministicEventId(jobId: string): string {
+  // Google Calendar custom IDs: 5–1024 chars, base32hex (0-9, a-v).
+  // UUID hex chars (0-9, a-f) all qualify; strip dashes.
+  return `cs${jobId.replace(/-/g, "")}`;
+}
+
+function isStatusCode(err: unknown, code: number): boolean {
+  return typeof err === "object" && err !== null && (err as { code?: number }).code === code;
+}
+
 export async function syncJobToCalendar(jobId: string): Promise<void> {
   try {
     const calendar = await getAuthorizedCalendar();
@@ -143,22 +153,41 @@ export async function syncJobToCalendar(jobId: string): Promise<void> {
 
     const event = buildEvent(job);
     const supabase = createAdminClient();
+    const deterministicId = jobToDeterministicEventId(jobId);
 
-    if (job.googleEventId) {
+    // Legacy path: existing job already has a non-deterministic event ID. Keep it in sync.
+    if (job.googleEventId && job.googleEventId !== deterministicId) {
+      try {
+        await calendar.events.update({
+          calendarId: "primary",
+          eventId: job.googleEventId,
+          requestBody: event,
+        });
+        return;
+      } catch (err) {
+        // Old event was deleted from Google. Fall through to deterministic insert.
+        if (!isStatusCode(err, 404) && !isStatusCode(err, 410)) throw err;
+      }
+    }
+
+    // Idempotent insert with deterministic ID. If two requests race, the second gets 409
+    // and we update instead — no duplicate event can be created.
+    try {
+      await calendar.events.insert({
+        calendarId: "primary",
+        requestBody: { ...event, id: deterministicId },
+      });
+    } catch (err) {
+      if (!isStatusCode(err, 409)) throw err;
       await calendar.events.update({
         calendarId: "primary",
-        eventId: job.googleEventId,
+        eventId: deterministicId,
         requestBody: event,
       });
-    } else {
-      const res = await calendar.events.insert({
-        calendarId: "primary",
-        requestBody: event,
-      });
-      const eventId = res.data.id;
-      if (eventId) {
-        await supabase.from("jobs").update({ google_event_id: eventId }).eq("id", jobId);
-      }
+    }
+
+    if (job.googleEventId !== deterministicId) {
+      await supabase.from("jobs").update({ google_event_id: deterministicId }).eq("id", jobId);
     }
   } catch (err) {
     console.error("[google-calendar] sync failed:", err);
