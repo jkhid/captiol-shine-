@@ -1,113 +1,146 @@
-export type HomeSize = "studio" | "apartment" | "home" | "large";
+// ─── Capitol Shine Pricing v2 ────────────────────────────────────────────────
+// Source of truth: public/Capitol_Shine_Pricing_v2.xlsx
+// Standard one-time price = STANDARD_GRID[bedrooms][bathrooms]
+// Deep / Move-In-Out = standard × multiplier
+// Recurring frequencies apply a percentage discount to standard
+// Sqft guardrail and heavy-duty surcharges add to the base.
 
-export const HOME_SIZE_LABELS: Record<HomeSize, string> = {
-  studio:    "1 Bedroom",
-  apartment: "2 Bedrooms",
-  home:      "3 Bedrooms",
-  large:     "4+ Bedrooms",
+export type Bedrooms  = 0 | 1 | 2 | 3 | 4 | 5;
+export type Bathrooms = "1" | "1.5" | "2" | "2.5" | "3" | "3.5+";
+
+export const BEDROOM_OPTIONS: Bedrooms[]  = [0, 1, 2, 3, 4, 5];
+export const BATHROOM_OPTIONS: Bathrooms[] = ["1", "1.5", "2", "2.5", "3", "3.5+"];
+
+export const BEDROOM_LABELS: Record<Bedrooms, string> = {
+  0: "Studio",
+  1: "1 Bedroom",
+  2: "2 Bedrooms",
+  3: "3 Bedrooms",
+  4: "4 Bedrooms",
+  5: "5+ Bedrooms",
 };
 
-export type ServiceTier = "standard_biweekly" | "standard_weekly" | "deep" | "moveinout";
+// Bathrooms valid for a given bedroom count (matches the sheet's "—" cells).
+export const VALID_BATHS: Record<Bedrooms, Bathrooms[]> = {
+  0: ["1"],
+  1: ["1", "1.5"],
+  2: ["1", "1.5", "2"],
+  3: ["1", "1.5", "2", "2.5"],
+  4: ["1", "1.5", "2", "2.5", "3"],
+  5: ["1", "1.5", "2", "2.5", "3", "3.5+"],
+};
 
-export interface PricingTier {
-  key: ServiceTier;
-  name: string;
-  subtitle?: string;
-  prices: Record<HomeSize, number>;
-  included: string[];
+// Standard one-time clean — base prices
+export const STANDARD_GRID: Record<Bedrooms, Partial<Record<Bathrooms, number>>> = {
+  0: { "1": 150 },
+  1: { "1": 165, "1.5": 180 },
+  2: { "1": 195, "1.5": 210, "2": 225 },
+  3: { "1": 235, "1.5": 250, "2": 265, "2.5": 280 },
+  4: { "1": 285, "1.5": 300, "2": 315, "2.5": 330, "3": 345 },
+  5: { "1": 345, "1.5": 360, "2": 375, "2.5": 390, "3": 405, "3.5+": 420 },
+};
+
+export type ServiceKey = "standard" | "deep" | "moveinout";
+
+export const SERVICE_LABELS: Record<ServiceKey, string> = {
+  standard:  "Standard Clean",
+  deep:      "Deep Clean",
+  moveinout: "Move-In / Move-Out",
+};
+
+export const SERVICE_MULTIPLIERS: Record<ServiceKey, number> = {
+  standard:  1.0,
+  deep:      1.6,
+  moveinout: 2.0,
+};
+
+export type Frequency = "one-time" | "monthly" | "biweekly" | "weekly";
+
+export const FREQUENCY_DISCOUNTS: Record<Frequency, number> = {
+  "one-time": 0,
+  monthly:    0.10,
+  biweekly:   0.15,
+  weekly:     0.20,
+};
+
+export const FREQUENCY_LABELS: Record<Frequency, string> = {
+  "one-time": "One-time",
+  monthly:    "Monthly (10% off)",
+  biweekly:   "Biweekly (15% off)",
+  weekly:     "Weekly (20% off)",
+};
+
+// Sqft guardrail — typical max + surcharge tiers per bedroom count.
+interface SqftGuardrail {
+  typicalMax: number;
+  tier1Max:   number;   // sqft up to here = +30 surcharge
+  tier2Max:   number;   // sqft up to here = +55 surcharge
+  // anything above tier2Max = +80 (or custom quote)
 }
 
-export const PRICING_TIERS: PricingTier[] = [
-  {
-    key: "standard_biweekly",
-    name: "Standard Clean",
-    subtitle: "Biweekly — 10% off",
-    prices: { studio: 130, apartment: 161, home: 202, large: 260 },
-    included: [
-      "Dust all surfaces & furniture",
-      "Vacuum & mop all floors",
-      "Clean & sanitize bathrooms",
-      "Clean & sanitize kitchen",
-      "Empty trash cans & replace liners",
-    ],
-  },
-  {
-    key: "standard_weekly",
-    name: "Standard Clean",
-    subtitle: "Weekly — 20% off",
-    prices: { studio: 116, apartment: 143, home: 180, large: 231 },
-    included: [
-      "Everything in biweekly Standard Clean",
-      "Priority scheduling",
-      "Same dedicated cleaner each visit",
-      "Deepest recurring discount",
-      "Flexible skip or reschedule",
-    ],
-  },
-  {
-    key: "deep",
-    name: "Deep Clean",
-    subtitle: "One-time",
-    prices: { studio: 250, apartment: 300, home: 420, large: 550 },
-    included: [
-      "Everything in Standard Clean",
-      "Inside oven & microwave",
-      "Baseboards & door frames",
-      "Light fixtures & ceiling fans",
-      "Window sills & tracks",
-    ],
-  },
-  {
-    key: "moveinout",
-    name: "Move-In / Move-Out",
-    prices: { studio: 250, apartment: 300, home: 420, large: 550 },
-    included: [
-      "Everything in Deep Clean",
-      "Inside all cabinets & drawers",
-      "Inside refrigerator & freezer",
-      "Interior windows",
-      "Garage sweep",
-    ],
-  },
-];
+export const SQFT_GUARDRAIL: Record<Bedrooms, SqftGuardrail> = {
+  0: { typicalMax: 600,  tier1Max: 1100, tier2Max: 1600 },
+  1: { typicalMax: 900,  tier1Max: 1400, tier2Max: 1900 },
+  2: { typicalMax: 1300, tier1Max: 1800, tier2Max: 2300 },
+  3: { typicalMax: 2200, tier1Max: 2700, tier2Max: 3200 },
+  4: { typicalMax: 3200, tier1Max: 3700, tier2Max: 4200 },
+  5: { typicalMax: 4500, tier1Max: 5000, tier2Max: 5500 },
+};
+
+export const HEAVY_DUTY_SURCHARGE: Record<Bedrooms, number> = {
+  0: 100, 1: 100, 2: 100, 3: 175, 4: 250, 5: 350,
+};
+
+// ─── Add-ons ─────────────────────────────────────────────────────────────────
 
 export interface AddOn {
-  name: string;
+  name:  string;
   price: number;
   unit?: string;
 }
 
 export const ADD_ONS: AddOn[] = [
-  { name: "Inside Oven Cleaning", price: 40 },
-  { name: "Inside Refrigerator", price: 30 },
-  { name: "Interior Windows", price: 8, unit: "per window" },
-  { name: "Laundry (wash, dry, fold)", price: 35, unit: "per load" },
-  { name: "Inside Cabinets", price: 40, unit: "per room" },
+  { name: "Inside Oven",            price: 40 },
+  { name: "Inside Refrigerator",    price: 35 },
+  { name: "Interior Windows",       price: 8,   unit: "per window" },
+  { name: "Wet Wipe Window Blinds", price: 10,  unit: "per window" },
+  { name: "Inside Cabinets",        price: 60,  unit: "per kitchen" },
+  { name: "Laundry & Folding",      price: 30,  unit: "per load" },
+  { name: "Dishes",                 price: 25,  unit: "per load" },
   { name: "Garage Sweep & Organize", price: 100 },
 ];
 
+// ─── Hourly ──────────────────────────────────────────────────────────────────
+
+export const HOURLY_RATE = 50;     // $/hr per cleaner
+export const HOURLY_MIN_HOURS = 2;
+export const HOURLY_MIN_TOTAL = HOURLY_RATE * HOURLY_MIN_HOURS;
+
+// ─── Airbnb / STR ────────────────────────────────────────────────────────────
+
 export interface AirbnbTier {
-  name: string;
-  price: number;
+  key:        "studio" | "1br" | "2br" | "3br";
+  name:       string;
+  turnover:   number;
+  linenAddOn: number;
 }
 
 export const AIRBNB_PRICING: AirbnbTier[] = [
-  { name: "Studio / 1 BR", price: 100 },
-  { name: "2 BR", price: 140 },
-  { name: "3+ BR", price: 190 },
+  { key: "studio", name: "Studio",       turnover: 95,  linenAddOn: 25 },
+  { key: "1br",    name: "1 Bedroom",    turnover: 115, linenAddOn: 30 },
+  { key: "2br",    name: "2 Bedrooms",   turnover: 145, linenAddOn: 35 },
+  { key: "3br",    name: "3+ Bedrooms",  turnover: 195, linenAddOn: 45 },
 ];
 
-export const AIRBNB_LINEN_ADDON = 30;
-
-// ── Commercial Pricing ────────────────────────────────────────────────────────
+// ─── Commercial (kept for internal reference; public page uses quote form) ───
 
 export type OfficeSize = "small" | "medium" | "large";
 
 export interface CommercialTier {
-  key: OfficeSize;
-  name: string;
-  sqft: string;
-  weeklyPrice: number;
+  key:              OfficeSize;
+  name:             string;
+  sqft:             string;
+  weeklyPrice:      number;
   twiceWeeklyPrice: number;
 }
 
@@ -126,14 +159,7 @@ export const COMMERCIAL_INCLUDED = [
   "Clean interior glass & door handles",
 ];
 
-export const COMMERCIAL_ADDONS = [
-  { name: "Restroom deep clean", price: 50 },
-  { name: "Kitchen / break room detail", price: 40 },
-  { name: "Floor buffing & waxing", price: 150 },
-  { name: "Window washing (exterior)", price: 8, unit: "per pane" },
-];
-
-// ── Construction Cleanup ──────────────────────────────────────────────────────
+// ─── Construction (quoted on-site) ───────────────────────────────────────────
 
 export const CONSTRUCTION_PHASES = [
   {
@@ -169,80 +195,139 @@ export const CONSTRUCTION_PHASES = [
   },
 ];
 
-// Base standard clean prices (no recurring discount)
-export const STANDARD_BASE_PRICES: Record<HomeSize, number> = {
-  studio:    145,
-  apartment: 179,
-  home:      225,
-  large:     289,
+// ─── Service inclusions (used by display + booking summary) ──────────────────
+
+export const SERVICE_INCLUDED: Record<ServiceKey, string[]> = {
+  standard: [
+    "Dust all surfaces & furniture",
+    "Vacuum & mop all floors",
+    "Clean & sanitize bathrooms",
+    "Clean & sanitize kitchen",
+    "Empty trash cans & replace liners",
+  ],
+  deep: [
+    "Everything in Standard Clean",
+    "Inside oven & microwave",
+    "Baseboards & door frames",
+    "Light fixtures & ceiling fans",
+    "Window sills & tracks",
+  ],
+  moveinout: [
+    "Everything in Deep Clean",
+    "Inside all cabinets & drawers",
+    "Inside refrigerator & freezer",
+    "Interior windows",
+    "Garage sweep",
+  ],
 };
 
-function bedroomsToHomeSize(bedrooms: number): HomeSize {
-  if (bedrooms >= 4) return "large";
-  if (bedrooms >= 3) return "home";
-  if (bedrooms >= 2) return "apartment";
-  return "studio";
+// ─── Calculation engine ──────────────────────────────────────────────────────
+
+function clampBedrooms(n: number): Bedrooms {
+  if (n <= 0) return 0;
+  if (n >= 5) return 5;
+  return n as Bedrooms;
 }
 
-// Returns the base price for the first clean (no recurring discount applied)
-export function getFirstCleanBasePrice(service: string, bedrooms: number): number {
-  const homeSize = bedroomsToHomeSize(bedrooms);
+function nearestValidBath(bedrooms: Bedrooms, bath: string): Bathrooms {
+  const valid = VALID_BATHS[bedrooms];
+  return (valid.includes(bath as Bathrooms) ? bath : valid[valid.length - 1]) as Bathrooms;
+}
 
-  switch (service) {
-    case "standard":   return STANDARD_BASE_PRICES[homeSize];
-    case "deep":       return PRICING_TIERS[2].prices[homeSize];
-    case "moveinout":  return PRICING_TIERS[3].prices[homeSize];
-    case "airbnb":
-      if (bedrooms >= 3) return 190;
-      if (bedrooms >= 2) return 140;
-      return 100;
-    default: return STANDARD_BASE_PRICES[homeSize];
-  }
+export function getStandardBase(bedrooms: number, bathrooms: string): number {
+  const br = clampBedrooms(bedrooms);
+  const ba = nearestValidBath(br, bathrooms);
+  return STANDARD_GRID[br][ba] ?? STANDARD_GRID[br][VALID_BATHS[br][0]] ?? 0;
+}
+
+export function sqftSurcharge(bedrooms: number, sqftRaw: string | number | null | undefined): number {
+  if (sqftRaw === null || sqftRaw === undefined || sqftRaw === "") return 0;
+  const sqft = typeof sqftRaw === "number" ? sqftRaw : parseInt(String(sqftRaw).replace(/[^\d]/g, ""), 10);
+  if (!Number.isFinite(sqft) || sqft <= 0) return 0;
+  const g = SQFT_GUARDRAIL[clampBedrooms(bedrooms)];
+  if (sqft <= g.typicalMax) return 0;
+  if (sqft <= g.tier1Max)   return 30;
+  if (sqft <= g.tier2Max)   return 55;
+  return 80;
 }
 
 export function calcAddOnTotal(addOns: string[]): number {
   return addOns.reduce((sum, name) => {
-    const addon = ADD_ONS.find((a) => a.name === name);
-    return sum + (addon?.price ?? 0);
+    const a = ADD_ONS.find((x) => x.name === name);
+    return sum + (a?.price ?? 0);
   }, 0);
 }
 
-// Helper to estimate price for the booking form
+export interface QuoteInputs {
+  service:    ServiceKey;
+  bedrooms:   number;
+  bathrooms:  string;
+  frequency:  Frequency;
+  sqft?:      string | number | null;
+  heavyDuty?: boolean;
+  addOns?:    string[];
+}
+
+export interface QuoteBreakdown {
+  base:              number;  // pre-multiplier standard base
+  serviceMultiplier: number;
+  serviceAdjusted:   number;  // base × multiplier
+  frequencyDiscount: number;  // dollars off (recurring)
+  recurringPrice:    number;  // serviceAdjusted − frequencyDiscount
+  sqftSurcharge:     number;
+  heavyDutySurcharge: number;
+  addOnTotal:        number;
+  total:             number;
+}
+
+export function quoteBreakdown(inp: QuoteInputs): QuoteBreakdown {
+  const base = getStandardBase(inp.bedrooms, inp.bathrooms);
+  const mult = SERVICE_MULTIPLIERS[inp.service];
+  const serviceAdjusted = Math.round(base * mult);
+
+  // Frequency discount only applies to standard recurring cleans.
+  const discountPct = inp.service === "standard" ? FREQUENCY_DISCOUNTS[inp.frequency] : 0;
+  const frequencyDiscount = Math.round(serviceAdjusted * discountPct);
+  const recurringPrice    = serviceAdjusted - frequencyDiscount;
+
+  const sqftS  = sqftSurcharge(inp.bedrooms, inp.sqft);
+  const heavyD = inp.heavyDuty ? HEAVY_DUTY_SURCHARGE[clampBedrooms(inp.bedrooms)] : 0;
+  const addOns = calcAddOnTotal(inp.addOns ?? []);
+
+  return {
+    base,
+    serviceMultiplier: mult,
+    serviceAdjusted,
+    frequencyDiscount,
+    recurringPrice,
+    sqftSurcharge:      sqftS,
+    heavyDutySurcharge: heavyD,
+    addOnTotal:         addOns,
+    total:              recurringPrice + sqftS + heavyD + addOns,
+  };
+}
+
+// Backwards-compat: returns a single number total. Used by booking flow + API.
 export function estimatePrice(
-  service: string,
-  bedrooms: number,
+  service:   string,
+  bedrooms:  number,
   frequency: string,
-  addOns: string[]
+  addOns:    string[],
+  bathrooms: string = "1",
+  sqft:      string | null = null,
+  heavyDuty: boolean = false,
 ): number {
-  const homeSize = bedroomsToHomeSize(bedrooms);
+  const svc: ServiceKey = (["standard", "deep", "moveinout"].includes(service) ? service : "standard") as ServiceKey;
+  const freq: Frequency = (["one-time", "weekly", "biweekly", "monthly"].includes(frequency) ? frequency : "one-time") as Frequency;
+  return quoteBreakdown({ service: svc, bedrooms, bathrooms, frequency: freq, sqft, heavyDuty, addOns }).total;
+}
 
-  let base = 0;
-  switch (service) {
-    case "standard":
-      if (frequency === "weekly") base = PRICING_TIERS[1].prices[homeSize];
-      else if (frequency === "biweekly") base = PRICING_TIERS[0].prices[homeSize];
-      else if (frequency === "monthly") base = Math.round(STANDARD_BASE_PRICES[homeSize] * 0.95);
-      else base = STANDARD_BASE_PRICES[homeSize];
-      break;
-    case "deep":
-      base = PRICING_TIERS[2].prices[homeSize];
-      break;
-    case "moveinout":
-      base = PRICING_TIERS[3].prices[homeSize];
-      break;
-    case "airbnb":
-      if (bedrooms >= 3) base = 190;
-      else if (bedrooms >= 2) base = 140;
-      else base = 100;
-      break;
-    default:
-      base = PRICING_TIERS[0].prices[homeSize];
-  }
-
-  const addOnTotal = addOns.reduce((sum, name) => {
-    const addon = ADD_ONS.find((a) => a.name === name);
-    return sum + (addon?.price ?? 0);
-  }, 0);
-
-  return base + addOnTotal;
+// First-clean price (no recurring discount) — used when a recurring promo applies.
+export function getFirstCleanBasePrice(
+  service:   string,
+  bedrooms:  number,
+  bathrooms: string = "1",
+): number {
+  const svc: ServiceKey = (["standard", "deep", "moveinout"].includes(service) ? service : "standard") as ServiceKey;
+  return quoteBreakdown({ service: svc, bedrooms, bathrooms, frequency: "one-time" }).total;
 }

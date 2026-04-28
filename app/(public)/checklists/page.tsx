@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ClipboardList, ChevronRight, CheckCircle2 } from "lucide-react";
+import { ChevronRight, CheckCircle2, Lock, Sparkles } from "lucide-react";
+import { EditorialCloseCTA } from "@/components/public/WavePage";
+
+const URL = "https://capitolshinecleaners.com/checklists";
 
 export const metadata: Metadata = {
   title: "House Cleaning Checklists | Capitol Shine Arlington VA",
@@ -10,39 +13,59 @@ export const metadata: Metadata = {
     title: "House Cleaning Checklists | Capitol Shine",
     description:
       "Complete room-by-room checklists for every residential cleaning service we offer in Arlington and Northern Virginia.",
+    url: URL,
   },
+  alternates: { canonical: URL },
 };
 
 const checklists = [
   {
     href: "/checklists/standard-cleaning",
-    title: "Standard Cleaning Checklist",
-    subtitle: "Our recurring weekly & biweekly service",
+    title: "Standard cleaning",
+    subtitle: "Weekly or biweekly recurring maintenance. Same scope, every visit.",
     description:
-      "A thorough top-to-bottom clean of every room — countertops, floors, bathrooms, kitchens, and more. Designed for homes that want to stay consistently clean.",
-    highlights: ["Kitchen & bathrooms", "All floors vacuumed & mopped", "Surfaces dusted & wiped"],
+      "A thorough top-to-bottom clean of every room, designed for homes that want to stay consistently clean.",
+    highlights: [
+      "Kitchen — counters, stovetop, exteriors, sink, floor",
+      "Bathrooms — toilet, sink, shower, mirror, floor",
+      "Bedrooms — dust, vacuum, trash, beds",
+      "Common areas — dust, vacuum, sills, fans",
+    ],
     badge: "Most popular",
-    badgeColor: "bg-gold text-navy",
+    badgeColor: "bg-cream text-navy",
+    icon: Sparkles,
   },
   {
     href: "/checklists/deep-cleaning",
-    title: "Deep Cleaning Checklist",
-    subtitle: "One-time intensive clean",
+    title: "Deep cleaning",
+    subtitle: "One-time intensive. Standard plus baseboards, inside appliances, grout, fans.",
     description:
-      "Everything in our standard clean, plus baseboards, inside the oven and microwave, ceiling fans, window sills and tracks, and all the spots that collect buildup over time.",
-    highlights: ["Inside oven & microwave", "Baseboards & door frames", "Window sills & tracks"],
-    badge: "Great for first-time clients",
-    badgeColor: "bg-navy/10 text-navy",
+      "Everything in our standard clean, plus the spots that collect buildup over time and never get handled in a maintenance visit.",
+    highlights: [
+      "Inside oven, microwave, range hood",
+      "Wipe all baseboards, door frames, trim",
+      "Detail ceiling fan blades + housing",
+      "Window sills, tracks, switch plates",
+    ],
+    badge: "First-timers",
+    badgeColor: "bg-cream text-navy",
+    icon: Sparkles,
   },
   {
     href: "/checklists/move-out-cleaning",
-    title: "Move-In / Move-Out Cleaning Checklist",
-    subtitle: "Full-property detail clean",
+    title: "Move-in / Move-out",
+    subtitle: "Most detailed clean. Inside every cabinet, drawer, appliance, closet.",
     description:
-      "Our most thorough service. Every cabinet, drawer, appliance, closet, and surface — spotless for new owners, or to get your deposit back with no issues.",
-    highlights: ["Inside all cabinets & drawers", "Inside fridge & freezer", "Interior windows throughout"],
-    badge: "Deposit-ready clean",
-    badgeColor: "bg-cta-green/10 text-cta-green",
+      "Our most thorough service, built for landlord walkthroughs, buyer handoffs, and truly empty-home resets.",
+    highlights: [
+      "Inside fridge, oven, dishwasher, microwave",
+      "Inside all cabinets, drawers, closets",
+      "Interior windows + tracks",
+      "Wall scuff spot-cleaning",
+    ],
+    badge: "Deposit-ready",
+    badgeColor: "bg-cream text-navy",
+    icon: Lock,
   },
 ];
 
@@ -67,88 +90,99 @@ export default function ChecklistsPage() {
         }}
       />
 
-      <div className="bg-off-white min-h-screen">
-        {/* Hero */}
-        <div className="bg-navy py-16 md:py-20">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div className="inline-flex items-center gap-2 bg-white/10 text-white/70 text-xs font-medium px-3 py-1.5 rounded-full mb-6">
-              <ClipboardList size={13} />
-              Arlington &amp; Northern Virginia
-            </div>
-            <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight mb-4">
-              Cleaning Service Checklists
+      <div className="min-h-screen bg-paper">
+        <section className="border-b border-navy/10 bg-paper py-10 md:py-14">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-gold">
+              No guessing what got cleaned
+            </p>
+            <h1 className="max-w-4xl font-display text-[4.1rem] font-light leading-[0.92] tracking-tight text-ink md:text-[5.6rem] lg:text-[6.1rem]">
+              Cleaning <em className="italic">checklists.</em>
             </h1>
-            <p className="text-white/60 text-lg max-w-2xl mx-auto">
-              No guessing what got cleaned. Every service comes with a clear scope —
-              here&apos;s exactly what we cover, room by room.
+            <p className="mt-6 max-w-3xl text-lg leading-relaxed text-muted md:text-[1.5rem] md:leading-[1.45]">
+              Every service comes with a clear scope. Here&apos;s exactly what we cover,
+              room by room, before you ever book.
             </p>
           </div>
-        </div>
+        </section>
 
-        {/* Cards */}
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-6">
-          {checklists.map((c) => (
-            <Link
-              key={c.href}
-              href={c.href}
-              className="group block bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-7 md:p-9"
-            >
-              <div className="flex flex-col md:flex-row md:items-start gap-6">
-                <div className="flex-1">
-                  <div className="flex flex-wrap items-center gap-3 mb-3">
-                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${c.badgeColor}`}>
+        <section className="px-4 py-12 sm:px-6 lg:px-8 md:py-16">
+          <div className="mx-auto grid max-w-7xl gap-6 xl:grid-cols-3">
+            {checklists.map((c) => {
+              const Icon = c.icon;
+
+              return (
+                <Link
+                  key={c.href}
+                  href={c.href}
+                  className="group flex h-full flex-col rounded-[28px] border border-navy/10 bg-white p-7 shadow-[0_24px_60px_-40px_rgba(23,36,63,0.35)] transition hover:-translate-y-1 hover:border-navy/20 hover:shadow-[0_30px_80px_-40px_rgba(23,36,63,0.35)] md:p-8"
+                >
+                  <div className="mb-7 flex items-start justify-between gap-4">
+                    <div className="flex h-20 w-20 items-center justify-center rounded-[18px] bg-cream text-navy">
+                      <Icon size={26} />
+                    </div>
+                    <span className={`rounded-xl px-4 py-2 text-sm font-semibold uppercase tracking-[0.08em] ${c.badgeColor}`}>
                       {c.badge}
                     </span>
-                    <span className="text-xs text-charcoal/40">{c.subtitle}</span>
                   </div>
-                  <h2 className="font-display text-xl md:text-2xl font-bold text-navy mb-2 group-hover:text-navy/80 transition-colors">
+
+                  <h2 className="text-[1.85rem] font-semibold leading-[1.04] tracking-tight text-ink md:text-[2.5rem]">
                     {c.title}
                   </h2>
-                  <p className="text-charcoal/65 text-sm leading-relaxed mb-5">{c.description}</p>
-                  <ul className="flex flex-wrap gap-3">
+                  <p className="mt-5 text-[1.05rem] leading-relaxed text-muted">{c.subtitle}</p>
+                  <p className="mt-4 text-[0.98rem] leading-relaxed text-muted">{c.description}</p>
+
+                  <ul className="mt-8 space-y-3 text-sm leading-relaxed text-charcoal/85 md:text-[0.9rem]">
                     {c.highlights.map((h) => (
-                      <li key={h} className="flex items-center gap-1.5 text-xs text-charcoal/60">
-                        <CheckCircle2 size={13} className="text-cta-green flex-shrink-0" />
-                        {h}
+                      <li key={h} className="flex items-start gap-3">
+                        <CheckCircle2 size={18} className="mt-0.5 flex-shrink-0 text-green" />
+                        <span>{h}</span>
                       </li>
                     ))}
                   </ul>
-                </div>
-                <div className="flex-shrink-0 flex items-center md:items-start md:pt-1">
-                  <span className="flex items-center gap-1 text-sm font-medium text-navy group-hover:gap-2 transition-all">
-                    View checklist <ChevronRight size={16} />
-                  </span>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
 
-        {/* Bottom CTA */}
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-          <div className="bg-navy rounded-2xl p-8 md:p-10 text-center">
-            <h2 className="font-display text-2xl font-bold text-white mb-2">
-              Ready to get started?
-            </h2>
-            <p className="text-white/60 mb-6 max-w-sm mx-auto text-sm">
-              Book online in 60 seconds — or call and mention FIRST30 for $30 off your first clean.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <div className="mt-auto border-t border-navy/8 pt-7">
+                    <span className="inline-flex items-center gap-2 text-[1.1rem] font-semibold text-navy transition-all group-hover:gap-3">
+                      View checklist
+                      <ChevronRight size={20} />
+                    </span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+
+        <EditorialCloseCTA
+          title={
+            <>
+              Ready to book?
+              <br />
+              <em className="italic text-gold-2">Know exactly what you&apos;re getting.</em>
+            </>
+          }
+          description={
+            <>
+              Pick the right service, book online in under a minute, and get $30 off your first clean.
+            </>
+          }
+          actions={
+            <>
               <Link
                 href="/book?promo=FIRST30"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-gold text-navy text-sm font-semibold hover:bg-gold/90 transition-colors"
+                className="inline-flex items-center justify-center rounded-xl bg-gold px-6 py-3 text-sm font-semibold text-ink transition hover:bg-gold-2"
               >
-                Book Online — $30 Off
+                Book Online
               </Link>
               <a
                 href="tel:+17033759132"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-white/20 text-white text-sm font-medium hover:border-white/50 transition-colors"
+                className="inline-flex items-center justify-center rounded-xl border border-white/20 px-6 py-3 text-sm font-medium text-white transition hover:border-white/40 hover:bg-white/5"
               >
                 Call (703) 375-9132
               </a>
-            </div>
-          </div>
-        </div>
+            </>
+          }
+        />
       </div>
     </>
   );

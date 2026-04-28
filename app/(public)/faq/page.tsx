@@ -29,7 +29,7 @@ const sections: FAQSection[] = [
     items: [
       {
         q: "How much does house cleaning cost in Arlington, VA?",
-        a: "Our standard cleans start at $119 and deep cleans start at $249. Final pricing depends on home size, number of bathrooms, and service type. You can see exact flat-rate pricing on our pricing page and book online in 60 seconds.",
+        a: "Our standard one-time cleans start at $150, with recurring weekly service starting at $120 for smaller homes. Deep cleans start at $240, and move-in / move-out cleans start at $300. Final pricing depends on home size, number of bathrooms, and service type. You can see exact flat-rate pricing on our pricing page and book online in 60 seconds.",
       },
       {
         q: "Do I have to sign a contract?",

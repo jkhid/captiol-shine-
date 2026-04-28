@@ -91,8 +91,8 @@ export default function QuoteRequest({ propertyType, onBack }: Props) {
   if (submitted) {
     return (
       <div className="max-w-lg mx-auto text-center py-12">
-        <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-cta-green/10 flex items-center justify-center">
-          <svg className="w-10 h-10 text-cta-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-green/10 flex items-center justify-center">
+          <svg className="w-10 h-10 text-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
@@ -123,8 +123,8 @@ export default function QuoteRequest({ propertyType, onBack }: Props) {
             value={form.name}
             onChange={(e) => set("name", e.target.value)}
             placeholder="Your name"
-            className={`w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 ${
-              errors.name ? "border-red-400" : "border-gray-300"
+            className={`w-full rounded-xl border px-4 py-2.5 text-sm bg-paper focus:outline-none focus:ring-2 focus:ring-navy/20 focus:border-navy/40 transition-colors ${
+              errors.name ? "border-red-400" : "border-navy/12"
             }`}
           />
           {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name}</p>}
@@ -139,8 +139,8 @@ export default function QuoteRequest({ propertyType, onBack }: Props) {
             value={form.email}
             onChange={(e) => set("email", e.target.value)}
             placeholder="you@example.com"
-            className={`w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 ${
-              errors.email ? "border-red-400" : "border-gray-300"
+            className={`w-full rounded-xl border px-4 py-2.5 text-sm bg-paper focus:outline-none focus:ring-2 focus:ring-navy/20 focus:border-navy/40 transition-colors ${
+              errors.email ? "border-red-400" : "border-navy/12"
             }`}
           />
           {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
@@ -155,8 +155,8 @@ export default function QuoteRequest({ propertyType, onBack }: Props) {
             value={form.phone}
             onChange={(e) => set("phone", e.target.value)}
             placeholder="(555) 555-5555"
-            className={`w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 ${
-              errors.phone ? "border-red-400" : "border-gray-300"
+            className={`w-full rounded-xl border px-4 py-2.5 text-sm bg-paper focus:outline-none focus:ring-2 focus:ring-navy/20 focus:border-navy/40 transition-colors ${
+              errors.phone ? "border-red-400" : "border-navy/12"
             }`}
           />
           {errors.phone && <p className="mt-1 text-xs text-red-500">{errors.phone}</p>}
@@ -169,7 +169,7 @@ export default function QuoteRequest({ propertyType, onBack }: Props) {
             value={form.address}
             onChange={(e) => set("address", e.target.value)}
             placeholder="123 Main St, Arlington, VA"
-            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40"
+            className="w-full rounded-xl border border-navy/12 bg-paper px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy/20 focus:border-navy/40 transition-colors"
           />
         </div>
 
@@ -181,7 +181,7 @@ export default function QuoteRequest({ propertyType, onBack }: Props) {
               value={form.sqft}
               onChange={(e) => set("sqft", e.target.value)}
               placeholder="e.g. 2,500"
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40"
+              className="w-full rounded-xl border border-navy/12 bg-paper px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy/20 focus:border-navy/40 transition-colors"
             />
           </div>
           <div>
@@ -189,7 +189,7 @@ export default function QuoteRequest({ propertyType, onBack }: Props) {
             <select
               value={form.frequency}
               onChange={(e) => set("frequency", e.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40"
+              className="w-full rounded-xl border border-navy/12 bg-paper px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy/20 focus:border-navy/40 transition-colors"
             >
               <option value="">Select…</option>
               <option value="one-time">One-time</option>
@@ -207,7 +207,7 @@ export default function QuoteRequest({ propertyType, onBack }: Props) {
             onChange={(e) => set("notes", e.target.value)}
             rows={3}
             placeholder="Anything else we should know about your space or needs?"
-            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 resize-none"
+            className="w-full rounded-xl border border-navy/12 bg-paper px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 resize-none"
           />
         </div>
       </div>

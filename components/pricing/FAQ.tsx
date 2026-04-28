@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import SectionWrapper from "@/components/ui/SectionWrapper";
 
 interface FAQItem {
   q: string;
@@ -13,24 +12,22 @@ export function FAQAccordion({ items }: { items: FAQItem[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <div className="space-y-3">
+    <div className="divide-y divide-navy/8 border border-navy/8 rounded-2xl overflow-hidden bg-white">
       {items.map((item, i) => (
-        <div key={i} className="border border-gray-200 rounded-lg overflow-hidden">
+        <div key={i}>
           <button
             onClick={() => setOpenIndex(openIndex === i ? null : i)}
-            className="w-full flex items-center justify-between p-4 text-left font-medium text-navy hover:bg-gray-50 transition-colors"
+            className="w-full flex items-center justify-between px-5 py-4 text-left font-medium text-navy text-sm hover:bg-paper transition-colors"
             aria-expanded={openIndex === i}
           >
-            {item.q}
+            <span className="pr-4">{item.q}</span>
             <ChevronDown
-              size={18}
-              className={`flex-shrink-0 transition-transform ${
-                openIndex === i ? "rotate-180" : ""
-              }`}
+              size={16}
+              className={`flex-shrink-0 text-muted transition-transform ${openIndex === i ? "rotate-180" : ""}`}
             />
           </button>
           {openIndex === i && (
-            <div className="px-4 pb-4 text-sm text-charcoal/70 leading-relaxed">
+            <div className="px-5 pb-4 text-sm text-muted leading-relaxed bg-paper/60">
               {item.a}
             </div>
           )}
@@ -70,15 +67,15 @@ const residentialFAQs: FAQItem[] = [
 const commercialFAQs: FAQItem[] = [
   {
     q: "How is commercial cleaning priced?",
-    a: "Commercial cleaning is quoted by square footage, frequency, and scope. After a free on-site walk-through you'll get firm, itemized pricing. Most small offices in Northern Virginia fall in the $300-$800/month range depending on schedule.",
+    a: "Commercial cleaning is quoted by square footage, frequency, and scope. After a free on-site walk-through you'll get firm, itemized pricing. Most small offices in Northern Virginia fall in the $300–$800/month range depending on schedule.",
   },
   {
     q: "Do you offer after-hours or overnight cleaning?",
     a: "Yes. Most commercial clients schedule cleanings after business hours so the space is ready before the next workday. We carry keys, alarm codes, or coordinate with building management.",
   },
   {
-    q: "Are you licensed, bonded, and insured?",
-    a: "Yes. Every Capitol Shine team is fully licensed, bonded, and insured. We provide a certificate of insurance on request — many commercial clients need one on file.",
+    q: "Are you licensed and insured?",
+    a: "Yes. Every Capitol Shine team is fully licensed and insured. We provide a certificate of insurance on request — many commercial clients need one on file.",
   },
   {
     q: "Do you require a long-term contract?",
@@ -86,7 +83,7 @@ const commercialFAQs: FAQItem[] = [
   },
   {
     q: "How quickly can you start service?",
-    a: "Most commercial accounts can be onboarded within 5-10 business days of signing. Urgent turnarounds are possible depending on current capacity.",
+    a: "Most commercial accounts can be onboarded within 5–10 business days of signing. Urgent turnarounds are possible depending on current capacity.",
   },
   {
     q: "Which areas do you cover for commercial cleaning?",
@@ -101,7 +98,7 @@ const airbnbFAQs: FAQItem[] = [
   },
   {
     q: "Do you provide linens and handle laundry?",
-    a: "Yes. Our optional linen service brings fresh hotel-grade sheets and towels, takes the used set with us for laundering, and returns them for the next turnover. Pricing is $30 per bedroom.",
+    a: "Yes. Our optional linen service brings fresh hotel-grade sheets and towels, takes the used set with us for laundering, and returns them for the next turnover.",
   },
   {
     q: "What if a guest leaves damage or missing items?",
@@ -140,7 +137,7 @@ const constructionFAQs: FAQItem[] = [
   },
   {
     q: "How soon can you get on site?",
-    a: "For scheduled projects, we lock in dates weeks in advance to line up with your trades. For urgent pre-walkthrough cleans, we can often turn around within 24-48 hours.",
+    a: "For scheduled projects, we lock in dates weeks in advance to line up with your trades. For urgent pre-walkthrough cleans, we can often turn around within 24–48 hours.",
   },
   {
     q: "Do you carry the insurance required for active job sites?",
@@ -157,14 +154,35 @@ const FAQ_SETS: Record<string, FAQItem[]> = {
 
 export default function PricingFAQ({ service = "residential" }: { service?: string }) {
   const items = FAQ_SETS[service] ?? residentialFAQs;
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.a,
+      },
+    })),
+  };
+
   return (
-    <SectionWrapper className="py-16">
+    <section className="bg-paper py-16 md:py-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="font-display text-2xl md:text-3xl font-bold text-navy mb-8">
-          Frequently Asked Questions
-        </h2>
+        <div className="mb-8">
+          <p className="text-gold text-xs font-semibold uppercase tracking-widest mb-3">FAQ</p>
+          <h2 className="font-display text-3xl md:text-4xl text-ink font-light tracking-tight">
+            Common questions
+          </h2>
+        </div>
         <FAQAccordion items={items} />
       </div>
-    </SectionWrapper>
+    </section>
   );
 }

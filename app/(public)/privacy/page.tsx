@@ -15,9 +15,9 @@ const sections = [
     content: `Capitol Home Services LLC ("Capitol Shine," "we," "us," "our") operates the website capitolshinecleaners.com and provides residential and commercial cleaning services in Northern Virginia.
 
 Capitol Home Services LLC
-1805 Key Blvd, Arlington, VA 22201
+Arlington, VA service area
 (703) 375-9132
-capitolhomeservices1@gmail.com`,
+hello@capitolshinecleaners.com`,
   },
   {
     title: "2. Information We Collect",
@@ -123,7 +123,7 @@ Opt-out of marketing: unsubscribe from promotional emails or texts at any time u
 
 Opt-out of tracking: manage cookie preferences through your browser settings.
 
-To exercise any of these rights, contact us at capitolhomeservices1@gmail.com or (703) 375-9132. We will respond within 30 days.`,
+To exercise any of these rights, contact us at hello@capitolshinecleaners.com or (703) 375-9132. We will respond within 30 days.`,
   },
   {
     title: "10. Children's Privacy",
@@ -140,9 +140,9 @@ For active clients, material changes will be communicated via email at least 30 
     content: `If you have questions about this Privacy Policy or how we handle your data, contact us at:
 
 Capitol Home Services LLC
-1805 Key Blvd, Arlington, VA 22201
+Arlington, VA service area
 (703) 375-9132
-capitolhomeservices1@gmail.com`,
+hello@capitolshinecleaners.com`,
   },
 ];
 

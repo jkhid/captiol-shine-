@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Button from "@/components/ui/Button";
 
-type ServiceType = "commercial" | "construction";
+type ServiceType = "commercial" | "construction" | "airbnb";
 
 interface QuoteFormState {
   name: string;
@@ -16,9 +15,11 @@ interface QuoteFormState {
   notes: string;
 }
 
-const COMMERCIAL_SPACE_TYPES = ["Office", "Retail", "Medical / Dental", "Warehouse", "Other"];
-const COMMERCIAL_FREQUENCIES = ["Weekly", "2x / Week", "3x / Week", "Daily (M–F)", "Not sure yet"];
+const COMMERCIAL_SPACE_TYPES  = ["Office", "Retail", "Medical / Dental", "Warehouse", "Other"];
+const COMMERCIAL_FREQUENCIES  = ["Weekly", "2x / Week", "3x / Week", "Daily (M–F)", "Not sure yet"];
 const CONSTRUCTION_PROJECT_TYPES = ["New Construction", "Gut Renovation", "Partial Renovation", "Other"];
+const AIRBNB_PROPERTY_TYPES   = ["Studio", "1 Bedroom", "2 Bedrooms", "3+ Bedrooms"];
+const AIRBNB_FREQUENCIES      = ["Daily", "2–3x / Week", "Weekly", "Biweekly", "Varies / On demand"];
 const TIMELINES = ["ASAP", "Within 2 weeks", "1 month", "2–3 months", "Just planning ahead"];
 
 export default function QuoteRequestForm({ serviceType }: { serviceType: ServiceType }) {
@@ -49,14 +50,14 @@ export default function QuoteRequestForm({ serviceType }: { serviceType: Service
 
   if (status === "success") {
     return (
-      <div className="text-center py-8">
-        <div className="w-12 h-12 rounded-full bg-cta-green/10 flex items-center justify-center mx-auto mb-4">
-          <svg className="w-6 h-6 text-cta-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div className="text-center py-10">
+        <div className="w-12 h-12 rounded-full bg-green/10 flex items-center justify-center mx-auto mb-4">
+          <svg className="w-6 h-6 text-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
         <p className="font-semibold text-navy text-lg">Request received!</p>
-        <p className="text-charcoal/60 mt-2 text-sm">
+        <p className="text-muted mt-2 text-sm">
           We&apos;ll be in touch within 24–48 hours to schedule your free estimate.
         </p>
       </div>
@@ -64,15 +65,25 @@ export default function QuoteRequestForm({ serviceType }: { serviceType: Service
   }
 
   const inputClass =
-    "w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-charcoal focus:outline-none focus:ring-2 focus:ring-navy/30 focus:border-navy/50 transition-colors";
-  const labelClass = "block text-xs font-medium text-charcoal/60 mb-1";
+    "w-full rounded-xl border border-navy/12 px-3.5 py-2.5 text-sm text-charcoal bg-paper focus:outline-none focus:ring-2 focus:ring-navy/20 focus:border-navy/40 transition-colors";
+  const labelClass = "block text-xs font-semibold uppercase tracking-wider text-muted mb-1.5";
 
-  const spaceTypeOptions = serviceType === "commercial" ? COMMERCIAL_SPACE_TYPES : CONSTRUCTION_PROJECT_TYPES;
-  const spaceTypeLabel  = serviceType === "commercial" ? "Space type" : "Project type";
+  const spaceTypeOptions =
+    serviceType === "commercial" ? COMMERCIAL_SPACE_TYPES :
+    serviceType === "airbnb"     ? AIRBNB_PROPERTY_TYPES :
+    CONSTRUCTION_PROJECT_TYPES;
+  const spaceTypeLabel =
+    serviceType === "commercial" ? "Space type" :
+    serviceType === "airbnb"     ? "Property size" :
+    "Project type";
+  const sqftLabel =
+    serviceType === "airbnb" ? "Approx. sq ft (optional)" : "Approx. sq ft";
+  const showFrequency   = serviceType === "commercial" || serviceType === "airbnb";
+  const frequencyOptions = serviceType === "airbnb" ? AIRBNB_FREQUENCIES : COMMERCIAL_FREQUENCIES;
+  const frequencyLabel   = serviceType === "airbnb" ? "Average turnover frequency" : "Desired cleaning frequency";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {/* Name / Email / Phone */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className={labelClass}>Full name *</label>
@@ -88,7 +99,6 @@ export default function QuoteRequestForm({ serviceType }: { serviceType: Service
         <input required type="email" className={inputClass} value={form.email} onChange={set("email")} placeholder="jane@company.com" maxLength={254} />
       </div>
 
-      {/* Space / project details */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className={labelClass}>{spaceTypeLabel}</label>
@@ -100,17 +110,17 @@ export default function QuoteRequestForm({ serviceType }: { serviceType: Service
           </select>
         </div>
         <div>
-          <label className={labelClass}>Approx. square footage</label>
+          <label className={labelClass}>{sqftLabel}</label>
           <input className={inputClass} value={form.sqft} onChange={set("sqft")} placeholder="e.g. 2,000" maxLength={20} />
         </div>
       </div>
 
-      {serviceType === "commercial" && (
+      {showFrequency && (
         <div>
-          <label className={labelClass}>Desired cleaning frequency</label>
+          <label className={labelClass}>{frequencyLabel}</label>
           <select className={inputClass} value={form.frequency} onChange={set("frequency")}>
             <option value="">Select…</option>
-            {COMMERCIAL_FREQUENCIES.map((f) => (
+            {frequencyOptions.map((f) => (
               <option key={f} value={f}>{f}</option>
             ))}
           </select>
@@ -143,9 +153,13 @@ export default function QuoteRequestForm({ serviceType }: { serviceType: Service
         <p className="text-sm text-red-600">Something went wrong. Please try again or call us directly.</p>
       )}
 
-      <Button type="submit" variant="primary" className="w-full" disabled={status === "loading"}>
+      <button
+        type="submit"
+        disabled={status === "loading"}
+        className="w-full bg-gold text-ink font-semibold text-sm py-3.5 rounded-xl hover:bg-gold-2 transition-colors disabled:opacity-60"
+      >
         {status === "loading" ? "Sending…" : "Request Free Estimate"}
-      </Button>
+      </button>
     </form>
   );
 }

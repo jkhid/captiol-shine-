@@ -10,6 +10,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/areas`,                    lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/book`,                     lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/faq`,                      lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE}/services`,                 lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
+    { url: `${BASE}/services/standard-cleaning`,          lastModified: new Date(), changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE}/services/deep-cleaning`,              lastModified: new Date(), changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE}/services/move-out-cleaning`,          lastModified: new Date(), changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE}/services/airbnb-cleaning`,            lastModified: new Date(), changeFrequency: "monthly", priority: 0.9 },

@@ -1,129 +1,107 @@
 import Link from "next/link";
-import SectionWrapper from "@/components/ui/SectionWrapper";
-import { ArrowRight, Home, Building2, HardHat, Star } from "lucide-react";
 
-const categories = [
+const SERVICES = [
   {
-    icon: Home,
-    label: "Residential",
-    headline: "A cleaner home, on your schedule.",
+    num: "01",
+    name: "Standard Clean",
+    tagline: "Recurring maintenance for a consistently fresh home.",
     description:
-      "From weekly upkeep to a full deep reset, our residential packages keep your home consistently fresh — with no contracts required.",
-    services: [
-      { name: "Standard Clean", detail: "Recurring maintenance — weekly or biweekly" },
-      { name: "Deep Clean", detail: "Top-to-bottom reset, inside appliances & baseboards" },
-      { name: "Move-In / Move-Out", detail: "Every cabinet, drawer, and corner — spotless" },
-    ],
-    cta: { label: "See Residential Pricing", href: "/pricing?service=residential" },
-    accent: "bg-navy",
+      "Dust, vacuum, mop, bathrooms, kitchen — everything reset on your schedule. Weekly, biweekly, or monthly. No contracts.",
+    from: "$150",
+    href: "/pricing?service=residential",
   },
   {
-    icon: Star,
-    label: "Airbnb & Short-Term Rentals",
-    headline: "5-star turnovers, every time.",
+    num: "02",
+    name: "Deep Clean",
+    tagline: "Top-to-bottom reset — every surface, appliance, and corner.",
     description:
-      "Fast, reliable cleaning between guests — timed to your checkout. We handle linens, restocking checks, and same-day availability so you never miss a booking.",
-    services: [
-      { name: "Full Surface Clean & Sanitize", detail: "Kitchen, bathrooms, all rooms" },
-      { name: "Linen & Bed Making", detail: "Fresh setup ready for next guest" },
-      { name: "Restock & Trash Check", detail: "Essentials verified, trash removed" },
-    ],
-    cta: { label: "See Airbnb Pricing", href: "/pricing?service=airbnb" },
-    accent: "bg-gold",
+      "Everything in Standard, plus inside the oven and microwave, baseboards, door frames, ceiling fans, and window sills. Perfect for a first clean or seasonal refresh.",
+    from: "$240",
+    href: "/pricing?service=residential",
   },
   {
-    icon: Building2,
-    label: "Commercial",
-    headline: "Professional spaces deserve professional cleaning.",
+    num: "03",
+    name: "Move-In / Move-Out",
+    tagline: "Spotless for deposit recovery or a fresh start.",
     description:
-      "We service offices, retail spaces, and common areas in the Arlington area. Flexible scheduling including after-hours and weekend availability.",
-    services: [
-      { name: "Office & Workspace Cleaning", detail: "Desks, floors, kitchens, restrooms" },
-      { name: "Retail & Lobby Cleaning", detail: "High-traffic areas and storefronts" },
-      { name: "Recurring Contracts", detail: "Daily, weekly, or custom schedules" },
-    ],
-    cta: { label: "Request a Quote", href: "/pricing?service=commercial" },
-    accent: "bg-navy",
+      "All Deep Clean tasks plus inside every cabinet and drawer, inside the refrigerator, interior windows, and garage sweep. Leave nothing behind — or arrive to nothing left undone.",
+    from: "$300",
+    href: "/pricing?service=residential",
   },
-  {
-    icon: HardHat,
-    label: "Post-Construction",
-    headline: "Ready for move-in. Not a speck of dust.",
-    description:
-      "Newly built or renovated spaces need a specialized clean before occupancy. We remove construction debris, dust, and residue from every surface.",
-    services: [
-      { name: "Debris & Dust Removal", detail: "Walls, vents, floors, fixtures" },
-      { name: "Window & Glass Polish", detail: "Labels, film, and smudges removed" },
-      { name: "Final Inspection Clean", detail: "Walkthrough-ready before handoff" },
-    ],
-    cta: { label: "Request a Quote", href: "/pricing?service=construction" },
-    accent: "bg-charcoal",
-  },
+];
+
+const OTHER_SERVICES = [
+  { label: "Airbnb & STR Turnover", href: "/pricing?service=airbnb" },
+  { label: "Commercial Cleaning",   href: "/pricing?service=commercial" },
+  { label: "Post-Construction",     href: "/pricing?service=construction" },
 ];
 
 export default function ServicesGrid() {
   return (
-    <SectionWrapper className="py-20 bg-off-white">
+    <section className="bg-paper py-20 md:py-28">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl mx-auto text-center mb-14">
-          <h2 className="font-display text-3xl md:text-4xl font-bold text-navy">
-            Services for every space
+
+        {/* Header */}
+        <div className="max-w-2xl mb-14">
+          <p className="text-gold text-xs font-semibold uppercase tracking-widest mb-3">Residential</p>
+          <h2 className="font-display text-4xl md:text-5xl text-ink font-light tracking-tight leading-tight">
+            Every type of clean,<br />
+            <em className="italic">covered.</em>
           </h2>
-          <p className="mt-4 text-charcoal/70">
-            Residential, commercial, post-construction, or short-term rental — we have the right clean for the job.
-          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {categories.map((cat) => {
-            const Icon = cat.icon;
-            return (
-              <div
-                key={cat.label}
-                className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm flex flex-col"
-              >
-                {/* Header bar */}
-                <div className={`${cat.accent} px-6 py-5 flex items-center gap-3`}>
-                  <div className="w-9 h-9 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
-                    <Icon size={18} className="text-white" />
-                  </div>
-                  <span className="text-white font-semibold tracking-wide text-sm uppercase">
-                    {cat.label}
-                  </span>
-                </div>
+        {/* Numbered service rows */}
+        <div className="divide-y divide-navy/8">
+          {SERVICES.map((svc) => (
+            <div key={svc.num} className="py-10 flex flex-col sm:flex-row sm:items-start gap-6 group">
 
-                {/* Body */}
-                <div className="px-6 pt-6 pb-7 flex flex-col flex-1">
-                  <h3 className="font-display text-xl font-bold text-navy mb-2">
-                    {cat.headline}
-                  </h3>
-                  <p className="text-sm text-charcoal/70 mb-5">{cat.description}</p>
-
-                  <ul className="space-y-3 mb-7 flex-1">
-                    {cat.services.map((svc) => (
-                      <li key={svc.name} className="flex items-start gap-3">
-                        <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-gold flex-shrink-0" />
-                        <span className="text-sm text-charcoal">
-                          <span className="font-semibold">{svc.name}</span>
-                          <span className="text-charcoal/60"> — {svc.detail}</span>
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Link
-                    href={cat.cta.href}
-                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-navy hover:text-gold transition-colors group"
-                  >
-                    {cat.cta.label}
-                    <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
-                  </Link>
-                </div>
+              {/* Number */}
+              <div className="flex-shrink-0 w-12">
+                <span className="font-display text-sm text-gold font-light tracking-wider">{svc.num}</span>
               </div>
-            );
-          })}
+
+              {/* Content */}
+              <div className="flex-1 min-w-0">
+                <h3 className="font-display text-2xl md:text-3xl text-ink font-light tracking-tight mb-2">
+                  {svc.name}
+                </h3>
+                <p className="text-navy/70 font-medium text-sm mb-3">{svc.tagline}</p>
+                <p className="text-muted text-sm leading-relaxed max-w-2xl">{svc.description}</p>
+              </div>
+
+              {/* From price + CTA */}
+              <div className="flex-shrink-0 text-right sm:text-right flex sm:flex-col items-center sm:items-end gap-4 sm:gap-2">
+                <div>
+                  <p className="text-xs text-muted uppercase tracking-wider">From</p>
+                  <p className="font-display text-2xl text-ink font-semibold tracking-tight">{svc.from}</p>
+                </div>
+                <Link
+                  href={svc.href}
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-navy hover:text-gold transition-colors group-hover:gap-2"
+                >
+                  See pricing
+                  <span className="transition-transform group-hover:translate-x-0.5">→</span>
+                </Link>
+              </div>
+            </div>
+          ))}
         </div>
+
+        {/* Other services row */}
+        <div className="mt-12 pt-8 border-t border-navy/8 flex flex-wrap items-center gap-x-8 gap-y-3">
+          <span className="text-xs font-semibold uppercase tracking-widest text-muted">Also available</span>
+          {OTHER_SERVICES.map(({ label, href }) => (
+            <Link
+              key={href}
+              href={href}
+              className="text-sm font-medium text-charcoal hover:text-navy transition-colors"
+            >
+              {label} →
+            </Link>
+          ))}
+        </div>
+
       </div>
-    </SectionWrapper>
+    </section>
   );
 }

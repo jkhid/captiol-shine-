@@ -16,7 +16,7 @@ const variantStyles: Record<Variant, string> = {
   primary: "bg-navy text-white hover:bg-navy/90",
   outline: "border-2 border-navy text-navy hover:bg-navy hover:text-white",
   gold: "bg-gold text-navy font-semibold hover:bg-gold/90",
-  green: "bg-cta-green text-white font-semibold hover:bg-cta-green/90",
+  green: "bg-green text-white font-semibold hover:bg-green/90",
 };
 
 export default function Button({

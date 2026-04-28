@@ -9,8 +9,8 @@ interface Props {
 const frequencies = [
   { value: "one-time", label: "One-time", discount: "" },
   { value: "weekly", label: "Weekly", discount: "20% off" },
-  { value: "biweekly", label: "Biweekly", discount: "10% off" },
-  { value: "monthly", label: "Monthly", discount: "5% off" },
+  { value: "biweekly", label: "Biweekly", discount: "15% off" },
+  { value: "monthly", label: "Monthly", discount: "10% off" },
 ];
 
 const timeWindows = [
@@ -22,7 +22,7 @@ const timeWindows = [
 export default function Schedule({ state, dispatch }: Props) {
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-bold text-navy mb-6">Schedule</h2>
+      <h2 className="text-xs font-semibold text-muted uppercase tracking-wider">Schedule</h2>
 
       {/* Frequency */}
       <div>
@@ -32,16 +32,16 @@ export default function Schedule({ state, dispatch }: Props) {
             <button
               key={f.value}
               onClick={() => dispatch({ type: "SET_FIELD", field: "frequency", value: f.value })}
-              className={`p-3 rounded-lg text-sm font-medium transition-all text-center ${
+              className={`p-3 rounded-lg text-sm font-medium transition-all text-center border ${
                 state.frequency === f.value
-                  ? "bg-navy text-white"
-                  : "bg-gray-100 text-charcoal hover:bg-gray-200"
+                  ? "bg-navy text-white border-navy"
+                  : "bg-paper text-charcoal border-navy/10 hover:border-navy/25"
               }`}
             >
               {f.label}
               {f.discount && (
                 <span className={`block text-xs mt-0.5 ${
-                  state.frequency === f.value ? "text-gold" : "text-cta-green"
+                  state.frequency === f.value ? "text-gold" : "text-green"
                 }`}>
                   {f.discount}
                 </span>
@@ -76,10 +76,10 @@ export default function Schedule({ state, dispatch }: Props) {
             <button
               key={tw.value}
               onClick={() => dispatch({ type: "SET_FIELD", field: "timeWindow", value: tw.value })}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all border ${
                 state.timeWindow === tw.value
-                  ? "bg-navy text-white"
-                  : "bg-gray-100 text-charcoal hover:bg-gray-200"
+                  ? "bg-navy text-white border-navy"
+                  : "bg-paper text-charcoal border-navy/10 hover:border-navy/25"
               }`}
             >
               {tw.label}
@@ -99,7 +99,7 @@ export default function Schedule({ state, dispatch }: Props) {
           onChange={(e) => dispatch({ type: "SET_FIELD", field: "instructions", value: e.target.value })}
           placeholder="Any special requests, entry instructions, pet info, etc."
           rows={3}
-          className="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent resize-none"
+          className="w-full px-4 py-2.5 rounded-xl border border-navy/12 bg-paper text-sm focus:outline-none focus:ring-2 focus:ring-navy/20 focus:border-navy/40 transition-colors resize-none"
         />
       </div>
     </div>

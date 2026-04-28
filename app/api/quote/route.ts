@@ -10,7 +10,7 @@ const QuoteSchema = z.object({
   name:        z.string().min(1).max(120),
   email:       z.string().email().max(254),
   phone:       z.string().min(7).max(20),
-  serviceType: z.enum(["commercial", "construction"]),
+  serviceType: z.enum(["commercial", "construction", "airbnb"]),
   address:     z.string().max(200).optional(),
   spaceType:   z.string().max(60).optional(),
   sqft:        z.string().max(20).optional(),
@@ -37,7 +37,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid request data." }, { status: 400 });
   }
 
-  const serviceLabel = body.serviceType === "commercial" ? "Commercial Cleaning" : "Post-Construction Cleanup";
+  const serviceLabel =
+    body.serviceType === "commercial"   ? "Commercial Cleaning" :
+    body.serviceType === "airbnb"       ? "Airbnb / STR Turnover" :
+    "Post-Construction Cleanup";
 
   // 1. Save to Supabase
   const { error } = await supabase.from("quotes").insert({

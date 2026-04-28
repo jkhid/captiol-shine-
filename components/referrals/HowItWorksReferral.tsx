@@ -1,44 +1,57 @@
-import SectionWrapper from "@/components/ui/SectionWrapper";
-import { Share2, CalendarCheck, Wallet } from "lucide-react";
+import { SectionIntro } from "@/components/public/WavePage";
 
 const steps = [
   {
-    icon: Share2,
-    title: "Share Your Link",
-    description: "Send your unique referral link to a friend, neighbor, or coworker.",
+    number: "01",
+    title: "Share your link",
+    description:
+      "Send your referral link to a friend, neighbor, or coworker. Texts, emails, group chats, condo Slack threads. Whatever works.",
   },
   {
-    icon: CalendarCheck,
-    title: "They Book",
-    description: "When they complete their first cleaning, you both get $30 off.",
+    number: "02",
+    title: "They book",
+    description:
+      "When they complete their first cleaning, your friend gets $30 off and your credit is automatically queued for the next visit.",
   },
   {
-    icon: Wallet,
-    title: "You Save",
-    description: "Credits apply automatically to your next booking. No limits.",
+    number: "03",
+    title: "You save",
+    description:
+      "Credits stack. Refer a few neighbors in the same building and your recurring clean starts paying for itself.",
   },
 ];
 
 export default function HowItWorksReferral() {
   return (
-    <SectionWrapper className="py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="font-display text-2xl md:text-3xl font-bold text-navy text-center mb-12">
-          How It Works
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-          {steps.map((step, i) => (
-            <div key={step.title} className="text-center">
-              <div className="mx-auto w-16 h-16 rounded-full bg-navy/10 flex items-center justify-center mb-4">
-                <step.icon size={28} className="text-navy" />
-              </div>
-              <div className="text-sm font-semibold text-gold mb-1">Step {i + 1}</div>
-              <h3 className="text-xl font-bold text-navy mb-2">{step.title}</h3>
-              <p className="text-charcoal/70">{step.description}</p>
+    <section className="px-4 py-16 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl">
+        <SectionIntro
+          eyebrow="How It Works"
+          title={
+            <>
+              Three steps.
+              <br />
+              <em className="italic">No catch.</em>
+            </>
+          }
+        />
+        <div className="mt-10 grid gap-5 lg:grid-cols-3">
+          {steps.map((step) => (
+            <div
+              key={step.number}
+              className="rounded-[22px] border border-navy/10 bg-white p-7 shadow-[0_24px_60px_-40px_rgba(23,36,63,0.4)]"
+            >
+              <p className="font-display text-6xl font-light leading-none tracking-tight text-gold">
+                {step.number}
+              </p>
+              <h3 className="mt-5 font-display text-3xl font-light leading-none tracking-tight text-ink">
+                {step.title}
+              </h3>
+              <p className="mt-4 text-sm leading-relaxed text-muted md:text-base">{step.description}</p>
             </div>
           ))}
         </div>
       </div>
-    </SectionWrapper>
+    </section>
   );
 }

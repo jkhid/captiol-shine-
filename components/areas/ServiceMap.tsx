@@ -3,7 +3,13 @@
 import { useEffect, useState } from "react";
 import { NEIGHBORHOODS } from "@/lib/neighborhoods";
 
-export default function ServiceMap() {
+type ServiceMapProps = {
+  heightClass?: string;
+};
+
+export default function ServiceMap({
+  heightClass = "h-[400px] md:h-[500px]",
+}: ServiceMapProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -12,19 +18,20 @@ export default function ServiceMap() {
 
   if (!mounted) {
     return (
-      <div className="w-full h-[400px] md:h-[500px] rounded-xl bg-gray-200 flex items-center justify-center text-charcoal/50">
+      <div className={`w-full ${heightClass} rounded-xl bg-gray-200 flex items-center justify-center text-charcoal/50`}>
         Loading map...
       </div>
     );
   }
 
-  return <MapInner />;
+  return <MapInner heightClass={heightClass} />;
 }
 
-function MapInner() {
+function MapInner({ heightClass }: { heightClass: string }) {
   /* eslint-disable @typescript-eslint/no-var-requires */
-  const { MapContainer, TileLayer, Marker, Popup } = require("react-leaflet");
+  const { MapContainer, TileLayer, CircleMarker, Popup } = require("react-leaflet");
   const L = require("leaflet");
+  const bounds = NEIGHBORHOODS.map((n) => [n.lat, n.lng]);
 
   useEffect(() => {
     // Fix default marker icons for Leaflet in Next.js
@@ -44,17 +51,27 @@ function MapInner() {
         crossOrigin=""
       />
       <MapContainer
-        center={[38.8816, -77.091]}
-        zoom={13}
+        bounds={bounds}
+        boundsOptions={{ padding: [28, 28] }}
         scrollWheelZoom={false}
-        className="w-full h-[400px] md:h-[500px] rounded-xl z-0"
+        className={`w-full ${heightClass} rounded-xl z-0`}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         {NEIGHBORHOODS.map((n) => (
-          <Marker key={n.name} position={[n.lat, n.lng]}>
+          <CircleMarker
+            key={n.name}
+            center={[n.lat, n.lng]}
+            radius={8}
+            pathOptions={{
+              color: "#1f3152",
+              weight: 2,
+              fillColor: "#c79a3a",
+              fillOpacity: 0.9,
+            }}
+          >
             <Popup>
               <strong>{n.name}</strong>
               <br />
@@ -65,7 +82,7 @@ function MapInner() {
                 Book in {n.name}
               </a>
             </Popup>
-          </Marker>
+          </CircleMarker>
         ))}
       </MapContainer>
     </>

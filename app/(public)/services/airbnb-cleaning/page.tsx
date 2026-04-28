@@ -8,7 +8,7 @@ const URL = "https://capitolshinecleaners.com/services/airbnb-cleaning";
 export const metadata: Metadata = {
   title: "Airbnb Cleaning Service — Arlington, VA | Capitol Shine",
   description:
-    "Same-day Airbnb and short-term rental turnover cleaning in Arlington, VA. Flat-rate pricing by bedroom count starting at $85. Linen service available.",
+    "Same-day Airbnb and short-term rental turnover cleaning in Arlington, VA. Flat-rate pricing by bedroom count starting at $95. Linen service available.",
   openGraph: {
     title: "Airbnb & Short-Term Rental Cleaning in Arlington, VA | Capitol Shine",
     description:
@@ -39,7 +39,7 @@ const whyHostsChoose = [
 const faqs = [
   {
     q: "How much does Airbnb cleaning cost in Arlington?",
-    a: "Our Airbnb turnover pricing is flat-rate by bedroom count, starting at $85 for studios. Most 2-bedroom Arlington units fall around $135-$165. Linen service is an optional add-on.",
+    a: "Our Airbnb turnover pricing is flat-rate by bedroom count, starting at $95 for studios. Most 2-bedroom Arlington units fall around $145-$180 depending on linen needs. Linen service is an optional add-on.",
   },
   {
     q: "Can you handle same-day turnovers?",
@@ -80,7 +80,7 @@ export default function AirbnbCleaningPage() {
             description:
               "Same-day Airbnb and short-term rental turnover cleaning in Arlington and Northern Virginia. Flat-rate pricing by bedroom count.",
             url: URL,
-            offers: { "@type": "Offer", priceCurrency: "USD", price: "85" },
+            offers: { "@type": "Offer", priceCurrency: "USD", price: "95" },
           }),
         }}
       />
@@ -99,102 +99,114 @@ export default function AirbnbCleaningPage() {
         }}
       />
 
-      <div className="bg-off-white min-h-screen">
-        <section className="bg-navy py-16 md:py-20">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div className="inline-flex items-center gap-2 bg-white/10 text-white/70 text-xs font-medium px-3 py-1.5 rounded-full mb-6">
-              Arlington &amp; Northern Virginia
-            </div>
-            <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight mb-4">
-              Airbnb Cleaning Service in Arlington, VA
-            </h1>
-            <p className="text-white/70 text-lg max-w-2xl mx-auto">
-              Same-day turnovers your guests will notice. Flat-rate pricing, linen service available, and the
-              reliability hosts need to protect their reviews.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center mt-8">
-              <Link
-                href="/book?service=airbnb"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-gold text-navy text-sm font-semibold hover:bg-gold/90 transition-colors"
-              >
-                Book Turnover
-              </Link>
-              <Link
-                href="/pricing?service=airbnb"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-white/20 text-white text-sm font-medium hover:border-white/50 transition-colors"
-              >
-                See Pricing
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-          <h2 className="font-display text-2xl md:text-3xl font-bold text-navy mb-6">
-            What every turnover includes
-          </h2>
-          <p className="text-charcoal/70 mb-8 max-w-2xl">
-            Built for hosts who don&apos;t have time to micromanage. Each turnover follows a repeatable
-            scope designed to protect your reviews and keep your calendar moving.
+      {/* Hero */}
+      <section className="bg-paper border-b border-navy/8 py-10 md:py-14">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <nav aria-label="Breadcrumb" className="mb-5">
+            <ol className="flex items-center gap-2 text-xs text-muted font-medium">
+              <li><Link href="/" className="hover:text-navy transition-colors">Home</Link></li>
+              <li className="text-navy/30">/</li>
+              <li><Link href="/services" className="hover:text-navy transition-colors">Services</Link></li>
+              <li className="text-navy/30">/</li>
+              <li className="text-charcoal">Airbnb Cleaning</li>
+            </ol>
+          </nav>
+          <p className="text-gold text-xs font-semibold uppercase tracking-widest mb-3">Arlington & Northern Virginia</p>
+          <h1 className="font-display text-4xl md:text-5xl text-ink font-light tracking-tight leading-none">
+            Airbnb cleaning service<br />
+            <em className="italic">in Arlington, VA.</em>
+          </h1>
+          <p className="mt-4 text-muted text-base leading-relaxed max-w-xl">
+            Same-day turnovers your guests will notice. Flat-rate pricing, linen service available,
+            and the reliability hosts need to protect their reviews.
           </p>
-          <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {whatsIncluded.map((item) => (
-              <li key={item} className="flex items-start gap-2 text-sm text-charcoal/80">
-                <CheckCircle2 size={16} className="text-cta-green flex-shrink-0 mt-0.5" />
+          <div className="mt-8 flex flex-col sm:flex-row gap-3">
+            <Link
+              href="/pricing?service=airbnb"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-navy text-white text-sm font-semibold hover:bg-navy/90 transition-colors"
+            >
+              Get Turnover Quote
+            </Link>
+            <Link
+              href="/pricing?service=airbnb"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-navy/15 text-navy text-sm font-medium hover:border-navy/30 transition-colors"
+            >
+              See Pricing
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* What's included */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+        <h2 className="font-display text-2xl md:text-3xl text-ink font-light tracking-tight mb-6">
+          What every turnover includes
+        </h2>
+        <p className="text-muted mb-8 max-w-2xl">
+          Built for hosts who don&apos;t have time to micromanage. Each turnover follows a repeatable
+          scope designed to protect your reviews and keep your calendar moving.
+        </p>
+        <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {whatsIncluded.map((item) => (
+            <li key={item} className="flex items-start gap-2 text-sm text-charcoal/80">
+              <CheckCircle2 size={16} className="text-green flex-shrink-0 mt-0.5" />
+              {item}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* Why hosts choose */}
+      <section className="bg-white border-y border-navy/8 py-14">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="font-display text-2xl md:text-3xl text-ink font-light tracking-tight mb-6">
+            Why NoVA hosts choose us
+          </h2>
+          <ul className="space-y-3">
+            {whyHostsChoose.map((item) => (
+              <li key={item} className="flex items-start gap-2 text-charcoal/80">
+                <CheckCircle2 size={18} className="text-green flex-shrink-0 mt-0.5" />
                 {item}
               </li>
             ))}
           </ul>
-        </section>
+        </div>
+      </section>
 
-        <section className="bg-white border-y border-gray-100 py-14">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="font-display text-2xl md:text-3xl font-bold text-navy mb-6">
-              Why NoVA hosts choose us
-            </h2>
-            <ul className="space-y-3">
-              {whyHostsChoose.map((item) => (
-                <li key={item} className="flex items-start gap-2 text-charcoal/80">
-                  <CheckCircle2 size={18} className="text-cta-green flex-shrink-0 mt-0.5" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
+      {/* FAQ */}
+      <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+        <h2 className="font-display text-2xl md:text-3xl text-ink font-light tracking-tight mb-8">
+          Airbnb cleaning FAQs
+        </h2>
+        <FAQAccordion items={faqs} />
+      </section>
 
-        <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-          <h2 className="font-display text-2xl md:text-3xl font-bold text-navy mb-8">
-            Airbnb cleaning FAQs
+      {/* Bottom CTA */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        <div className="bg-ink rounded-2xl p-8 md:p-10 text-center">
+          <h2 className="font-display text-2xl md:text-3xl text-white font-light tracking-tight">
+            Turn your calendar over,<br />
+            <em className="italic">stress-free.</em>
           </h2>
-          <FAQAccordion items={faqs} />
-        </section>
-
-        <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-          <div className="bg-navy rounded-2xl p-8 md:p-10 text-center">
-            <h2 className="font-display text-2xl font-bold text-white mb-2">
-              Turn your calendar over, stress-free.
-            </h2>
-            <p className="text-white/60 mb-6 max-w-sm mx-auto text-sm">
-              Set up recurring turnovers in 60 seconds. First clean gets you a same-day response.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link
-                href="/book?service=airbnb"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-gold text-navy text-sm font-semibold hover:bg-gold/90 transition-colors"
-              >
-                Book Turnover
-              </Link>
-              <a
-                href="tel:+17033759132"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-white/20 text-white text-sm font-medium hover:border-white/50 transition-colors"
-              >
-                Call (703) 375-9132
-              </a>
-            </div>
+          <p className="text-white/60 mt-3 mb-6 max-w-sm mx-auto text-sm">
+            Set up recurring turnovers in 60 seconds. First clean gets you a same-day response.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
+              href="/pricing?service=airbnb"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gold text-navy text-sm font-semibold hover:bg-gold/90 transition-colors"
+            >
+              Get Turnover Quote
+            </Link>
+            <a
+              href="tel:+17033759132"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/20 text-white text-sm font-medium hover:border-white/40 transition-colors"
+            >
+              Call (703) 375-9132
+            </a>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
     </>
   );
 }

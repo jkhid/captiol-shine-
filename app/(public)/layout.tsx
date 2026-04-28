@@ -1,5 +1,6 @@
 import Navbar from "@/components/nav/Navbar";
 import Footer from "@/components/nav/Footer";
+import StickyCTA from "@/components/nav/StickyCTA";
 
 const localBusinessSchema = {
   "@context": "https://schema.org",
@@ -14,19 +15,6 @@ const localBusinessSchema = {
   "image": "https://capitolshinecleaners.com/updated_logo.png",
   "priceRange": "$$",
   "openingHours": "Mo-Su 00:00-23:59",
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "1805 Key Blvd",
-    "addressLocality": "Arlington",
-    "addressRegion": "VA",
-    "postalCode": "22201",
-    "addressCountry": "US",
-  },
-  "geo": {
-    "@type": "GeoCoordinates",
-    "latitude": 38.8948,
-    "longitude": -77.0845,
-  },
   "areaServed": [
     { "@type": "City", "name": "Arlington", "sameAs": "https://en.wikipedia.org/wiki/Arlington,_Virginia" },
     { "@type": "City", "name": "McLean",    "sameAs": "https://en.wikipedia.org/wiki/McLean,_Virginia" },
@@ -57,6 +45,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
       <Navbar />
       <main className="min-h-screen">{children}</main>
       <Footer />
+      <StickyCTA />
     </>
   );
 }

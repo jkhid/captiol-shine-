@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import Hero from "@/components/home/Hero";
-import HowItWorks from "@/components/home/HowItWorks";
 import ServicesGrid from "@/components/home/ServicesGrid";
+import HowItWorks from "@/components/home/HowItWorks";
+import Reviews from "@/components/home/Reviews";
 import WhyUs from "@/components/home/WhyUs";
 import CTABanner from "@/components/home/CTABanner";
+
+const URL = "https://capitolshinecleaners.com";
 
 export const metadata: Metadata = {
   title: "House Cleaning Service in Arlington, VA | Capitol Shine",
@@ -13,16 +16,18 @@ export const metadata: Metadata = {
     title: "House Cleaning Service in Arlington, VA | Capitol Shine",
     description:
       "Arlington's trusted house cleaning service. Transparent pricing, eco-friendly, licensed & insured.",
-    url: "https://capitolshinecleaners.com",
+    url: URL,
   },
+  alternates: { canonical: URL },
 };
 
 export default function HomePage() {
   return (
     <>
       <Hero />
-      <HowItWorks />
       <ServicesGrid />
+      <HowItWorks />
+      <Reviews />
       <WhyUs />
       <CTABanner />
     </>

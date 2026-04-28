@@ -3,6 +3,8 @@ import Link from "next/link";
 import { getPublishedPosts } from "@/lib/blog";
 import { Calendar, Clock, ArrowRight } from "lucide-react";
 
+const URL = "https://capitolshinecleaners.com/blog";
+
 export const metadata: Metadata = {
   title: "Cleaning Tips & Guides — Capitol Shine",
   description:
@@ -11,8 +13,9 @@ export const metadata: Metadata = {
     title: "Cleaning Tips & Guides | Capitol Shine",
     description:
       "Practical cleaning advice for homeowners, renters, and businesses in Arlington and Northern Virginia.",
-    url: "https://capitolshinecleaners.com/blog",
+    url: URL,
   },
+  alternates: { canonical: URL },
 };
 
 function formatDate(dateStr: string) {

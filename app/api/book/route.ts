@@ -17,11 +17,12 @@ const BookingSchema = z.object({
   address:      z.string().min(5).max(200),
   unit:         z.string().max(20).optional(),
   neighborhood: z.string().max(80).optional(),
-  service:      z.enum(["standard", "deep", "moveinout", "airbnb"]),
+  service:      z.enum(["standard", "deep", "moveinout"]),
   homeType:     z.string().max(40).optional(),
   bedrooms:     z.number().int().min(0).max(20),
   bathrooms:    z.string().max(10).optional(),
   sqft:         z.string().max(20).optional(),
+  heavyDuty:    z.boolean().optional(),
   frequency:    z.string().max(20).optional(),
   date:         z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   timeWindow:   z.string().max(20).optional(),
@@ -87,7 +88,18 @@ export async function POST(req: NextRequest) {
   }
 
   // Server-side price computation — never trust client-supplied price
-  const price = Math.max(0, estimatePrice(body.service, body.bedrooms, body.frequency ?? "one-time", addOns) - promoDiscount);
+  const price = Math.max(
+    0,
+    estimatePrice(
+      body.service,
+      body.bedrooms,
+      body.frequency ?? "one-time",
+      addOns,
+      body.bathrooms ?? "1",
+      body.sqft ?? null,
+      body.heavyDuty ?? false,
+    ) - promoDiscount,
+  );
 
   // 1. Save booking to Supabase
   const { data, error } = await supabaseAdmin

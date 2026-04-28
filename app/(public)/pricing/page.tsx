@@ -10,24 +10,24 @@ import PricingFAQ from "@/components/pricing/FAQ";
 
 const SERVICE_META: Record<string, { title: string; description: string }> = {
   residential: {
-    title: "Residential Cleaning Prices — Arlington, VA",
+    title: "House Cleaning Prices — Arlington, VA | Capitol Shine",
     description:
-      "Flat-rate house cleaning in Arlington, VA. Standard cleans from $119, deep cleans from $249. No contracts, no hidden fees. Book online in 60 seconds.",
+      "Transparent house cleaning prices in Arlington, VA. Standard cleans from $150, deep cleans from $240, move-in/out from $300. No hidden fees, no contracts. Book online in 60 seconds.",
   },
   airbnb: {
-    title: "Airbnb & Short-Term Rental Cleaning — Arlington, VA",
+    title: "Airbnb & Short-Term Rental Cleaning — Arlington, VA | Capitol Shine",
     description:
-      "Same-day Airbnb and vacation rental turnover cleaning in Arlington and Northern Virginia. Flat-rate pricing by bedroom count, starting at $85.",
+      "Same-day Airbnb and vacation rental turnover cleaning in Arlington and Northern Virginia. Reliable, consistent turnovers your guests will notice. Request a rate today.",
   },
   commercial: {
-    title: "Commercial Office Cleaning — Arlington & Northern Virginia",
+    title: "Commercial Office Cleaning — Arlington & Northern Virginia | Capitol Shine",
     description:
-      "Recurring office and retail cleaning in Arlington, VA. Weekly and 2x-per-week rates. Free walk-through estimate. Flexible scheduling including after hours.",
+      "Recurring office and retail cleaning in Arlington, VA. Free walk-through estimate, flexible scheduling including after hours. No long-term contracts.",
   },
   construction: {
-    title: "Post-Construction Cleaning — Arlington & Northern Virginia",
+    title: "Post-Construction Cleaning — Arlington & Northern Virginia | Capitol Shine",
     description:
-      "Post-construction cleanup in Northern Virginia. Rough clean, final clean, and touch-up before owner walkthrough. All jobs quoted on-site.",
+      "Post-construction cleanup in Northern Virginia. Rough clean, final clean, and touch-up before owner walkthrough. Free on-site estimate within 24–48 hours.",
   },
 };
 
@@ -44,37 +44,69 @@ export async function generateMetadata({
   return {
     title,
     description,
-    openGraph: { title: `${title} | Capitol Shine`, description, url },
+    alternates: { canonical: url },
+    openGraph: { title, description, url },
   };
 }
 
 const TABS = [
   { key: "residential",  label: "Residential",   icon: Home,      description: "Standard, Deep & Move-In/Out" },
-  { key: "commercial",   label: "Commercial",     icon: Briefcase, description: "Offices & retail spaces" },
   { key: "airbnb",       label: "Airbnb / STR",   icon: Building2, description: "Turnover cleaning for hosts" },
+  { key: "commercial",   label: "Commercial",     icon: Briefcase, description: "Offices & retail spaces" },
   { key: "construction", label: "Construction",   icon: HardHat,   description: "Post-build & renovation" },
 ] as const;
 
 type ServiceKey = typeof TABS[number]["key"];
 
-const HERO_COPY: Record<ServiceKey, { heading: string; sub: string }> = {
+const HERO_COPY: Record<ServiceKey, { eyebrow: string; heading: string; sub: string }> = {
   residential: {
-    heading: "Simple, transparent pricing.",
-    sub: "No hidden fees. No estimates needed. Pick your home size and service — your price is right here.",
+    eyebrow: "Residential cleaning",
+    heading: "Transparent pricing.\nNo surprises.",
+    sub: "Pick your home size and service type — your price is right here. No estimates needed, no hidden fees.",
   },
   airbnb: {
-    heading: "Airbnb & short-term rental cleaning.",
-    sub: "Consistent, same-day turnovers your guests will notice. Flat-rate pricing by bedroom count.",
+    eyebrow: "Airbnb & short-term rentals",
+    heading: "5-star turnovers,\nevery time.",
+    sub: "Same-day turnovers your guests will notice. Flat-rate estimates below — confirmed after a quick property review.",
   },
   commercial: {
-    heading: "Commercial cleaning for Northern Virginia.",
+    eyebrow: "Commercial cleaning",
+    heading: "Professional spaces.\nProfessional clean.",
     sub: "Recurring office and retail cleaning at competitive rates. Free walk-through before we start.",
   },
   construction: {
-    heading: "Post-construction cleanup done right.",
-    sub: "Rough clean, final clean, or touch-up — we work around your schedule. All jobs quoted on-site.",
+    eyebrow: "Post-construction",
+    heading: "Move-in ready.\nNot a speck of dust.",
+    sub: "Specialized cleanup for new builds and renovations. Every project quoted on-site — no guesswork.",
   },
 };
+
+// Service JSON-LD schema
+function serviceSchema(service: ServiceKey) {
+  const labels: Record<ServiceKey, string> = {
+    residential: "Residential House Cleaning",
+    airbnb: "Airbnb & Short-Term Rental Cleaning",
+    commercial: "Commercial Office Cleaning",
+    construction: "Post-Construction Cleaning",
+  };
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: labels[service],
+    serviceType: labels[service],
+    provider: {
+      "@type": "LocalBusiness",
+      "@id": "https://capitolshinecleaners.com",
+      name: "Capitol Shine",
+    },
+    areaServed: [
+      { "@type": "City", name: "Arlington, VA" },
+      { "@type": "City", name: "Alexandria, VA" },
+      { "@type": "City", name: "McLean, VA" },
+    ],
+    url: `https://capitolshinecleaners.com/pricing${service !== "residential" ? `?service=${service}` : ""}`,
+  };
+}
 
 export default function PricingPage({
   searchParams,
@@ -86,33 +118,55 @@ export default function PricingPage({
       ? (searchParams.service as ServiceKey)
       : "residential";
 
-  const { heading, sub } = HERO_COPY[service];
+  const { eyebrow, heading, sub } = HERO_COPY[service];
+  const headingLines = heading.split("\n");
 
   return (
     <>
-      {/* Hero + tab strip */}
-      <section className="bg-off-white py-16 md:py-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema(service)) }}
+      />
+
+      {/* Page header */}
+      <section className="bg-paper py-14 md:py-20 border-b border-navy/8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-2xl mx-auto text-center mb-10">
-            <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-navy">
-              {heading}
+
+          {/* Breadcrumb */}
+          <nav aria-label="Breadcrumb" className="mb-6">
+            <ol className="flex items-center gap-2 text-xs text-muted font-medium">
+              <li><Link href="/" className="hover:text-navy transition-colors">Home</Link></li>
+              <li className="text-navy/30">/</li>
+              <li className="text-charcoal">Pricing</li>
+            </ol>
+          </nav>
+
+          <div className="max-w-3xl">
+            <p className="text-gold text-xs font-semibold uppercase tracking-widest mb-4">{eyebrow}</p>
+            <h1 className="font-display text-5xl md:text-6xl text-ink font-light tracking-tight leading-none">
+              {headingLines.map((line, i) => (
+                <span key={i}>
+                  {i === 1 ? <em className="italic">{line}</em> : line}
+                  {i < headingLines.length - 1 && <br />}
+                </span>
+              ))}
             </h1>
-            <p className="mt-4 text-lg text-charcoal/70">{sub}</p>
+            <p className="mt-5 text-lg text-muted leading-relaxed max-w-xl">{sub}</p>
           </div>
 
-          {/* Service tab strip */}
-          <div className="flex flex-wrap justify-center gap-3">
+          {/* Service tabs */}
+          <div className="mt-10 flex flex-wrap gap-2">
             {TABS.map(({ key, label, icon: Icon }) => (
               <Link
                 key={key}
                 href={`/pricing?service=${key}`}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all border ${
                   service === key
-                    ? "bg-navy text-white shadow-md"
-                    : "bg-gray-100 text-charcoal hover:bg-gray-200"
+                    ? "bg-navy text-white border-navy"
+                    : "bg-white text-charcoal border-navy/12 hover:border-navy/30"
                 }`}
               >
-                <Icon size={15} />
+                <Icon size={14} />
                 {label}
               </Link>
             ))}
@@ -123,7 +177,7 @@ export default function PricingPage({
       {/* Tab content */}
       {service === "residential" && (
         <>
-          <section className="py-16">
+          <section className="py-16 md:py-20">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <PricingCalculator />
             </div>

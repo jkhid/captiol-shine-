@@ -1,39 +1,107 @@
-import Card from "@/components/ui/Card";
-import Button from "@/components/ui/Button";
-import { AIRBNB_PRICING, AIRBNB_LINEN_ADDON } from "@/lib/pricing-data";
-import SectionWrapper from "@/components/ui/SectionWrapper";
+import { AIRBNB_PRICING } from "@/lib/pricing-data";
+import QuoteRequestForm from "./QuoteRequestForm";
+
+const PROCESS_STEPS = [
+  {
+    title: "Tell us about your property",
+    subtitle: "Quick form, takes 2 minutes",
+    description:
+      "Share your unit size, location, average turnover frequency, and whether you need linen service. We'll respond within a few hours.",
+  },
+  {
+    title: "Lock in your rate",
+    subtitle: "Firm pricing — no surprises",
+    description:
+      "We confirm your per-turnover rate based on the property and add any extras you need. Hosts with multiple properties or weekly turnovers get priority scheduling.",
+  },
+  {
+    title: "Same-day turnovers, on autopilot",
+    subtitle: "Reliable, consistent, on-time",
+    description:
+      "Book turnovers as needed via our scheduling link. We treat back-to-back guest days as a priority and confirm completion with photos on request.",
+  },
+];
 
 export default function AirbnbPricing() {
   return (
-    <SectionWrapper className="py-16 bg-off-white">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="font-display text-2xl md:text-3xl font-bold text-navy mb-2">
-          Airbnb / Short-Term Rental
-        </h2>
-        <p className="text-charcoal/70 mb-8">
-          Turnover cleaning with same-day availability. Consistent quality your guests will notice.
-        </p>
-        <Card className="max-w-xl">
-          <div className="space-y-3 mb-6">
-            {AIRBNB_PRICING.map((tier) => (
+    <div className="py-16 md:py-20">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        {/* Estimated pricing table */}
+        <section className="mb-14">
+          <div className="max-w-2xl mb-6">
+            <h2 className="font-display text-3xl text-ink font-light tracking-tight mb-2">
+              Estimated turnover rates
+            </h2>
+            <p className="text-muted text-sm leading-relaxed">
+              Starting rates — we confirm your exact per-turnover rate after a quick property review.
+              Hosts with frequent turnovers may qualify for a discounted rate.
+            </p>
+          </div>
+          <div className="bg-white rounded-2xl border border-navy/8 overflow-hidden">
+            <table className="w-full text-sm">
+              <caption className="sr-only">Airbnb turnover cleaning rates by unit size</caption>
+              <thead>
+                <tr className="bg-paper border-b border-navy/8 text-left">
+                  <th className="px-5 py-3.5 text-xs font-semibold uppercase tracking-wider text-muted">Unit size</th>
+                  <th className="px-5 py-3.5 text-xs font-semibold uppercase tracking-wider text-muted text-right">Turnover</th>
+                  <th className="px-5 py-3.5 text-xs font-semibold uppercase tracking-wider text-muted text-right">Linen add-on</th>
+                  <th className="px-5 py-3.5 text-xs font-semibold uppercase tracking-wider text-muted text-right">With linen</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-navy/6">
+                {AIRBNB_PRICING.map((tier) => (
+                  <tr key={tier.key} className="hover:bg-paper/60 transition-colors">
+                    <td className="px-5 py-4 font-medium text-charcoal">{tier.name}</td>
+                    <td className="px-5 py-4 text-right font-semibold text-navy">${tier.turnover}</td>
+                    <td className="px-5 py-4 text-right text-muted">+${tier.linenAddOn}</td>
+                    <td className="px-5 py-4 text-right font-semibold text-navy">${tier.turnover + tier.linenAddOn}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        {/* How it works */}
+        <section className="mb-14">
+          <h2 className="font-display text-3xl text-ink font-light tracking-tight mb-2">
+            How it works
+          </h2>
+          <p className="text-muted text-sm mb-8">
+            Built for hosts running properties in Arlington and the broader Northern Virginia / DC area.
+          </p>
+          <div className="flex flex-col gap-4">
+            {PROCESS_STEPS.map((step, i) => (
               <div
-                key={tier.name}
-                className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0"
+                key={step.title}
+                className="bg-white rounded-2xl border border-navy/8 p-5 flex items-start gap-4"
               >
-                <span className="font-medium">{tier.name}</span>
-                <span className="text-xl font-bold text-navy">${tier.price}</span>
+                <span className="w-8 h-8 rounded-full bg-navy text-white text-sm font-semibold flex items-center justify-center flex-shrink-0 mt-0.5">
+                  {i + 1}
+                </span>
+                <div>
+                  <p className="font-semibold text-navy text-sm">{step.title}</p>
+                  <p className="text-xs text-muted mb-1.5">{step.subtitle}</p>
+                  <p className="text-sm text-muted leading-relaxed">{step.description}</p>
+                </div>
               </div>
             ))}
-            <div className="flex items-center justify-between py-2 text-charcoal/70">
-              <span>Linen service add-on</span>
-              <span className="font-semibold">+${AIRBNB_LINEN_ADDON}</span>
-            </div>
           </div>
-          <Button href="/book" variant="green" className="w-full">
-            Set Up Recurring Turnovers
-          </Button>
-        </Card>
+        </section>
+
+        {/* Quote form */}
+        <section className="bg-white rounded-2xl border border-navy/8 p-6 md:p-8 max-w-2xl">
+          <h2 className="font-display text-2xl text-ink font-light tracking-tight mb-1">
+            Set up turnover service
+          </h2>
+          <p className="text-sm text-muted mb-6">
+            Tell us about your property and we&apos;ll confirm your rate within a few hours.
+          </p>
+          <QuoteRequestForm serviceType="airbnb" />
+        </section>
+
       </div>
-    </SectionWrapper>
+    </div>
   );
 }

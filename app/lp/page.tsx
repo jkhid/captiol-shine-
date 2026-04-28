@@ -10,15 +10,16 @@ import CallButton from "@/components/lp/CallButton";
 import SaveOfferButton from "@/components/lp/SaveOfferButton";
 import PricingCalculator from "@/components/pricing/PricingCalculator";
 import { FAQAccordion } from "@/components/pricing/FAQ";
+import { CUSTOMER_REVIEWS } from "@/lib/reviews";
 
 export const metadata: Metadata = {
-  title: "House Cleaning in Northern Virginia — From $119 | Capitol Shine",
+  title: "House Cleaning in Northern Virginia — From $120 Weekly | Capitol Shine",
   description:
-    "5.0-rated house cleaning across Arlington, McLean, Alexandria & Northern Virginia. Flat-rate from $119. Pay only after we're done. 24-hour re-clean promise. Book in 60 seconds.",
+    "5.0-rated house cleaning across Arlington, McLean, Alexandria & Northern Virginia. Flat-rate recurring cleaning from $120 weekly and one-time cleans from $150. Pay only after we're done. Book in 60 seconds.",
   openGraph: {
-    title: "House Cleaning in Northern Virginia — From $119 | Capitol Shine",
+    title: "House Cleaning in Northern Virginia — From $120 Weekly | Capitol Shine",
     description:
-      "5.0-rated cleaning across Northern Virginia. Flat-rate from $119. Pay only after we're done. 24-hour re-clean promise.",
+      "5.0-rated cleaning across Northern Virginia. Flat-rate recurring cleaning from $120 weekly and one-time cleans from $150.",
     url: "https://capitolshinecleaners.com/lp",
     images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Capitol Shine — House Cleaning in Northern Virginia" }],
   },
@@ -109,23 +110,7 @@ const SERVICES = [
   },
 ];
 
-const TESTIMONIALS = [
-  {
-    name: "Joshua Kwok",
-    location: "Google Review",
-    body: "They arrived right on time, were super professional and friendly, and left my house sparkling clean from top to bottom. Every surface, floor, and even the hard-to-reach spots were spotless. I've tried a few services before, but this one is by far the best.",
-  },
-  {
-    name: "Eren Y.",
-    location: "Google Review",
-    body: "Hired Jay and Capitol Shine for a deep clean before we moved out. The kitchen and bathrooms looked brand new. Amazing communication, easy to book, and fair pricing. Really recommend their services!",
-  },
-  {
-    name: "Dr Prop",
-    location: "Google Review",
-    body: "Capitol Shine handled my weekly cleaning in Arlington and took care of my move-out deep clean when I had to relocate. Great to work with and always made my place spotless!",
-  },
-];
+const TESTIMONIALS = [CUSTOMER_REVIEWS[0], CUSTOMER_REVIEWS[1], CUSTOMER_REVIEWS[3]];
 
 const BEFORE_AFTER = [
   { room: "Living Room", before: "/before-after/Living_Room_Before.jpg", after: "/before-after/Living_Room_After.jpg" },
@@ -160,13 +145,6 @@ export default function LandingPage() {
             name: "Capitol Shine",
             telephone: PHONE,
             url: "https://capitolshinecleaners.com",
-            address: {
-              "@type": "PostalAddress",
-              streetAddress: "1805 Key Blvd",
-              addressLocality: "Arlington",
-              addressRegion: "VA",
-              postalCode: "22201",
-            },
             aggregateRating: {
               "@type": "AggregateRating",
               ratingValue: "5.0",
@@ -206,7 +184,7 @@ export default function LandingPage() {
               Spotless homes across<br className="hidden sm:block" /> Northern Virginia.
             </h1>
             <p className="text-gray-300 text-lg md:text-xl max-w-xl mx-auto mb-10">
-              Flat-rate cleaning from <span className="text-white font-semibold">$119</span>. 5.0 on Google, licensed & insured, same team every visit — and you pay only after we&apos;re done.
+              Flat-rate recurring cleaning from <span className="text-white font-semibold">$120 weekly</span>, with one-time cleans from $150. 5.0 on Google, licensed & insured, same team every visit — and you pay only after we&apos;re done.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-5">
@@ -420,14 +398,14 @@ export default function LandingPage() {
               {TESTIMONIALS.map((t) => (
                 <div key={t.name} className="bg-white/5 border border-white/10 rounded-xl p-6">
                   <div className="flex mb-3">
-                    {[...Array(5)].map((_, i) => (
+                    {[...Array(t.rating)].map((_, i) => (
                       <Star key={i} size={14} className="text-gold fill-gold" />
                     ))}
                   </div>
-                  <p className="text-white/80 text-sm leading-relaxed mb-4">&ldquo;{t.body}&rdquo;</p>
+                  <p className="text-white/80 text-sm leading-relaxed mb-4">&ldquo;{t.text}&rdquo;</p>
                   <div className="text-xs text-white/40">
                     <p className="font-semibold text-white/60">{t.name}</p>
-                    <p>{t.location}</p>
+                    <p>{t.serviceLabel} · {t.source}</p>
                   </div>
                 </div>
               ))}

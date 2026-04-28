@@ -9,7 +9,8 @@
     scroll-behavior: smooth;
   }
   body {
-    @apply text-charcoal bg-white;
+    @apply text-charcoal;
+    background-color: #fbf8f3;
   }
 }
 

@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 
+const URL = "https://capitolshinecleaners.com/terms";
+
 export const metadata: Metadata = {
   title: "Terms of Service",
   description: "Capitol Shine service terms, cancellation policy, and satisfaction guarantee.",
+  alternates: { canonical: URL },
 };
 
 const sections = [
@@ -145,9 +148,9 @@ For recurring service plan clients, material changes to these Terms will be comm
     content: `If you have questions about these Terms, please contact us at:
 
 Capitol Home Services LLC
-1805 Key Blvd, Arlington, VA 22201
+Arlington, VA service area
 (703) 375-9132
-capitolhomeservices1@gmail.com`,
+hello@capitolshinecleaners.com`,
   },
 ];
 

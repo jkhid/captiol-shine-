@@ -21,6 +21,7 @@ export async function generateMetadata({
   return {
     title: `${post.title} — Capitol Shine`,
     description: post.description,
+    alternates: { canonical: url },
     openGraph: {
       title: post.title,
       description: post.description,

@@ -2,42 +2,64 @@ import Link from "next/link";
 import Logo from "@/components/ui/Logo";
 import { COMPANY } from "@/lib/constants";
 import { NEIGHBORHOODS } from "@/lib/neighborhoods";
-import { Phone, Mail, Shield } from "lucide-react";
+import { Phone, Mail } from "lucide-react";
 
-const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/pricing", label: "Services & Pricing" },
-  { href: "/areas", label: "Service Areas" },
+const SERVICE_LINKS = [
+  { href: "/pricing?service=residential",  label: "Residential Cleaning" },
+  { href: "/pricing?service=airbnb",       label: "Airbnb & STR" },
+  { href: "/pricing?service=commercial",   label: "Commercial" },
+  { href: "/pricing?service=construction", label: "Post-Construction" },
+  { href: "/checklists",                   label: "Cleaning Checklists" },
+];
+
+const COMPANY_LINKS = [
+  { href: "/areas",     label: "Service Areas" },
   { href: "/referrals", label: "Referral Program" },
-  { href: "/book", label: "Book Now" },
+  { href: "/blog",      label: "Blog" },
+  { href: "/book",      label: "Book a Cleaning" },
 ];
 
 export default function Footer() {
   return (
-    <footer className="bg-navy text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+    <footer className="bg-ink text-white/60 border-t border-white/7">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
+
           {/* Brand */}
           <div>
-            <Logo className="[&_span]:text-white [&_.text-gold]:text-gold" />
-            <p className="mt-3 text-sm text-gray-300">{COMPANY.tagline}</p>
-            <div className="mt-4 space-y-2 text-sm text-gray-300">
-              <a href={`tel:${COMPANY.phone}`} className="flex items-center gap-2 hover:text-gold transition-colors">
-                <Phone size={14} /> {COMPANY.phone}
+            <Logo className="[&_span]:text-white [&_.text-gold]:text-gold mb-4" />
+            <p className="text-sm text-white/50 leading-relaxed mb-5">{COMPANY.tagline}</p>
+            <div className="space-y-2 text-sm">
+              <a href={`tel:${COMPANY.phone}`} className="flex items-center gap-2 hover:text-gold-2 transition-colors">
+                <Phone size={13} /> {COMPANY.phone}
               </a>
-              <a href={`mailto:${COMPANY.email}`} className="flex items-center gap-2 hover:text-gold transition-colors">
-                <Mail size={14} /> {COMPANY.email}
+              <a href={`mailto:${COMPANY.email}`} className="flex items-center gap-2 hover:text-gold-2 transition-colors">
+                <Mail size={13} /> {COMPANY.email}
               </a>
             </div>
           </div>
 
-          {/* Navigation */}
+          {/* Services */}
           <div>
-            <h3 className="font-semibold mb-4">Navigation</h3>
-            <ul className="space-y-2 text-sm text-gray-300">
-              {navLinks.map((link) => (
+            <h5 className="text-white text-xs font-semibold uppercase tracking-widest mb-4">Services</h5>
+            <ul className="space-y-2.5 text-sm">
+              {SERVICE_LINKS.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="hover:text-gold transition-colors">
+                  <Link href={link.href} className="hover:text-gold-2 transition-colors">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Company */}
+          <div>
+            <h5 className="text-white text-xs font-semibold uppercase tracking-widest mb-4">Company</h5>
+            <ul className="space-y-2.5 text-sm">
+              {COMPANY_LINKS.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} className="hover:text-gold-2 transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -47,29 +69,21 @@ export default function Footer() {
 
           {/* Service Areas */}
           <div>
-            <h3 className="font-semibold mb-4">Service Areas</h3>
-            <ul className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm text-gray-300">
-              {NEIGHBORHOODS.map((n) => (
-                <li key={n.name}>{n.name}</li>
+            <h5 className="text-white text-xs font-semibold uppercase tracking-widest mb-4">Service Areas</h5>
+            <ul className="grid grid-cols-2 gap-x-3 gap-y-2 text-sm">
+              {NEIGHBORHOODS.slice(0, 10).map((n) => (
+                <li key={n.name} className="text-white/45 text-xs">{n.name}</li>
               ))}
             </ul>
-          </div>
-
-          {/* Trust */}
-          <div>
-            <h3 className="font-semibold mb-4">Trust & Safety</h3>
-            <div className="flex items-center gap-2 text-sm text-gray-300 mb-3">
-              <Shield size={16} className="text-gold flex-shrink-0" />
-              Licensed & Insured in Virginia
-            </div>
-            <p className="text-sm text-gray-300">
-              Background-checked team. Eco-friendly products. Satisfaction guaranteed.
-            </p>
+            <Link href="/areas" className="inline-block mt-3 text-xs text-gold hover:text-gold-2 transition-colors font-medium">
+              All areas →
+            </Link>
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-white/10 text-center text-sm text-gray-400">
-          &copy; {new Date().getFullYear()} {COMPANY.name}. All rights reserved.
+        <div className="pt-8 border-t border-white/8 flex flex-wrap justify-between items-center gap-4 text-xs text-white/35">
+          <span>&copy; {new Date().getFullYear()} {COMPANY.name}. All rights reserved.</span>
+          <span>Licensed &amp; insured in Virginia · Arlington, VA</span>
         </div>
       </div>
     </footer>

@@ -50,8 +50,8 @@ function InputField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className={`w-full px-4 py-2.5 rounded-lg border text-sm focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent ${
-          error ? "border-red-300" : "border-gray-200"
+        className={`w-full px-4 py-2.5 rounded-xl border text-sm bg-paper focus:outline-none focus:ring-2 focus:ring-navy/20 focus:border-navy/40 transition-colors ${
+          error ? "border-red-300" : "border-navy/12"
         }`}
       />
       {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
@@ -73,7 +73,7 @@ export default function ContactConfirm({ state, dispatch, price, originalPrice, 
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-bold text-navy mb-6">Contact Info & Confirmation</h2>
+      <h2 className="text-xs font-semibold text-muted uppercase tracking-wider">Contact info & confirmation</h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <InputField
@@ -127,7 +127,7 @@ export default function ContactConfirm({ state, dispatch, price, originalPrice, 
             id="hearAbout"
             value={state.hearAbout}
             onChange={(e) => dispatch({ type: "SET_FIELD", field: "hearAbout", value: e.target.value })}
-            className="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent bg-white"
+            className="w-full px-4 py-2.5 rounded-xl border border-navy/12 bg-paper text-sm focus:outline-none focus:ring-2 focus:ring-navy/20 focus:border-navy/40 transition-colors"
           >
             <option value="">Select...</option>
             {hearAboutOptions.filter(Boolean).map((opt) => (
@@ -157,7 +157,7 @@ export default function ContactConfirm({ state, dispatch, price, originalPrice, 
       </div>
 
       {/* Summary */}
-      <Card className="bg-off-white border-0">
+      <Card className="bg-cream border-0">
         <h3 className="font-bold text-navy mb-3">Booking Summary</h3>
         <div className="space-y-2 text-sm">
           <div className="flex justify-between">
@@ -188,13 +188,13 @@ export default function ContactConfirm({ state, dispatch, price, originalPrice, 
                 <span>Original price</span>
                 <span className="line-through">${originalPrice}</span>
               </div>
-              <div className="flex justify-between text-cta-green">
+              <div className="flex justify-between text-green">
                 <span>Promo (FIRST30)</span>
                 <span className="font-medium">−$30</span>
               </div>
             </>
           )}
-          <div className="pt-2 border-t border-gray-200 space-y-1.5">
+          <div className="pt-2 border-t border-navy/12 space-y-1.5">
             <div className="flex justify-between">
               <span className="font-bold text-navy">
                 {recurringPrice > 0 ? "First clean" : "Estimated Total"}
