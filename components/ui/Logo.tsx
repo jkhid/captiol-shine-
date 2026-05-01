@@ -5,10 +5,10 @@ export default function Logo({ className = "" }: { className?: string }) {
   return (
     <Link href="/" className={`flex items-center gap-2.5 ${className}`} aria-label="Capitol Shine home">
       <Image
-        src="/updated_logo.png"
+        src="/logo-128.png"
         alt=""
-        width={56}
-        height={56}
+        width={128}
+        height={90}
         className="h-14 w-14 object-contain flex-shrink-0"
         priority
       />
