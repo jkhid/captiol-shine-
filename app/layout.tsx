@@ -8,6 +8,7 @@ const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
+  weight: ["400", "500", "600", "700"],
 });
 
 const fraunces = Fraunces({
@@ -15,6 +16,7 @@ const fraunces = Fraunces({
   variable: "--font-fraunces",
   display: "swap",
   style: ["normal", "italic"],
+  weight: ["300", "600", "700"],
 });
 
 export const metadata: Metadata = {
