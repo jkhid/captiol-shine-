@@ -14,7 +14,7 @@ const inter = Inter({
 const fraunces = Fraunces({
   subsets: ["latin"],
   variable: "--font-fraunces",
-  display: "swap",
+  display: "optional",
   style: ["normal", "italic"],
   weight: ["300", "600", "700"],
 });
@@ -67,18 +67,31 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             gtag('config', 'AW-18020726483');
           `}
         </Script>
-        <Script id="meta-pixel" strategy="lazyOnload">
+        <Script id="meta-pixel" strategy="afterInteractive">
           {`
-            !function(f,b,e,v,n,t,s)
-            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-            n.queue=[];t=b.createElement(e);t.async=!0;
-            t.src=v;s=b.getElementsByTagName(e)[0];
-            s.parentNode.insertBefore(t,s)}(window, document,'script',
-            'https://connect.facebook.net/en_US/fbevents.js');
-            fbq('init', '2193863041416882');
-            fbq('track', 'PageView');
+            (function() {
+              var loaded = false;
+              var events = ['scroll','touchstart','click','keydown','mousemove'];
+              function loadPixel() {
+                if (loaded) return;
+                loaded = true;
+                events.forEach(function(e) { window.removeEventListener(e, loadPixel); });
+                !function(f,b,e,v,n,t,s)
+                {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+                n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+                if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+                n.queue=[];t=b.createElement(e);t.async=!0;
+                t.src=v;s=b.getElementsByTagName(e)[0];
+                s.parentNode.insertBefore(t,s)}(window, document,'script',
+                'https://connect.facebook.net/en_US/fbevents.js');
+                fbq('init', '2193863041416882');
+                fbq('track', 'PageView');
+              }
+              events.forEach(function(e) {
+                window.addEventListener(e, loadPixel, { once: true, passive: true });
+              });
+              setTimeout(loadPixel, 5000);
+            })();
           `}
         </Script>
         <noscript>
