@@ -61,5 +61,8 @@
     "twilio": "^5.12.2",
     "typescript": "^5.9.3",
     "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/react-dom": "^19.2.3"
   }
 }

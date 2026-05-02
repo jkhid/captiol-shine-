@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { SERVICE_ITEMS, OTHER_LINKS } from "./nav-data";
@@ -8,24 +9,26 @@ import { SERVICE_ITEMS, OTHER_LINKS } from "./nav-data";
 export default function NavMobileMenu() {
   const [open, setOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
 
   const close = () => {
     setOpen(false);
     setServicesOpen(false);
   };
 
-  return (
-    <>
-      <button
-        className="md:hidden p-2 text-navy"
-        onClick={() => setOpen(!open)}
-        aria-label={open ? "Close menu" : "Open menu"}
-      >
-        {open ? <X size={22} /> : <Menu size={22} />}
-      </button>
-
-      {open && (
-        <div className="md:hidden fixed inset-0 top-[calc(68px+40px)] z-40 bg-paper overflow-y-auto">
+  const drawer = open ? (
+    <div className="md:hidden fixed inset-0 top-[calc(68px+40px)] z-40 bg-paper overflow-y-auto">
           <div className="flex flex-col p-6 gap-1">
             <Link href="/" onClick={close} className="text-base font-medium text-charcoal hover:text-navy py-3 border-b border-navy/8">
               Home
@@ -78,7 +81,18 @@ export default function NavMobileMenu() {
             </Link>
           </div>
         </div>
-      )}
+  ) : null;
+
+  return (
+    <>
+      <button
+        className="md:hidden p-2 text-navy"
+        onClick={() => setOpen(!open)}
+        aria-label={open ? "Close menu" : "Open menu"}
+      >
+        {open ? <X size={22} /> : <Menu size={22} />}
+      </button>
+      {mounted && drawer ? createPortal(drawer, document.body) : null}
     </>
   );
 }
