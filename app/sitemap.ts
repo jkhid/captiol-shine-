@@ -25,6 +25,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/referrals`,                lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
     { url: `${BASE}/privacy`,                  lastModified: new Date(), changeFrequency: "yearly",  priority: 0.2 },
     { url: `${BASE}/terms`,                    lastModified: new Date(), changeFrequency: "yearly",  priority: 0.2 },
+    { url: `${BASE}/service-agreement`,        lastModified: new Date(), changeFrequency: "yearly",  priority: 0.3 },
   ];
 
   const blogRoutes: MetadataRoute.Sitemap = getPublishedPosts().map((post) => ({
