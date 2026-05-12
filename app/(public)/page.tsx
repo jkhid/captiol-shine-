@@ -4,6 +4,7 @@ import ServicesGrid from "@/components/home/ServicesGrid";
 import HowItWorks from "@/components/home/HowItWorks";
 import Reviews from "@/components/home/Reviews";
 import WhyUs from "@/components/home/WhyUs";
+import Gallery from "@/components/home/Gallery";
 import CTABanner from "@/components/home/CTABanner";
 
 const URL = "https://capitolshinecleaners.com";
@@ -27,6 +28,7 @@ export default function HomePage() {
       <Hero />
       <ServicesGrid />
       <HowItWorks />
+      <Gallery />
       <Reviews />
       <WhyUs />
       <CTABanner />
