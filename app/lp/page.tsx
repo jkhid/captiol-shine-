@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import {
-  Phone, Star, Shield, Leaf, Clock, Check,
-  CalendarCheck, Sparkles, Home, Building2, HardHat, Briefcase, ArrowRight,
+  Star, Shield, Leaf, Clock, Check,
+  CalendarCheck, Sparkles, Home, Building2, HardHat, Briefcase,
 } from "lucide-react";
 import BookOnlineButton from "@/components/lp/BookOnlineButton";
 import CallButton from "@/components/lp/CallButton";
@@ -48,8 +48,8 @@ const LP_FAQS = [
     a: "No. Most clients give us a key, lockbox code, or smart lock access. We'll confirm the entry method when you book.",
   },
   {
-    q: "Are you licensed, bonded, and insured?",
-    a: "Yes — fully licensed, bonded, and insured up to $2M in Virginia. We provide a certificate of insurance on request.",
+    q: "Are you licensed and insured?",
+    a: "Yes — fully licensed and insured up to $2M in Virginia. We provide a certificate of insurance on request.",
   },
   {
     q: "What products do you use? Are they safe for kids and pets?",
@@ -67,17 +67,17 @@ const LP_FAQS = [
 
 const STEPS = [
   {
-    number: "1",
+    number: "01",
     title: "Book in 60 seconds",
     body: "Pick your service, home size, and date online — or just call us. No lengthy intake forms.",
   },
   {
-    number: "2",
+    number: "02",
     title: "We show up, fully equipped",
     body: "Our team arrives on time with everything needed. You don't have to lift a finger.",
   },
   {
-    number: "3",
+    number: "03",
     title: "Come home to spotless",
     body: "We follow up after every visit. If something isn't right, we make it right — guaranteed.",
   },
@@ -112,10 +112,10 @@ const SERVICES = [
 
 const TESTIMONIALS = [CUSTOMER_REVIEWS[0], CUSTOMER_REVIEWS[1], CUSTOMER_REVIEWS[3]];
 
-const BEFORE_AFTER = [
-  { room: "Living Room", before: "/before-after/Living_Room_Before.jpg", after: "/before-after/Living_Room_After.jpg" },
-  { room: "Kitchen",     before: "/before-after/Kitchen_Before.jpg",     after: "/before-after/Kitchen_After.jpg" },
-  { room: "Bathroom",    before: "/before-after/Bathroom_Before.jpg",    after: "/before-after/Bathroom_After.jpg" },
+const SHOWCASE = [
+  { room: "Kitchen",  src: "/marketing_photos/originals_edited/kitchen_galley_view.jpg",  alt: "Bright galley kitchen after a Capitol Shine clean" },
+  { room: "Bathroom", src: "/marketing_photos/originals_edited/bath_upper_full_room.jpg", alt: "Spotless full bathroom with polished fixtures" },
+  { room: "Bedroom",  src: "/marketing_photos/originals_edited/bedroom_empty_blue.jpg",   alt: "Fresh bedroom ready for guests" },
 ];
 
 const AREAS = [
@@ -154,13 +154,13 @@ export default function LandingPage() {
         }}
       />
 
-      <div className="bg-off-white min-h-screen pb-20 md:pb-0">
+      <div className="bg-paper min-h-screen pb-20 md:pb-0">
 
         {/* ── Top bar ────────────────────────────────────────────────── */}
-        <header className="bg-white border-b border-gray-100 sticky top-0 z-40">
+        <header className="bg-paper/92 backdrop-blur-md border-b border-navy/10 sticky top-0 z-40">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2.5" aria-label="Capitol Shine home">
-              <Image src="/updated_logo.png" alt="" width={40} height={40} className="h-10 w-10 object-contain" priority />
+              <Image src="/logo-128.png" alt="" width={128} height={90} className="h-10 w-10 object-contain" priority />
               <span className="font-display text-lg font-bold text-navy">
                 Capitol <span className="text-gold">Shine</span>
               </span>
@@ -175,37 +175,40 @@ export default function LandingPage() {
         </header>
 
         {/* ── Hero ───────────────────────────────────────────────────── */}
-        <section className="bg-gradient-to-b from-navy to-navy/90 text-white py-20 md:py-28 px-4">
+        <section className="bg-paper py-20 md:py-28 px-4 border-b border-navy/8">
           <div className="max-w-3xl mx-auto text-center">
-            <p className="text-gold text-sm font-semibold uppercase tracking-widest mb-4">
+            <p className="text-gold text-xs font-semibold uppercase tracking-widest mb-5">
               Arlington · McLean · Alexandria · Falls Church · & surrounding areas
             </p>
-            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-              Spotless homes across<br className="hidden sm:block" /> Northern Virginia.
+            <h1 className="font-display text-5xl md:text-6xl lg:text-[68px] font-light text-ink leading-[0.96] tracking-tight">
+              Spotless homes<br className="hidden sm:block" />
+              across <em className="italic">Northern Virginia.</em>
             </h1>
-            <p className="text-gray-300 text-lg md:text-xl max-w-xl mx-auto mb-10">
-              Flat-rate recurring cleaning from <span className="text-white font-semibold">$120 weekly</span>, with one-time cleans from $150. 5.0 on Google, licensed & insured, same team every visit — and you pay only after we&apos;re done.
+            <p className="mt-7 text-muted text-lg leading-relaxed max-w-xl mx-auto">
+              Flat-rate recurring cleaning from <span className="text-ink font-semibold">$120 weekly</span>,
+              with one-time cleans from $150. 5.0 on Google, licensed & insured, same team every visit —
+              and you pay only after we&apos;re done.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-5">
+            <div className="mt-9 flex flex-col sm:flex-row items-center justify-center gap-3">
               <CallButton
                 phone={PHONE}
                 label={`Call ${PHONE_DISPLAY}`}
-                className="w-full sm:w-auto flex items-center justify-center gap-2.5 bg-gold hover:bg-gold/90 text-navy font-bold text-base px-8 py-4 rounded-xl transition-colors shadow-lg"
+                className="w-full sm:w-auto flex items-center justify-center gap-2.5 bg-navy hover:bg-ink text-white font-semibold text-sm px-7 py-3.5 rounded-xl transition-colors"
               />
               <BookOnlineButton
                 href={BOOK_URL}
-                className="w-full sm:w-auto flex items-center justify-center gap-2.5 bg-white hover:bg-gray-50 text-navy font-bold text-base px-8 py-4 rounded-xl transition-colors shadow-lg"
+                className="w-full sm:w-auto flex items-center justify-center gap-2.5 bg-gold hover:bg-gold/90 text-ink font-semibold text-sm px-7 py-3.5 rounded-xl transition-colors"
               />
             </div>
-            <p className="text-sm text-white/60 mb-12">
+            <p className="mt-4 text-sm text-muted">
               Prefer texting?{" "}
-              <a href={SMS_URL} className="text-gold hover:text-gold/80 underline underline-offset-2">
+              <a href={SMS_URL} className="font-semibold text-charcoal hover:text-navy transition-colors">
                 Send us a quick message →
               </a>
             </p>
 
-            <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm text-white/70">
+            <div className="mt-10 pt-7 border-t border-navy/10 flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm text-charcoal/70">
               {TRUST_ITEMS.map(({ icon: Icon, label }) => (
                 <span key={label} className="flex items-center gap-1.5">
                   <Icon size={14} className="text-gold flex-shrink-0" />
@@ -217,7 +220,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── Social proof bar ───────────────────────────────────────── */}
-        <div className="bg-white border-b border-gray-100 py-5 px-4">
+        <div className="bg-cream border-b border-navy/8 py-5 px-4">
           <div className="max-w-4xl mx-auto flex flex-wrap justify-center items-center gap-8 text-sm text-charcoal/70">
             <span className="flex items-center gap-2 font-semibold text-navy">
               <span className="flex">
@@ -228,34 +231,35 @@ export default function LandingPage() {
               5.0 on Google
             </span>
             <span className="flex items-center gap-1.5">
-              <Check size={14} className="text-cta-green flex-shrink-0" />
+              <Check size={14} className="text-green flex-shrink-0" />
               No contracts required
             </span>
             <span className="flex items-center gap-1.5">
-              <Check size={14} className="text-cta-green flex-shrink-0" />
+              <Check size={14} className="text-green flex-shrink-0" />
               Confirmation within 30 minutes
             </span>
             <span className="flex items-center gap-1.5">
-              <Check size={14} className="text-cta-green flex-shrink-0" />
+              <Check size={14} className="text-green flex-shrink-0" />
               Same team every visit
             </span>
           </div>
         </div>
 
         {/* ── How it works ───────────────────────────────────────────── */}
-        <section className="py-16 px-4">
+        <section className="bg-paper py-20 md:py-24 px-4">
           <div className="max-w-4xl mx-auto">
-            <h2 className="font-display text-2xl md:text-3xl font-bold text-navy text-center mb-12">
-              Simple from start to finish
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center mb-14">
+              <p className="text-gold text-xs font-semibold uppercase tracking-widest mb-3">How it works</p>
+              <h2 className="font-display text-4xl md:text-5xl text-ink font-light tracking-tight leading-tight">
+                Simple from<br /><em className="italic">start to finish.</em>
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8">
               {STEPS.map((step) => (
                 <div key={step.number} className="text-center">
-                  <div className="w-12 h-12 rounded-full bg-navy text-white font-bold text-lg flex items-center justify-center mx-auto mb-4">
-                    {step.number}
-                  </div>
-                  <h3 className="font-semibold text-navy text-lg mb-2">{step.title}</h3>
-                  <p className="text-charcoal/60 text-sm leading-relaxed">{step.body}</p>
+                  <span className="font-display text-sm text-gold font-light tracking-wider mb-4 block">{step.number}</span>
+                  <h3 className="font-display text-xl text-ink font-light tracking-tight mb-3">{step.title}</h3>
+                  <p className="text-muted text-sm leading-relaxed">{step.body}</p>
                 </div>
               ))}
             </div>
@@ -263,13 +267,15 @@ export default function LandingPage() {
         </section>
 
         {/* ── Offer banner ───────────────────────────────────────────── */}
-        <div className="bg-gold/10 border-y border-gold/30 py-8 px-4">
+        <div className="bg-gold/10 border-y border-gold/30 py-10 px-4">
           <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
             <div>
               <p className="text-xs font-semibold text-gold uppercase tracking-widest mb-1">Limited time offer</p>
-              <p className="font-display text-2xl font-bold text-navy">$30 off for new customers</p>
-              <p className="text-charcoal/60 text-sm mt-1">
-                Use code <span className="font-mono font-bold text-gold bg-gold/10 px-2 py-0.5 rounded">FIRST30</span> — mention it when you call or enter it at checkout.
+              <p className="font-display text-2xl md:text-3xl text-ink font-light tracking-tight">
+                $30 off <em className="italic">for new customers.</em>
+              </p>
+              <p className="text-muted text-sm mt-2">
+                Use code <span className="font-mono font-bold text-gold bg-gold/15 px-2 py-0.5 rounded">FIRST30</span> — mention it when you call or enter it at checkout.
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 shrink-0">
@@ -277,62 +283,43 @@ export default function LandingPage() {
                 phone={PHONE}
                 iconSize={15}
                 label="Call to claim"
-                className="flex items-center justify-center gap-2 bg-navy text-white font-semibold px-6 py-3 rounded-xl hover:bg-navy/90 transition-colors text-sm"
+                className="flex items-center justify-center gap-2 bg-navy text-white font-semibold px-5 py-3 rounded-xl hover:bg-ink transition-colors text-sm"
               />
               <BookOnlineButton
                 href={BOOK_URL}
                 label="Book online"
                 iconSize={15}
-                className="flex items-center justify-center gap-2 bg-gold text-navy font-semibold px-6 py-3 rounded-xl hover:bg-gold/90 transition-colors text-sm"
+                className="flex items-center justify-center gap-2 bg-gold text-ink font-semibold px-5 py-3 rounded-xl hover:bg-gold/90 transition-colors text-sm"
               />
               <SaveOfferButton
                 source="lp-offer-banner"
-                className="flex items-center justify-center gap-2 bg-white text-navy font-semibold px-6 py-3 rounded-xl border border-navy/15 hover:border-navy/40 transition-colors text-sm"
+                className="flex items-center justify-center gap-2 bg-white text-navy font-semibold px-5 py-3 rounded-xl border border-navy/15 hover:border-navy/30 transition-colors text-sm"
               />
             </div>
           </div>
         </div>
 
-        {/* ── Before & after ─────────────────────────────────────────── */}
-        <section className="py-16 px-4 bg-white border-t border-gray-100">
+        {/* ── Recent work ─────────────────────────────────────────────── */}
+        <section className="bg-cream py-20 md:py-24 px-4">
           <div className="max-w-5xl mx-auto">
-            <h2 className="font-display text-2xl md:text-3xl font-bold text-navy text-center mb-3">
-              See the difference
-            </h2>
-            <p className="text-charcoal/60 text-center mb-10 max-w-xl mx-auto text-sm">
-              Real results from a recent clean in Arlington.
-            </p>
-            <div className="space-y-10">
-              {BEFORE_AFTER.map(({ room, before, after }) => (
-                <div key={room}>
-                  <p className="text-xs font-semibold text-charcoal/40 uppercase tracking-widest mb-3 text-center">
+            <div className="text-center mb-12">
+              <p className="text-gold text-xs font-semibold uppercase tracking-widest mb-3">Our work</p>
+              <h2 className="font-display text-4xl md:text-5xl text-ink font-light tracking-tight leading-tight">
+                Recent cleans,<br /><em className="italic">unedited.</em>
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
+              {SHOWCASE.map(({ room, src, alt }) => (
+                <div key={room} className="relative overflow-hidden rounded-xl aspect-[3/2] bg-paper">
+                  <Image
+                    src={src}
+                    alt={alt}
+                    fill
+                    sizes="(min-width: 768px) 33vw, 100vw"
+                    className="object-cover"
+                  />
+                  <div className="absolute top-3 left-3 bg-ink/75 text-white text-xs font-semibold px-2.5 py-1 rounded-md z-10">
                     {room}
-                  </p>
-                  <div className="grid grid-cols-2 gap-3 md:gap-4">
-                    <div className="relative overflow-hidden rounded-xl">
-                      <div className="absolute top-3 left-3 bg-charcoal/70 text-white text-xs font-semibold px-2.5 py-1 rounded-md z-10">
-                        Before
-                      </div>
-                      <Image
-                        src={before}
-                        alt={`${room} before cleaning`}
-                        width={600}
-                        height={450}
-                        className="w-full h-auto object-cover rounded-xl"
-                      />
-                    </div>
-                    <div className="relative overflow-hidden rounded-xl">
-                      <div className="absolute top-3 left-3 bg-cta-green text-white text-xs font-semibold px-2.5 py-1 rounded-md z-10">
-                        After
-                      </div>
-                      <Image
-                        src={after}
-                        alt={`${room} after cleaning`}
-                        width={600}
-                        height={450}
-                        className="w-full h-auto object-cover rounded-xl"
-                      />
-                    </div>
                   </div>
                 </div>
               ))}
@@ -341,28 +328,31 @@ export default function LandingPage() {
         </section>
 
         {/* ── Services ───────────────────────────────────────────────── */}
-        <section className="py-16 px-4 bg-white">
+        <section className="bg-paper py-20 md:py-24 px-4">
           <div className="max-w-4xl mx-auto">
-            <h2 className="font-display text-2xl md:text-3xl font-bold text-navy text-center mb-2">
-              Every type of clean, covered
-            </h2>
-            <p className="text-charcoal/60 text-center mb-10 max-w-xl mx-auto">
-              From weekly home cleaning to post-construction site cleanup, we serve homeowners and businesses across Northern Virginia.
-            </p>
+            <div className="text-center mb-12">
+              <p className="text-gold text-xs font-semibold uppercase tracking-widest mb-3">Services</p>
+              <h2 className="font-display text-4xl md:text-5xl text-ink font-light tracking-tight leading-tight mb-4">
+                Every type of clean,<br /><em className="italic">covered.</em>
+              </h2>
+              <p className="text-muted max-w-xl mx-auto text-base">
+                From weekly home cleaning to post-construction site cleanup, we serve homeowners and businesses across Northern Virginia.
+              </p>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {SERVICES.map(({ icon: Icon, name, blurb, from }) => (
-                <div key={name} className="bg-off-white rounded-xl p-6 flex gap-4">
-                  <span className="w-10 h-10 rounded-lg bg-navy/5 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <div key={name} className="bg-cream rounded-xl p-6 flex gap-4">
+                  <span className="w-10 h-10 rounded-lg bg-navy/6 flex items-center justify-center flex-shrink-0 mt-0.5">
                     <Icon size={18} className="text-navy" />
                   </span>
                   <div>
-                    <div className="font-semibold text-navy mb-1">{name}</div>
-                    <p className="text-sm text-charcoal/60 leading-relaxed mb-2">{blurb}</p>
+                    <div className="font-display text-lg text-ink font-semibold mb-1 tracking-tight">{name}</div>
+                    <p className="text-sm text-muted leading-relaxed mb-2">{blurb}</p>
                     {from && (
-                      <p className="text-xs font-semibold text-cta-green">From ${from}/visit</p>
+                      <p className="text-xs font-semibold text-green">From ${from}/visit</p>
                     )}
                     {!from && (
-                      <p className="text-xs font-semibold text-charcoal/40">Custom quote — free walk-through</p>
+                      <p className="text-xs font-semibold text-muted">Custom quote — free walk-through</p>
                     )}
                   </div>
                 </div>
@@ -372,14 +362,17 @@ export default function LandingPage() {
         </section>
 
         {/* ── Why Capitol Shine ──────────────────────────────────────── */}
-        <section className="py-16 px-4">
+        <section className="bg-cream py-20 md:py-24 px-4">
           <div className="max-w-4xl mx-auto">
-            <h2 className="font-display text-2xl md:text-3xl font-bold text-navy text-center mb-10">
-              Why Northern Virginia homeowners choose us
-            </h2>
+            <div className="text-center mb-12">
+              <p className="text-gold text-xs font-semibold uppercase tracking-widest mb-3">Why us</p>
+              <h2 className="font-display text-4xl md:text-5xl text-ink font-light tracking-tight leading-tight">
+                Why Northern Virginia<br /><em className="italic">chooses Capitol Shine.</em>
+              </h2>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {WHY_ITEMS.map(({ icon: Icon, label }) => (
-                <div key={label} className="flex items-start gap-3 bg-white rounded-xl p-4 border border-gray-100">
+                <div key={label} className="flex items-start gap-3 bg-paper rounded-xl p-5 border border-navy/8">
                   <Icon size={18} className="text-gold flex-shrink-0 mt-0.5" />
                   <span className="text-sm font-medium text-charcoal/80">{label}</span>
                 </div>
@@ -389,12 +382,15 @@ export default function LandingPage() {
         </section>
 
         {/* ── Testimonials ───────────────────────────────────────────── */}
-        <section className="py-16 px-4 bg-navy">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="font-display text-2xl md:text-3xl font-bold text-white text-center mb-10">
-              What our clients say
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <section className="bg-ink py-20 md:py-24 px-4">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-12">
+              <p className="text-gold text-xs font-semibold uppercase tracking-widest mb-3">Reviews</p>
+              <h2 className="font-display text-4xl md:text-5xl text-white font-light tracking-tight leading-tight">
+                What our clients<br /><em className="italic">say.</em>
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               {TESTIMONIALS.map((t) => (
                 <div key={t.name} className="bg-white/5 border border-white/10 rounded-xl p-6">
                   <div className="flex mb-3">
@@ -404,7 +400,7 @@ export default function LandingPage() {
                   </div>
                   <p className="text-white/80 text-sm leading-relaxed mb-4">&ldquo;{t.text}&rdquo;</p>
                   <div className="text-xs text-white/40">
-                    <p className="font-semibold text-white/60">{t.name}</p>
+                    <p className="font-semibold text-white/70">{t.name}</p>
                     <p>{t.serviceLabel} · {t.source}</p>
                   </div>
                 </div>
@@ -414,39 +410,39 @@ export default function LandingPage() {
         </section>
 
         {/* ── Pricing estimator ──────────────────────────────────────── */}
-        <section className="py-16 px-4 bg-off-white border-y border-gray-100">
+        <section className="bg-paper py-20 md:py-24 px-4 border-y border-navy/8">
           <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-8">
-              <p className="text-xs font-semibold text-gold uppercase tracking-widest mb-2">
+            <div className="text-center mb-10">
+              <p className="text-gold text-xs font-semibold uppercase tracking-widest mb-3">
                 Instant estimate
               </p>
-              <h2 className="font-display text-2xl md:text-3xl font-bold text-navy mb-3">
-                See your price in 10 seconds
+              <h2 className="font-display text-4xl md:text-5xl text-ink font-light tracking-tight leading-tight mb-4">
+                See your price<br /><em className="italic">in 10 seconds.</em>
               </h2>
-              <p className="text-charcoal/60 max-w-xl mx-auto text-sm md:text-base">
+              <p className="text-muted max-w-xl mx-auto text-base">
                 Pick your home size below for a starting estimate. Your final flat-rate price is
                 confirmed when you book — no hourly billing, no surprise fees.
               </p>
             </div>
             <PricingCalculator />
-            <p className="text-center text-xs text-charcoal/50 mt-6">
+            <p className="text-center text-xs text-muted mt-6">
               Estimates based on typical Northern Virginia homes. Final pricing confirmed at booking.
             </p>
           </div>
         </section>
 
         {/* ── 24-Hour Re-Clean Promise ──────────────────────────────── */}
-        <section className="py-14 px-4 bg-white">
+        <section className="bg-paper py-16 md:py-20 px-4">
           <div className="max-w-3xl mx-auto">
-            <div className="bg-gradient-to-br from-navy to-navy/90 rounded-2xl p-8 md:p-10 text-center border border-gold/20">
-              <div className="inline-flex items-center gap-2 bg-gold/15 text-gold text-xs font-semibold uppercase tracking-widest px-3 py-1.5 rounded-full mb-4">
+            <div className="bg-ink rounded-2xl p-10 md:p-12 text-center">
+              <div className="inline-flex items-center gap-2 bg-gold/15 text-gold text-xs font-semibold uppercase tracking-widest px-3 py-1.5 rounded-full mb-5">
                 <Shield size={13} />
                 Our Promise
               </div>
-              <h2 className="font-display text-2xl md:text-3xl font-bold text-white mb-3">
-                The 24-Hour Re-Clean Promise
+              <h2 className="font-display text-3xl md:text-4xl text-white font-light tracking-tight leading-tight mb-4">
+                The 24-hour<br /><em className="italic">re-clean promise.</em>
               </h2>
-              <p className="text-white/75 text-base md:text-lg max-w-xl mx-auto leading-relaxed">
+              <p className="text-white/70 text-base md:text-lg max-w-xl mx-auto leading-relaxed">
                 If anything isn&apos;t right when you walk in, tell us within 24 hours and we&apos;ll
                 come back and re-clean it — <span className="text-white font-semibold">free, no
                 questions asked</span>. Simple as that.
@@ -456,24 +452,27 @@ export default function LandingPage() {
         </section>
 
         {/* ── FAQ ───────────────────────────────────────────────────── */}
-        <section className="py-16 px-4 bg-off-white">
+        <section className="bg-cream py-20 md:py-24 px-4">
           <div className="max-w-3xl mx-auto">
-            <h2 className="font-display text-2xl md:text-3xl font-bold text-navy text-center mb-10">
-              Questions before you book
-            </h2>
+            <div className="text-center mb-10">
+              <p className="text-gold text-xs font-semibold uppercase tracking-widest mb-3">FAQ</p>
+              <h2 className="font-display text-4xl md:text-5xl text-ink font-light tracking-tight leading-tight">
+                Questions<br /><em className="italic">before you book.</em>
+              </h2>
+            </div>
             <FAQAccordion items={LP_FAQS} />
           </div>
         </section>
 
         {/* ── Service areas ──────────────────────────────────────────── */}
-        <section className="py-12 px-4 bg-white border-b border-gray-100">
+        <section className="bg-paper py-14 px-4 border-y border-navy/8">
           <div className="max-w-4xl mx-auto text-center">
-            <p className="text-xs font-semibold text-charcoal/40 uppercase tracking-widest mb-4">
+            <p className="text-xs font-semibold text-muted uppercase tracking-widest mb-5">
               Areas we serve
             </p>
             <div className="flex flex-wrap justify-center gap-2">
               {AREAS.map((area) => (
-                <span key={area} className="text-sm text-charcoal/60 bg-gray-100 px-3 py-1.5 rounded-full">
+                <span key={area} className="text-sm text-charcoal/70 bg-cream border border-navy/8 px-3 py-1.5 rounded-full">
                   {area}
                 </span>
               ))}
@@ -482,59 +481,61 @@ export default function LandingPage() {
         </section>
 
         {/* ── Final CTA ──────────────────────────────────────────────── */}
-        <section className="py-20 px-4 bg-off-white">
+        <section className="bg-paper py-24 md:py-28 px-4">
           <div className="max-w-2xl mx-auto text-center">
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-navy mb-4">
-              Ready for a cleaner home?
+            <h2 className="font-display text-4xl md:text-5xl text-ink font-light tracking-tight leading-tight mb-5">
+              Ready for<br /><em className="italic">a cleaner home?</em>
             </h2>
-            <p className="text-charcoal/60 mb-8 max-w-md mx-auto">
-              Book online in 60 seconds or give us a call. We'll confirm your appointment within 30 minutes, and you won't pay a thing until after we clean.
+            <p className="text-muted mb-9 max-w-md mx-auto text-base">
+              Book online in 60 seconds or give us a call. We&apos;ll confirm your appointment within 30 minutes, and you won&apos;t pay a thing until after we clean.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <CallButton
                 phone={PHONE}
                 label={`Call ${PHONE_DISPLAY}`}
-                className="w-full sm:w-auto flex items-center justify-center gap-2.5 bg-navy hover:bg-navy/90 text-white font-bold text-base px-8 py-4 rounded-xl transition-colors shadow-md"
+                className="w-full sm:w-auto flex items-center justify-center gap-2.5 bg-navy hover:bg-ink text-white font-semibold text-sm px-7 py-3.5 rounded-xl transition-colors"
               />
               <BookOnlineButton
                 href={BOOK_URL}
-                className="w-full sm:w-auto flex items-center justify-center gap-2.5 bg-gold hover:bg-gold/90 text-navy font-bold text-base px-8 py-4 rounded-xl transition-colors shadow-md"
+                className="w-full sm:w-auto flex items-center justify-center gap-2.5 bg-gold hover:bg-gold/90 text-ink font-semibold text-sm px-7 py-3.5 rounded-xl transition-colors"
               />
             </div>
-            <p className="mt-5 text-xs text-charcoal/40">
+            <p className="mt-6 text-xs text-muted">
               $30 off for new customers — mention it when you call or enter FIRST30 online · No contracts · Satisfaction guaranteed
             </p>
           </div>
         </section>
 
         {/* ── Footer ─────────────────────────────────────────────────── */}
-        <footer className="bg-navy py-8 px-4 text-center">
-          <p className="text-white/40 text-xs mb-2">
+        <footer className="bg-ink py-10 px-4 text-center">
+          <p className="text-white/55 text-xs mb-2">
             © {new Date().getFullYear()} Capitol Home Services LLC · Arlington, VA ·{" "}
-            <a href={`tel:${PHONE}`} className="hover:text-white/70 transition-colors">{PHONE_DISPLAY}</a>
+            <a href={`tel:${PHONE}`} className="hover:text-white/80 transition-colors">{PHONE_DISPLAY}</a>
             {" · "}
-            <a href="mailto:hello@capitolshinecleaners.com" className="hover:text-white/70 transition-colors">
+            <a href="mailto:hello@capitolshinecleaners.com" className="hover:text-white/80 transition-colors">
               hello@capitolshinecleaners.com
             </a>
           </p>
-          <p className="text-white/25 text-xs">
-            <Link href="/terms" className="hover:text-white/50 transition-colors">Terms of Service</Link>
+          <p className="text-white/35 text-xs">
+            <Link href="/terms" className="hover:text-white/60 transition-colors">Terms of Service</Link>
             {" · "}
-            <Link href="/" className="hover:text-white/50 transition-colors">Main Site</Link>
+            <Link href="/service-agreement" className="hover:text-white/60 transition-colors">Service Agreement</Link>
+            {" · "}
+            <Link href="/" className="hover:text-white/60 transition-colors">Main Site</Link>
           </p>
         </footer>
 
         {/* ── Sticky mobile CTA ──────────────────────────────────────── */}
-        <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 p-3 flex gap-3 shadow-xl">
+        <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-paper/95 backdrop-blur-md border-t border-navy/10 p-3 flex gap-3">
           <CallButton
             phone={PHONE}
             iconSize={16}
             label="Call Now"
-            className="flex-1 flex items-center justify-center gap-2 bg-navy text-white font-bold text-sm py-3.5 rounded-xl"
+            className="flex-1 flex items-center justify-center gap-2 bg-navy text-white font-semibold text-sm py-3.5 rounded-xl"
           />
           <BookOnlineButton
             href={BOOK_URL}
-            className="flex-1 flex items-center justify-center gap-2 bg-gold text-navy font-bold text-sm py-3.5 rounded-xl"
+            className="flex-1 flex items-center justify-center gap-2 bg-gold text-ink font-semibold text-sm py-3.5 rounded-xl"
             iconSize={16}
             label="Book Online"
           />
