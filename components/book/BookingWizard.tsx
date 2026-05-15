@@ -2,9 +2,20 @@
 
 import { useState, useMemo, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { ADD_ONS, calcAddOnTotal, estimatePrice, VALID_BATHS } from "@/lib/pricing-data";
-import type { Bedrooms } from "@/lib/pricing-data";
+import {
+  ADD_ONS,
+  calcAddOnTotal,
+  calculateServicePrice,
+  mapLegacyToV2,
+  mapV2ToLegacy,
+  CONDITIONS,
+  SERVICE_TYPES_V2,
+  SQFT_SLIDER,
+  VALID_BATHS,
+} from "@/lib/pricing-data";
+import type { Bedrooms, ServiceTypeV2, Condition } from "@/lib/pricing-data";
 import Calendar from "@/components/ui/Calendar";
+import SqftSlider from "@/components/ui/SqftSlider";
 import OrderSummary from "./OrderSummary";
 import Link from "next/link";
 
@@ -21,53 +32,13 @@ export interface BookingState {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const SERVICES = [
-  {
-    key: "standard",
-    name: "Standard clean",
-    sub: "Recurring or one-time",
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-        <path d="M3 12l9-9 9 9M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9" />
-      </svg>
-    ),
-  },
-  {
-    key: "deep",
-    name: "Deep clean",
-    sub: "Best first clean",
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" />
-        <path d="M8 12h8M12 8v8" />
-      </svg>
-    ),
-  },
-  {
-    key: "moveinout",
-    name: "Move-in / Move-out",
-    sub: "Deposit-ready",
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-        <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" />
-        <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-        <line x1="12" y1="22.08" x2="12" y2="12" />
-      </svg>
-    ),
-  },
-  {
-    key: "airbnb",
-    name: "Airbnb turnover",
-    sub: "Same-day available",
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="4" width="18" height="18" rx="2" />
-        <line x1="16" y1="2" x2="16" y2="6" />
-        <line x1="8" y1="2" x2="8" y2="6" />
-        <line x1="3" y1="10" x2="21" y2="10" />
-      </svg>
-    ),
-  },
+const SERVICES: { key: ServiceTypeV2; name: string; sub: string }[] = [
+  { key: "weekly",   name: "Weekly",            sub: "Best price per visit" },
+  { key: "biweekly", name: "Biweekly",          sub: "Most popular" },
+  { key: "monthly",  name: "Monthly",           sub: "Light maintenance" },
+  { key: "oneTime",  name: "One-Time",          sub: "Standard one-time clean" },
+  { key: "deep",     name: "Deep Clean",        sub: "Best first clean" },
+  { key: "moveOut",  name: "Move-In / Move-Out", sub: "Deposit-ready" },
 ];
 
 const BEDROOM_OPTIONS = [
@@ -75,13 +46,6 @@ const BEDROOM_OPTIONS = [
   { value: 2, label: "2 BR" },
   { value: 3, label: "3 BR" },
   { value: 4, label: "4+ BR" },
-];
-
-const FREQ_OPTIONS = [
-  { value: "one-time", label: "One-time", discount: "" },
-  { value: "monthly",  label: "Monthly",  discount: "-10%" },
-  { value: "biweekly", label: "Biweekly", discount: "-15%" },
-  { value: "weekly",   label: "Weekly",   discount: "-20%" },
 ];
 
 const TIME_SLOTS = ["8:00 AM", "10:00 AM", "12:00 PM", "2:00 PM", "4:00 PM", "6:00 PM"];
@@ -92,14 +56,16 @@ const inputCls =
 // ─── Step 1 ───────────────────────────────────────────────────────────────────
 
 interface Step1Props {
-  service: string;
-  onServiceChange: (s: string) => void;
+  serviceType: ServiceTypeV2;
+  onServiceTypeChange: (s: ServiceTypeV2) => void;
   bedrooms: number;
   onBedroomsChange: (n: number) => void;
   bathrooms: string;
   onBathroomsChange: (b: string) => void;
-  frequency: string;
-  onFrequencyChange: (f: string) => void;
+  sqft: number;
+  onSqftChange: (n: number) => void;
+  condition: Condition;
+  onConditionChange: (c: Condition) => void;
   addOns: string[];
   onToggleAddon: (name: string) => void;
   date: string;
@@ -111,45 +77,50 @@ interface Step1Props {
 }
 
 function Step1({
-  service, onServiceChange, bedrooms, onBedroomsChange,
-  bathrooms, onBathroomsChange,
-  frequency, onFrequencyChange, addOns, onToggleAddon,
+  serviceType, onServiceTypeChange, bedrooms, onBedroomsChange,
+  bathrooms, onBathroomsChange, sqft, onSqftChange,
+  condition, onConditionChange,
+  addOns, onToggleAddon,
   date, onDateChange, timeSlot, onTimeSlotChange,
   errors, onContinue,
 }: Step1Props) {
   const activeCard = "border-navy bg-gradient-to-b from-navy/[0.04] to-gold/[0.04]";
   const idleCard   = "border-navy/10 bg-white hover:border-navy/25";
 
+  const showCondition =
+    !SERVICE_TYPES_V2[serviceType].recurring && serviceType !== "oneTime";
+
   return (
     <div className="space-y-8">
-      {/* Service cards */}
+      {/* Service picker */}
       <div>
         <h2 className="font-display text-[28px] tracking-tight mb-1.5">What can we clean?</h2>
         <p className="text-muted text-sm mb-5">Pick a service. Your price updates live on the right.</p>
-        <div className="grid grid-cols-2 gap-2.5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
           {SERVICES.map((s) => (
             <button
               key={s.key}
-              onClick={() => onServiceChange(s.key)}
-              className={`flex gap-3.5 p-[18px] rounded-xl border text-left transition-all ${
-                service === s.key ? activeCard : idleCard
+              onClick={() => onServiceTypeChange(s.key)}
+              className={`p-3.5 rounded-xl border text-left transition-all ${
+                serviceType === s.key ? activeCard : idleCard
               }`}
             >
-              <div className="w-[38px] h-[38px] rounded-lg bg-cream flex items-center justify-center text-navy flex-shrink-0">
-                {s.icon}
-              </div>
-              <div>
-                <div className="font-semibold text-[15px] text-navy mb-0.5">{s.name}</div>
-                <div className="text-[12.5px] text-muted">{s.sub}</div>
-              </div>
+              <div className="font-semibold text-[14px] text-navy mb-0.5">{s.name}</div>
+              <div className="text-[11.5px] text-muted leading-tight">{s.sub}</div>
             </button>
           ))}
         </div>
+        <p className="mt-3 text-xs text-muted">
+          Need Airbnb / short-term rental turnover?{" "}
+          <Link href="/pricing?service=airbnb" className="text-navy underline hover:no-underline">
+            See turnover pricing →
+          </Link>
+        </p>
       </div>
 
       {/* Home size */}
       <div>
-        <h3 className="font-display text-[22px] tracking-tight mb-3">Home size</h3>
+        <h3 className="font-display text-[22px] tracking-tight mb-3">Bedrooms</h3>
         <div className="grid grid-cols-4 gap-2">
           {BEDROOM_OPTIONS.map((opt) => (
             <button
@@ -187,31 +158,32 @@ function Step1({
         </div>
       </div>
 
-      {/* Frequency — standard only */}
-      {service === "standard" && (
+      {/* Square footage slider */}
+      <div>
+        <h3 className="font-display text-[22px] tracking-tight mb-3">Approximate size</h3>
+        <SqftSlider value={sqft} onChange={onSqftChange} />
+        <p className="mt-2 text-xs text-muted">
+          A rough estimate is fine. Move the slider to match your home.
+        </p>
+      </div>
+
+      {/* Condition — only for Deep / Move-Out */}
+      {showCondition && (
         <div>
-          <h3 className="font-display text-[22px] tracking-tight mb-3">Frequency</h3>
-          <div className="grid grid-cols-4 gap-2">
-            {FREQ_OPTIONS.map((opt) => (
+          <h3 className="font-display text-[22px] tracking-tight mb-3">Home condition</h3>
+          <div className="grid grid-cols-3 gap-2">
+            {(Object.keys(CONDITIONS) as Condition[]).map((c) => (
               <button
-                key={opt.value}
-                onClick={() => onFrequencyChange(opt.value)}
-                className={`py-3 rounded-[10px] border text-center transition-all ${
-                  frequency === opt.value
-                    ? "bg-navy text-white border-navy"
-                    : "bg-white text-ink border-navy/12 hover:border-navy/30"
+                key={c}
+                onClick={() => onConditionChange(c)}
+                className={`p-3.5 rounded-[10px] border text-left transition-all ${
+                  condition === c
+                    ? "border-navy bg-gradient-to-b from-navy/[0.04] to-gold/[0.04]"
+                    : "border-navy/10 bg-white hover:border-navy/25"
                 }`}
               >
-                <div className="text-[13px] font-semibold">{opt.label}</div>
-                {opt.discount && (
-                  <div
-                    className={`text-[10.5px] mt-0.5 ${
-                      frequency === opt.value ? "text-gold-2" : "text-muted"
-                    }`}
-                  >
-                    {opt.discount}
-                  </div>
-                )}
+                <div className="font-semibold text-[14px] text-navy mb-0.5">{CONDITIONS[c].label}</div>
+                <div className="text-[11.5px] text-muted leading-tight">{CONDITIONS[c].description}</div>
               </button>
             ))}
           </div>
@@ -442,43 +414,55 @@ function Field({
 function BookingWizardInner() {
   const searchParams = useSearchParams();
 
-  const [step, setStep]           = useState(1);
-  const [service, setService]     = useState("standard");
-  const [bedrooms, setBedrooms]   = useState(2);
-  const [bathrooms, setBathrooms] = useState("1");
-  const [frequency, setFrequency] = useState("biweekly");
-  const [addOns, setAddOns]       = useState<string[]>([]);
-  const [date, setDate]           = useState("");
-  const [timeSlot, setTimeSlot]   = useState("");
-  const [promoCode, setPromoCode] = useState("FIRST30");
-  const [contact, setContact]     = useState({ name: "", email: "", phone: "", address: "", notes: "" });
-  const [errors, setErrors]       = useState<Record<string, string>>({});
-  const [submitting, setSubmitting] = useState(false);
+  const [step, setStep]               = useState(1);
+  const [serviceType, setServiceType] = useState<ServiceTypeV2>("biweekly");
+  const [bedrooms, setBedrooms]       = useState(2);
+  const [bathrooms, setBathrooms]     = useState("2");
+  const [sqft, setSqft]               = useState<number>(SQFT_SLIDER.default);
+  const [condition, setCondition]     = useState<Condition>("normal");
+  const [addOns, setAddOns]           = useState<string[]>([]);
+  const [date, setDate]               = useState("");
+  const [timeSlot, setTimeSlot]       = useState("");
+  const [promoCode, setPromoCode]     = useState("FIRST30");
+  const [contact, setContact]         = useState({ name: "", email: "", phone: "", address: "", notes: "" });
+  const [errors, setErrors]           = useState<Record<string, string>>({});
+  const [submitting, setSubmitting]   = useState(false);
   const [submitError, setSubmitError] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [submitted, setSubmitted]     = useState(false);
 
+  // ── URL param hydration (back-compat with legacy ?service=&frequency=) ─────
   useEffect(() => {
-    const svc  = searchParams.get("service");
-    const br   = parseInt(searchParams.get("bedrooms") ?? "");
-    const freq = searchParams.get("frequency");
-    const promo = searchParams.get("promo");
-    if (svc)   setService(svc);
+    const svc       = searchParams.get("service");
+    const freq      = searchParams.get("frequency") ?? "one-time";
+    const br        = parseInt(searchParams.get("bedrooms") ?? "");
+    const ba        = searchParams.get("bathrooms");
+    const sq        = parseInt(searchParams.get("sqft") ?? "");
+    const cond      = searchParams.get("condition") as Condition | null;
+    const promo     = searchParams.get("promo");
+
+    if (svc) setServiceType(mapLegacyToV2(svc, freq));
     if (!isNaN(br) && br > 0) setBedrooms(Math.min(br, 4));
-    if (freq)  setFrequency(freq);
+    if (ba) setBathrooms(ba);
+    if (!isNaN(sq) && sq >= SQFT_SLIDER.min && sq <= SQFT_SLIDER.max) setSqft(sq);
+    if (cond && cond in CONDITIONS) setCondition(cond);
     if (promo) setPromoCode(promo.toUpperCase());
   }, [searchParams]);
-
-  const effectiveFreq = service === "standard" ? frequency : "one-time";
 
   const handleBedroomsChange = (n: number) => {
     setBedrooms(n);
     const valid = VALID_BATHS[Math.min(n, 5) as Bedrooms];
-    if (!valid.includes(bathrooms as any)) setBathrooms(valid[0]);
+    if (!valid.includes(bathrooms as any)) setBathrooms(valid[valid.length - 1]);
   };
 
   const basePrice = useMemo(
-    () => estimatePrice(service, bedrooms, effectiveFreq, [], bathrooms, null, false),
-    [service, bedrooms, effectiveFreq, bathrooms],
+    () => calculateServicePrice({
+      sqft,
+      bedrooms,
+      bathroom: bathrooms,
+      serviceType,
+      condition,
+    }).price,
+    [sqft, bedrooms, bathrooms, serviceType, condition],
   );
 
   const promoDiscount = promoCode.toUpperCase() === "FIRST30" ? 30 : 0;
@@ -509,6 +493,9 @@ function BookingWizardInner() {
     if (!contact.address.trim()) errs.address = "Address is required.";
     if (Object.keys(errs).length) { setErrors(errs); return; }
 
+    // Map V2 service type back to legacy { service, frequency } for the API/DB.
+    const legacy = mapV2ToLegacy(serviceType);
+
     setSubmitting(true);
     setSubmitError("");
     try {
@@ -517,14 +504,15 @@ function BookingWizardInner() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           propertyType: "residential",
-          service,
+          service: legacy.service,
           homeType: "",
           bedrooms,
           bathrooms,
-          sqft: "",
+          sqft: String(sqft),
           neighborhood: "",
-          heavyDuty: false,
-          frequency: effectiveFreq,
+          heavyDuty: condition === "heavy",
+          condition,
+          frequency: legacy.frequency,
           addOns,
           date,
           timeWindow: timeSlot,
@@ -589,6 +577,10 @@ function BookingWizardInner() {
     );
   }
 
+  // For the OrderSummary, we still pass the legacy service+frequency so its
+  // existing labels render unchanged.
+  const summaryLegacy = mapV2ToLegacy(serviceType);
+
   // ── Wizard ────────────────────────────────────────────────────────────────
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-8 items-start">
@@ -616,17 +608,16 @@ function BookingWizardInner() {
 
         {step === 1 && (
           <Step1
-            service={service}
-            onServiceChange={(s) => {
-              setService(s);
-              if (s !== "standard") setFrequency("one-time");
-            }}
+            serviceType={serviceType}
+            onServiceTypeChange={setServiceType}
             bedrooms={bedrooms}
             onBedroomsChange={handleBedroomsChange}
             bathrooms={bathrooms}
             onBathroomsChange={setBathrooms}
-            frequency={frequency}
-            onFrequencyChange={setFrequency}
+            sqft={sqft}
+            onSqftChange={setSqft}
+            condition={condition}
+            onConditionChange={setCondition}
             addOns={addOns}
             onToggleAddon={toggleAddon}
             date={date}
@@ -658,9 +649,9 @@ function BookingWizardInner() {
 
       {/* Right: sticky order summary */}
       <OrderSummary
-        service={service}
+        service={summaryLegacy.service}
         bedrooms={bedrooms}
-        frequency={effectiveFreq}
+        frequency={summaryLegacy.frequency}
         addOns={addOns}
         date={date}
         timeSlot={timeSlot}

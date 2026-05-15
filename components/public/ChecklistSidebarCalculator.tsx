@@ -7,12 +7,17 @@ import {
   BEDROOM_OPTIONS,
   FREQUENCY_LABELS,
   VALID_BATHS,
-  quoteBreakdown,
+  SQFT_SLIDER,
+  CONDITIONS,
+  calculateServicePrice,
   type Bathrooms,
   type Bedrooms,
   type Frequency,
   type ServiceKey,
+  type ServiceTypeV2,
+  type Condition,
 } from "@/lib/pricing-data";
+import SqftSlider from "@/components/ui/SqftSlider";
 
 const DURATION_ESTIMATES: Record<ServiceKey, Record<Bedrooms, string>> = {
   standard: {
@@ -60,45 +65,64 @@ function bedroomShortLabel(bedrooms: Bedrooms): string {
   return `${bedrooms} BR`;
 }
 
+function serviceToV2(service: ServiceKey, freq: Frequency): ServiceTypeV2 {
+  if (service === "deep")      return "deep";
+  if (service === "moveinout") return "moveOut";
+  switch (freq) {
+    case "weekly":   return "weekly";
+    case "biweekly": return "biweekly";
+    case "monthly":  return "monthly";
+    default:         return "oneTime";
+  }
+}
+
 export default function ChecklistSidebarCalculator({
   service,
   defaultBedrooms = 2,
   defaultBathrooms = "2",
   defaultFrequency = "biweekly",
 }: Props) {
-  const [bedrooms, setBedrooms] = useState<Bedrooms>(defaultBedrooms);
+  const [bedrooms, setBedrooms]   = useState<Bedrooms>(defaultBedrooms);
   const validBaths = VALID_BATHS[bedrooms];
   const safeDefaultBath = validBaths.includes(defaultBathrooms) ? defaultBathrooms : validBaths[validBaths.length - 1];
   const [bathrooms, setBathrooms] = useState<Bathrooms>(safeDefaultBath);
   const [frequency, setFrequency] = useState<Frequency>(
     service === "standard" ? defaultFrequency : "one-time",
   );
+  const [sqft, setSqft]           = useState<number>(SQFT_SLIDER.default);
+  const [condition, setCondition] = useState<Condition>("normal");
 
   const effectiveBath = validBaths.includes(bathrooms) ? bathrooms : validBaths[validBaths.length - 1];
   const effectiveFrequency = service === "standard" ? frequency : "one-time";
 
-  const breakdown = useMemo(
-    () =>
-      quoteBreakdown({
-        service,
-        bedrooms,
-        bathrooms: effectiveBath,
-        frequency: effectiveFrequency,
-      }),
-    [service, bedrooms, effectiveBath, effectiveFrequency],
+  const showCondition = service === "deep" || service === "moveinout";
+
+  const v2 = serviceToV2(service, effectiveFrequency);
+  const result = useMemo(
+    () => calculateServicePrice({
+      sqft,
+      bedrooms,
+      bathroom: effectiveBath,
+      serviceType: v2,
+      condition,
+    }),
+    [sqft, bedrooms, effectiveBath, v2, condition],
   );
 
   const duration = DURATION_ESTIMATES[service][bedrooms];
+
   const bookHref = useMemo(() => {
     const params = new URLSearchParams({
       service,
       bedrooms: String(bedrooms),
       bathrooms: effectiveBath,
       frequency: effectiveFrequency,
+      sqft: String(sqft),
       promo: "FIRST30",
     });
+    if (showCondition) params.set("condition", condition);
     return `/book?${params.toString()}`;
-  }, [service, bedrooms, effectiveBath, effectiveFrequency]);
+  }, [service, bedrooms, effectiveBath, effectiveFrequency, sqft, condition, showCondition]);
 
   return (
     <div className="flex flex-col gap-5">
@@ -153,7 +177,33 @@ export default function ChecklistSidebarCalculator({
             ))}
           </select>
         </div>
+        <div className="mt-5">
+          <SqftSlider value={sqft} onChange={setSqft} compact />
+        </div>
       </div>
+
+      {showCondition && (
+        <div className="rounded-2xl border border-navy/10 bg-white p-6 shadow-[0_18px_50px_-40px_rgba(23,36,63,0.35)]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">Condition</p>
+          <div className="mt-3 grid grid-cols-3 gap-2">
+            {(Object.keys(CONDITIONS) as Condition[]).map((c) => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => setCondition(c)}
+                className={`py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                  condition === c
+                    ? "bg-navy text-white"
+                    : "bg-paper text-charcoal hover:bg-cream border border-navy/10"
+                }`}
+                title={CONDITIONS[c].description}
+              >
+                {CONDITIONS[c].label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="rounded-2xl border border-navy/10 bg-white p-6 shadow-[0_18px_50px_-40px_rgba(23,36,63,0.35)]">
         <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">
@@ -167,7 +217,7 @@ export default function ChecklistSidebarCalculator({
           Price · {bedroomShortLabel(bedrooms)} · {effectiveBath} BA
         </p>
         <p className="mt-3 text-[1.75rem] leading-none tracking-tight text-ink">
-          ${breakdown.total} / visit
+          ${result.price} / visit
         </p>
       </div>
 

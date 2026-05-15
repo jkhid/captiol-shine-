@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase";
 import { SERVICE_LABELS } from "@/lib/bookings";
-import { estimatePrice } from "@/lib/pricing-data";
+import { quoteBreakdown, type Condition } from "@/lib/pricing-data";
 import { Resend } from "resend";
 import twilio from "twilio";
 
@@ -23,6 +23,7 @@ const BookingSchema = z.object({
   bathrooms:    z.string().max(10).optional(),
   sqft:         z.string().max(20).optional(),
   heavyDuty:    z.boolean().optional(),
+  condition:    z.enum(["light", "normal", "heavy"]).optional(),
   frequency:    z.string().max(20).optional(),
   date:         z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   timeWindow:   z.string().max(20).optional(),
@@ -88,17 +89,20 @@ export async function POST(req: NextRequest) {
   }
 
   // Server-side price computation — never trust client-supplied price
+  const condition: Condition =
+    body.condition ?? (body.heavyDuty ? "heavy" : "normal");
+
   const price = Math.max(
     0,
-    estimatePrice(
-      body.service,
-      body.bedrooms,
-      body.frequency ?? "one-time",
+    quoteBreakdown({
+      service:   body.service,
+      bedrooms:  body.bedrooms,
+      bathrooms: body.bathrooms ?? "1",
+      frequency: (body.frequency ?? "one-time") as any,
+      sqft:      body.sqft ?? null,
+      condition,
       addOns,
-      body.bathrooms ?? "1",
-      body.sqft ?? null,
-      body.heavyDuty ?? false,
-    ) - promoDiscount,
+    }).total - promoDiscount,
   );
 
   // 1. Save booking to Supabase

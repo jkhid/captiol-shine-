@@ -1,81 +1,96 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import {
-  estimatePrice,
-  BEDROOM_OPTIONS,
+  calculateServicePrice,
+  mapV2ToLegacy,
+  SERVICE_TYPES_V2,
+  SQFT_SLIDER,
   VALID_BATHS,
+  CONDITIONS,
   type Bedrooms,
   type Bathrooms,
-  type ServiceKey,
+  type ServiceTypeV2,
+  type Condition,
 } from "@/lib/pricing-data";
+import SqftSlider from "@/components/ui/SqftSlider";
 
-const SERVICES: { key: ServiceKey; label: string }[] = [
-  { key: "standard",  label: "Standard" },
-  { key: "deep",      label: "Deep" },
-  { key: "moveinout", label: "Move-In/Out" },
-];
-
-const FREQUENCIES = [
-  { value: "one-time",  label: "One-Time" },
-  { value: "monthly",   label: "Monthly" },
-  { value: "biweekly",  label: "Biweekly" },
-  { value: "weekly",    label: "Weekly" },
+const SERVICES: { key: ServiceTypeV2; label: string }[] = [
+  { key: "weekly",   label: "Weekly"   },
+  { key: "biweekly", label: "Biweekly" },
+  { key: "monthly",  label: "Monthly"  },
+  { key: "oneTime",  label: "One-Time" },
+  { key: "deep",     label: "Deep"     },
+  { key: "moveOut",  label: "Move-Out" },
 ];
 
 const BR_LABELS: Record<Bedrooms, string> = {
   0: "Studio", 1: "1 BR", 2: "2 BR", 3: "3 BR", 4: "4 BR", 5: "5+ BR",
 };
 
-export default function HeroQuoteCard() {
-  const [service, setService]     = useState<ServiceKey>("standard");
-  const [bedrooms, setBedrooms]   = useState<Bedrooms>(2);
-  const [bathrooms, setBathrooms] = useState<Bathrooms>("1");
-  const [frequency, setFrequency] = useState("one-time");
+const BEDROOM_OPTIONS: Bedrooms[] = [0, 1, 2, 3, 4, 5];
 
-  // When bedrooms change, clamp bathrooms to a valid option
+export default function HeroQuoteCard() {
+  const [serviceType, setServiceType] = useState<ServiceTypeV2>("biweekly");
+  const [bedrooms, setBedrooms]       = useState<Bedrooms>(2);
+  const [bathrooms, setBathrooms]     = useState<Bathrooms>("2");
+  const [sqft, setSqft]               = useState<number>(SQFT_SLIDER.default);
+  const [condition, setCondition]     = useState<Condition>("normal");
+
   function handleBedroomsChange(n: Bedrooms) {
     setBedrooms(n);
     const valid = VALID_BATHS[n];
-    if (!valid.includes(bathrooms)) setBathrooms(valid[0]);
+    if (!valid.includes(bathrooms)) setBathrooms(valid[valid.length - 1]);
   }
 
-  const validBaths = VALID_BATHS[bedrooms];
-  const price = estimatePrice(
-    service,
-    bedrooms,
-    service === "standard" ? frequency : "one-time",
-    [],
-    bathrooms,
-    null,
-    false,
+  const validBaths   = VALID_BATHS[bedrooms];
+  const showCondition = !SERVICE_TYPES_V2[serviceType].recurring && serviceType !== "oneTime";
+
+  const result = useMemo(
+    () => calculateServicePrice({
+      sqft,
+      bedrooms,
+      bathroom: bathrooms,
+      serviceType,
+      condition,
+    }),
+    [sqft, bedrooms, bathrooms, serviceType, condition],
   );
-  const bookHref = `/book?service=${service}&bedrooms=${bedrooms}&bathrooms=${bathrooms}&frequency=${frequency}`;
+
+  // Map V2 → legacy params for /book URL so the booking flow still understands it.
+  const legacy = mapV2ToLegacy(serviceType);
+  const bookHref =
+    `/book?service=${legacy.service}` +
+    `&frequency=${legacy.frequency}` +
+    `&bedrooms=${bedrooms}&bathrooms=${bathrooms}` +
+    `&sqft=${sqft}${showCondition ? `&condition=${condition}` : ""}`;
 
   return (
     <div className="bg-white rounded-2xl shadow-2xl shadow-navy/12 border border-navy/8 p-6">
-      {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <span className="text-xs font-semibold uppercase tracking-widest text-gold">Get Your Price</span>
         <span className="text-xs text-muted">Instant estimate</span>
       </div>
 
-      {/* Service tabs */}
-      <div className="flex gap-1 mb-5 p-1 bg-paper rounded-xl">
-        {SERVICES.map(({ key, label }) => (
-          <button
-            key={key}
-            onClick={() => setService(key)}
-            className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${
-              service === key
-                ? "bg-navy text-white shadow-sm"
-                : "text-muted hover:text-navy"
-            }`}
-          >
-            {label}
-          </button>
-        ))}
+      {/* Service picker — 6 V2 types */}
+      <div className="mb-5">
+        <label className="block text-xs font-semibold uppercase tracking-wider text-muted mb-2">Service</label>
+        <div className="grid grid-cols-3 gap-1.5">
+          {SERVICES.map(({ key, label }) => (
+            <button
+              key={key}
+              onClick={() => setServiceType(key)}
+              className={`py-2 text-xs font-semibold rounded-lg transition-all ${
+                serviceType === key
+                  ? "bg-navy text-white"
+                  : "bg-paper text-charcoal hover:bg-cream"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Bedrooms */}
@@ -118,22 +133,27 @@ export default function HeroQuoteCard() {
         </div>
       </div>
 
-      {/* Frequency — standard only */}
-      {service === "standard" && (
+      {/* Sqft slider */}
+      <div className="mb-5">
+        <SqftSlider value={sqft} onChange={setSqft} compact />
+      </div>
+
+      {/* Condition — only for Deep / Move-Out */}
+      {showCondition && (
         <div className="mb-5">
-          <label className="block text-xs font-semibold uppercase tracking-wider text-muted mb-2">Frequency</label>
-          <div className="grid grid-cols-2 gap-1.5">
-            {FREQUENCIES.map(({ value, label }) => (
+          <label className="block text-xs font-semibold uppercase tracking-wider text-muted mb-2">Condition</label>
+          <div className="grid grid-cols-3 gap-1.5">
+            {(Object.keys(CONDITIONS) as Condition[]).map((c) => (
               <button
-                key={value}
-                onClick={() => setFrequency(value)}
+                key={c}
+                onClick={() => setCondition(c)}
                 className={`py-2 rounded-lg text-xs font-semibold transition-all ${
-                  frequency === value
+                  condition === c
                     ? "bg-navy text-white"
                     : "bg-paper text-charcoal hover:bg-cream"
                 }`}
               >
-                {label}
+                {CONDITIONS[c].label}
               </button>
             ))}
           </div>
@@ -144,7 +164,7 @@ export default function HeroQuoteCard() {
       <div className="bg-paper rounded-xl px-4 py-4 mb-4 text-center">
         <p className="text-xs text-muted mb-1">Estimated price</p>
         <p className="font-display text-5xl text-ink font-semibold tracking-tight leading-none">
-          ${price}
+          ${result.price}
         </p>
         <p className="text-xs text-muted mt-1.5">Final price confirmed after we review your space</p>
       </div>
