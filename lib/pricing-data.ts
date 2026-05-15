@@ -7,10 +7,14 @@
 // (AIRBNB_PRICING, COMMERCIAL_TIERS, CONSTRUCTION_PHASES) below.
 
 export type Bedrooms  = 0 | 1 | 2 | 3 | 4 | 5;
-export type Bathrooms = "1" | "1.5" | "2" | "2.5" | "3" | "3.5+";
+export type Bathrooms =
+  | "1" | "1.5" | "2" | "2.5" | "3" | "3.5"
+  | "4" | "4.5" | "5" | "5.5+";
 
 export const BEDROOM_OPTIONS: Bedrooms[]  = [0, 1, 2, 3, 4, 5];
-export const BATHROOM_OPTIONS: Bathrooms[] = ["1", "1.5", "2", "2.5", "3", "3.5+"];
+export const BATHROOM_OPTIONS: Bathrooms[] = [
+  "1", "1.5", "2", "2.5", "3", "3.5", "4", "4.5", "5", "5.5+",
+];
 
 export const BEDROOM_LABELS: Record<Bedrooms, string> = {
   0: "Studio",
@@ -21,14 +25,15 @@ export const BEDROOM_LABELS: Record<Bedrooms, string> = {
   5: "5+ Bedrooms",
 };
 
-// Bathrooms valid for a given bedroom count.
+// Bathrooms valid for a given bedroom count. Upper bound extends with
+// bedroom count so 5BR homes can pick up to 5.5+ baths (common in NoVA).
 export const VALID_BATHS: Record<Bedrooms, Bathrooms[]> = {
   0: ["1"],
   1: ["1", "1.5"],
-  2: ["1", "1.5", "2"],
-  3: ["1", "1.5", "2", "2.5"],
-  4: ["1", "1.5", "2", "2.5", "3"],
-  5: ["1", "1.5", "2", "2.5", "3", "3.5+"],
+  2: ["1", "1.5", "2", "2.5"],
+  3: ["1", "1.5", "2", "2.5", "3", "3.5"],
+  4: ["1", "1.5", "2", "2.5", "3", "3.5", "4", "4.5"],
+  5: ["1", "1.5", "2", "2.5", "3", "3.5", "4", "4.5", "5", "5.5+"],
 };
 
 // Legacy "service" key (still used by the booking API + DB).
@@ -153,6 +158,7 @@ function bedroomAdjustmentHrs(bedrooms: number, sqft: number): number {
 }
 
 // Map combined bathroom string ("2.5") → { fullBaths, halfBaths }.
+// "3.5+" is kept as a legacy alias so old links / cached URLs still resolve.
 export function splitBathrooms(b: string): { fullBaths: number; halfBaths: number } {
   switch (b) {
     case "1":    return { fullBaths: 1, halfBaths: 0 };
@@ -160,7 +166,12 @@ export function splitBathrooms(b: string): { fullBaths: number; halfBaths: numbe
     case "2":    return { fullBaths: 2, halfBaths: 0 };
     case "2.5":  return { fullBaths: 2, halfBaths: 1 };
     case "3":    return { fullBaths: 3, halfBaths: 0 };
+    case "3.5":  return { fullBaths: 3, halfBaths: 1 };
     case "3.5+": return { fullBaths: 3, halfBaths: 1 };
+    case "4":    return { fullBaths: 4, halfBaths: 0 };
+    case "4.5":  return { fullBaths: 4, halfBaths: 1 };
+    case "5":    return { fullBaths: 5, halfBaths: 0 };
+    case "5.5+": return { fullBaths: 5, halfBaths: 1 };
     default:     return { fullBaths: 2, halfBaths: 0 };
   }
 }
