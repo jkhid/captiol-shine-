@@ -113,15 +113,15 @@ interface SqftBand {
 }
 
 export const SQ_FT_BANDS: SqftBand[] = [
-  { low: 0,    high: 1000, label: "Under 1,000 sqft",   baseHrs: { weekly: 1.75, biweekly: 2.0,  monthly: 2.5,  oneTime: 3.5,  deep: 5.0,  moveOut: 7.0  } },
-  { low: 1001, high: 1500, label: "1,001–1,500 sqft",   baseHrs: { weekly: 2.25, biweekly: 2.5,  monthly: 3.0,  oneTime: 4.0,  deep: 5.5,  moveOut: 8.0  } },
-  { low: 1501, high: 2000, label: "1,501–2,000 sqft",   baseHrs: { weekly: 2.5,  biweekly: 2.75, monthly: 3.25, oneTime: 4.5,  deep: 6.5,  moveOut: 9.0  } },
-  { low: 2001, high: 2500, label: "2,001–2,500 sqft",   baseHrs: { weekly: 2.75, biweekly: 3.0,  monthly: 3.5,  oneTime: 5.0,  deep: 7.0,  moveOut: 10.0 } },
-  { low: 2501, high: 3000, label: "2,501–3,000 sqft",   baseHrs: { weekly: 3.25, biweekly: 3.5,  monthly: 4.0,  oneTime: 5.5,  deep: 7.5,  moveOut: 11.0 } },
-  { low: 3001, high: 3500, label: "3,001–3,500 sqft",   baseHrs: { weekly: 3.5,  biweekly: 3.75, monthly: 4.25, oneTime: 6.0,  deep: 8.0,  moveOut: 12.0 } },
-  { low: 3501, high: 4000, label: "3,501–4,000 sqft",   baseHrs: { weekly: 4.0,  biweekly: 4.25, monthly: 5.0,  oneTime: 7.0,  deep: 9.0,  moveOut: 13.0 } },
-  { low: 4001, high: 5000, label: "4,001–5,000 sqft",   baseHrs: { weekly: 4.75, biweekly: 5.0,  monthly: 5.75, oneTime: 8.0,  deep: 10.5, moveOut: 15.0 } },
-  { low: 5001, high: 6000, label: "5,001–6,000 sqft",   baseHrs: { weekly: 5.75, biweekly: 6.0,  monthly: 6.75, oneTime: 9.0,  deep: 12.0, moveOut: 17.0 } },
+  { low: 0,    high: 1000, label: "Under 1,000 sqft",   baseHrs: { weekly: 1.75, biweekly: 2.0,  monthly: 2.5,  oneTime: 2.75, deep: 4.0,  moveOut: 5.5  } },
+  { low: 1001, high: 1500, label: "1,001–1,500 sqft",   baseHrs: { weekly: 2.25, biweekly: 2.5,  monthly: 3.0,  oneTime: 3.25, deep: 4.5,  moveOut: 6.5  } },
+  { low: 1501, high: 2000, label: "1,501–2,000 sqft",   baseHrs: { weekly: 2.5,  biweekly: 2.75, monthly: 3.25, oneTime: 3.5,  deep: 5.25, moveOut: 7.25 } },
+  { low: 2001, high: 2500, label: "2,001–2,500 sqft",   baseHrs: { weekly: 2.75, biweekly: 3.0,  monthly: 3.5,  oneTime: 4.0,  deep: 5.5,  moveOut: 8.0  } },
+  { low: 2501, high: 3000, label: "2,501–3,000 sqft",   baseHrs: { weekly: 3.25, biweekly: 3.5,  monthly: 4.0,  oneTime: 4.5,  deep: 6.0,  moveOut: 8.75 } },
+  { low: 3001, high: 3500, label: "3,001–3,500 sqft",   baseHrs: { weekly: 3.5,  biweekly: 3.75, monthly: 4.25, oneTime: 4.75, deep: 6.5,  moveOut: 9.5  } },
+  { low: 3501, high: 4000, label: "3,501–4,000 sqft",   baseHrs: { weekly: 4.0,  biweekly: 4.25, monthly: 5.0,  oneTime: 5.5,  deep: 7.25, moveOut: 10.5 } },
+  { low: 4001, high: 5000, label: "4,001–5,000 sqft",   baseHrs: { weekly: 4.75, biweekly: 5.0,  monthly: 5.75, oneTime: 6.5,  deep: 8.5,  moveOut: 12.0 } },
+  { low: 5001, high: 6000, label: "5,001–6,000 sqft",   baseHrs: { weekly: 5.75, biweekly: 6.0,  monthly: 6.75, oneTime: 7.25, deep: 9.5,  moveOut: 13.5 } },
 ];
 
 export function getSqftBand(sqft: number): SqftBand {
