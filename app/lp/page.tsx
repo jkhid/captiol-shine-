@@ -10,7 +10,23 @@ import CallButton from "@/components/lp/CallButton";
 import SaveOfferButton from "@/components/lp/SaveOfferButton";
 import PricingCalculator from "@/components/pricing/PricingCalculator";
 import { FAQAccordion } from "@/components/pricing/FAQ";
-import { CUSTOMER_REVIEWS } from "@/lib/reviews";
+import { CUSTOMER_REVIEWS, getInitials } from "@/lib/reviews";
+
+const REVIEW_COUNT = 6;
+// Replace this with your direct Google review URL when ready.
+// Format: https://g.page/r/<your-id>/review  or  https://search.google.com/local/writereview?placeid=<PLACE_ID>
+const GOOGLE_REVIEWS_URL = "https://g.page/r/11791156975264082157/review";
+
+function GoogleG({ size = 20 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/>
+      <path fill="#FF3D00" d="m6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C16.318 4 9.656 8.337 6.306 14.691z"/>
+      <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/>
+      <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002l6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/>
+    </svg>
+  );
+}
 
 export const metadata: Metadata = {
   title: "House Cleaning in Northern Virginia — From $120 Weekly | Capitol Shine",
@@ -219,31 +235,94 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ── Social proof bar ───────────────────────────────────────── */}
-        <div className="bg-cream border-b border-navy/8 py-5 px-4">
-          <div className="max-w-4xl mx-auto flex flex-wrap justify-center items-center gap-8 text-sm text-charcoal/70">
-            <span className="flex items-center gap-2 font-semibold text-navy">
-              <span className="flex">
+        {/* ── Google reviews (moved up to be prominent) ──────────────── */}
+        <section className="bg-paper border-b border-navy/8">
+          {/* Aggregate rating + heading */}
+          <div className="max-w-5xl mx-auto px-4 pt-14 pb-8 text-center">
+            <div className="inline-flex items-center gap-2 mb-4">
+              <GoogleG size={20} />
+              <span className="text-xs font-semibold uppercase tracking-widest text-muted">
+                Verified on Google
+              </span>
+            </div>
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <span className="font-display text-3xl text-ink font-semibold tabular-nums">5.0</span>
+              <span className="flex gap-0.5">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={14} className="text-gold fill-gold" />
+                  <Star key={i} size={20} className="text-gold fill-gold" />
                 ))}
               </span>
-              5.0 on Google
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Check size={14} className="text-green flex-shrink-0" />
-              No contracts required
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Check size={14} className="text-green flex-shrink-0" />
-              Confirmation within 30 minutes
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Check size={14} className="text-green flex-shrink-0" />
-              Same team every visit
-            </span>
+              <span className="text-sm text-muted">· {REVIEW_COUNT} reviews</span>
+            </div>
+            <h2 className="font-display text-3xl md:text-4xl text-ink font-light tracking-tight leading-tight">
+              Real words<br />
+              <em className="italic">from real clients.</em>
+            </h2>
           </div>
-        </div>
+
+          {/* Review cards */}
+          <div className="max-w-5xl mx-auto px-4 pb-10">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {TESTIMONIALS.map((t) => (
+                <article
+                  key={t.name}
+                  className="relative bg-white rounded-xl border border-navy/8 p-5 flex flex-col"
+                >
+                  <div className="absolute top-4 right-4 opacity-80">
+                    <GoogleG size={16} />
+                  </div>
+                  <div className="flex gap-0.5 mb-3">
+                    {[...Array(t.rating)].map((_, i) => (
+                      <Star key={i} size={14} className="text-gold fill-gold" />
+                    ))}
+                  </div>
+                  <p className="text-sm text-charcoal/80 leading-relaxed italic mb-4 flex-1">
+                    &ldquo;{t.text.length > 220 ? t.text.slice(0, 220).trimEnd() + "…" : t.text}&rdquo;
+                  </p>
+                  <div className="flex items-center gap-3 pt-3 border-t border-navy/8">
+                    <div className="w-9 h-9 rounded-full bg-navy/8 flex items-center justify-center text-xs font-semibold text-navy">
+                      {getInitials(t.name)}
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-navy leading-tight">{t.name}</p>
+                      <p className="text-[11px] text-muted leading-tight mt-0.5">{t.serviceLabel}</p>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            <div className="text-center mt-8">
+              <a
+                href={GOOGLE_REVIEWS_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-navy hover:text-gold transition-colors"
+              >
+                Read all reviews on Google
+                <span aria-hidden>→</span>
+              </a>
+            </div>
+          </div>
+
+          {/* Slim trust bar at the bottom of the section */}
+          <div className="bg-cream border-t border-navy/8 py-5 px-4">
+            <div className="max-w-4xl mx-auto flex flex-wrap justify-center items-center gap-x-8 gap-y-2 text-sm text-charcoal/70">
+              <span className="flex items-center gap-1.5">
+                <Check size={14} className="text-green flex-shrink-0" />
+                No contracts required
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Check size={14} className="text-green flex-shrink-0" />
+                Confirmation within 30 minutes
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Check size={14} className="text-green flex-shrink-0" />
+                Same team every visit
+              </span>
+            </div>
+          </div>
+        </section>
 
         {/* ── How it works ───────────────────────────────────────────── */}
         <section className="bg-paper py-20 md:py-24 px-4">
@@ -375,34 +454,6 @@ export default function LandingPage() {
                 <div key={label} className="flex items-start gap-3 bg-paper rounded-xl p-5 border border-navy/8">
                   <Icon size={18} className="text-gold flex-shrink-0 mt-0.5" />
                   <span className="text-sm font-medium text-charcoal/80">{label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ── Testimonials ───────────────────────────────────────────── */}
-        <section className="bg-ink py-20 md:py-24 px-4">
-          <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-12">
-              <p className="text-gold text-xs font-semibold uppercase tracking-widest mb-3">Reviews</p>
-              <h2 className="font-display text-4xl md:text-5xl text-white font-light tracking-tight leading-tight">
-                What our clients<br /><em className="italic">say.</em>
-              </h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              {TESTIMONIALS.map((t) => (
-                <div key={t.name} className="bg-white/5 border border-white/10 rounded-xl p-6">
-                  <div className="flex mb-3">
-                    {[...Array(t.rating)].map((_, i) => (
-                      <Star key={i} size={14} className="text-gold fill-gold" />
-                    ))}
-                  </div>
-                  <p className="text-white/80 text-sm leading-relaxed mb-4">&ldquo;{t.text}&rdquo;</p>
-                  <div className="text-xs text-white/40">
-                    <p className="font-semibold text-white/70">{t.name}</p>
-                    <p>{t.serviceLabel} · {t.source}</p>
-                  </div>
                 </div>
               ))}
             </div>
