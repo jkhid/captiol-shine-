@@ -8,14 +8,14 @@ export default function Navbar() {
   return (
     <>
       {/* Promo bar */}
-      <div className="bg-ink text-white text-center py-2.5 px-4 text-xs font-medium tracking-wide">
+      <div className="bg-ink text-white text-center py-2.5 px-4 text-xs font-medium tracking-wide print:hidden">
         New residential customers save{" "}
         <strong className="text-gold-2">$30 on their first clean</strong>
         {" "}— no code needed.
       </div>
 
       {/* Nav */}
-      <header className="sticky top-0 z-50 bg-paper/92 backdrop-blur-md border-b border-navy/10">
+      <header className="sticky top-0 z-50 bg-paper/92 backdrop-blur-md border-b border-navy/10 print:hidden">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[68px] flex items-center justify-between">
           <Logo />
 

@@ -14,6 +14,7 @@ import {
   Settings,
   LogOut,
   Menu,
+  FileSignature,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -23,6 +24,7 @@ const navLinks = [
   { href: "/admin/clients", label: "Clients", icon: Users, exact: false },
   { href: "/admin/jobs", label: "Jobs", icon: Briefcase, exact: false },
   { href: "/admin/leads", label: "Leads", icon: Sparkles, exact: false },
+  { href: "/admin/contractor-agreements", label: "Agreements", icon: FileSignature, exact: false },
   { href: "/admin/settings", label: "Settings", icon: Settings, exact: false },
 ];
 
@@ -88,13 +90,13 @@ export default function AdminShell({
   );
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
-      <aside className="hidden md:flex flex-col w-60 bg-navy flex-shrink-0">
+    <div className="flex h-screen bg-gray-50 overflow-hidden print:block print:h-auto print:overflow-visible print:bg-white">
+      <aside className="hidden md:flex flex-col w-60 bg-navy flex-shrink-0 print:hidden">
         <Sidebar />
       </aside>
 
       {sidebarOpen && (
-        <div className="md:hidden fixed inset-0 z-50 flex">
+        <div className="md:hidden fixed inset-0 z-50 flex print:hidden">
           <div className="w-60 bg-navy flex flex-col">
             <Sidebar />
           </div>
@@ -102,8 +104,8 @@ export default function AdminShell({
         </div>
       )}
 
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <header className="bg-white border-b border-gray-200 px-4 md:px-8 h-14 flex items-center justify-between flex-shrink-0">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden print:overflow-visible">
+        <header className="bg-white border-b border-gray-200 px-4 md:px-8 h-14 flex items-center justify-between flex-shrink-0 print:hidden">
           <button
             className="md:hidden p-2 text-charcoal"
             onClick={() => setSidebarOpen(true)}
@@ -115,7 +117,7 @@ export default function AdminShell({
           <span className="text-sm text-charcoal/50">Capitol Shine Admin</span>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-4 md:p-8">{children}</main>
+        <main className="flex-1 overflow-y-auto p-4 md:p-8 print:overflow-visible print:p-0">{children}</main>
       </div>
     </div>
   );
