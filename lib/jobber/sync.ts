@@ -108,8 +108,11 @@ async function createClient(booking: BookingRow): Promise<string> {
     emails: booking.email
       ? [{ description: "MAIN", address: booking.email, primary: true }]
       : [],
+    // smsAllowed defaults to false. If we set it true, Jobber validates the
+    // number is a real mobile and rejects landlines / fake numbers. Customer
+    // can opt into SMS inside Jobber later.
     phones: booking.phone
-      ? [{ description: "MAIN", number: booking.phone, primary: true, smsAllowed: true }]
+      ? [{ description: "MAIN", number: booking.phone, primary: true, smsAllowed: false }]
       : [],
     properties: booking.address
       ? [{ address: { street1: booking.address } }]
