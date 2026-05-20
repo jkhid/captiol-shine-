@@ -19,12 +19,51 @@ export interface JobberCredentials {
   updated_at: string;
 }
 
+interface RawTokenResponse {
+  access_token: string;
+  refresh_token: string;
+  expires_in?: number;            // not returned by Jobber, but support if present
+  token_type?: string;
+  scope?: string;
+}
+
 interface TokenResponse {
   access_token: string;
   refresh_token: string;
-  expires_in: number;             // seconds
+  expires_in: number;             // seconds, always populated after normalization
   token_type?: string;
   scope?: string;
+}
+
+// Jobber doesn't return `expires_in` directly. Their access tokens are JWTs
+// with an `exp` claim. Decode the JWT to get the remaining lifetime, falling
+// back to a conservative 50-minute default if anything goes wrong.
+function computeExpiresInSeconds(accessToken: string, hint: number | undefined): number {
+  if (typeof hint === "number" && hint > 0) return hint;
+
+  try {
+    const parts = accessToken.split(".");
+    if (parts.length === 3) {
+      const payload = JSON.parse(Buffer.from(parts[1], "base64url").toString("utf-8"));
+      if (typeof payload.exp === "number") {
+        const remaining = payload.exp - Math.floor(Date.now() / 1000);
+        if (remaining > 60) return remaining; // at least 1 minute remaining
+      }
+    }
+  } catch {
+    // fall through
+  }
+  return 50 * 60; // 50 minutes, safe default
+}
+
+function normalize(raw: RawTokenResponse): TokenResponse {
+  return {
+    access_token:  raw.access_token,
+    refresh_token: raw.refresh_token,
+    expires_in:    computeExpiresInSeconds(raw.access_token, raw.expires_in),
+    token_type:    raw.token_type,
+    scope:         raw.scope,
+  };
 }
 
 function clientId(): string {
@@ -122,7 +161,8 @@ export async function exchangeCodeForTokens(code: string): Promise<TokenResponse
     const text = await res.text().catch(() => "");
     throw new Error(`Jobber token exchange failed: ${res.status} ${text}`);
   }
-  return (await res.json()) as TokenResponse;
+  const raw = (await res.json()) as RawTokenResponse;
+  return normalize(raw);
 }
 
 export async function refreshAccessToken(refreshToken: string): Promise<TokenResponse> {
@@ -141,7 +181,8 @@ export async function refreshAccessToken(refreshToken: string): Promise<TokenRes
     const text = await res.text().catch(() => "");
     throw new Error(`Jobber token refresh failed: ${res.status} ${text}`);
   }
-  return (await res.json()) as TokenResponse;
+  const raw = (await res.json()) as RawTokenResponse;
+  return normalize(raw);
 }
 
 // Returns a valid access token, refreshing if it's expired or about to expire.
