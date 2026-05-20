@@ -4,7 +4,8 @@ import { createAdminClient } from "@/lib/supabase";
 import { SERVICE_LABELS } from "@/lib/bookings";
 import { quoteBreakdown, type Condition } from "@/lib/pricing-data";
 import { Resend } from "resend";
-import twilio from "twilio";
+import { isConnected as isJobberConnected } from "@/lib/jobber/tokens";
+import { pushBookingToJobber } from "@/lib/jobber/sync";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -141,19 +142,10 @@ export async function POST(req: NextRequest) {
   const ownerEmail  = process.env.OWNER_EMAIL ?? "hello@capitolshinecleaners.com";
   const fromAddress = "Capitol Shine <bookings@capitolshinecleaners.com>";
 
-  // 2. Send owner notification email
-  try {
-    await resend.emails.send({
-      from:    fromAddress,
-      to:      ownerEmail,
-      subject: `New Booking — ${body.name} (${serviceLabel})`,
-      html:    ownerEmailHtml({ ...body, serviceLabel, fullAddress, price, bookingId: data.id }),
-    });
-  } catch (e) {
-    console.error("Resend owner email error:", e);
-  }
-
-  // 3. Send customer confirmation email
+  // 2. Send the customer confirmation email. Jobber doesn't auto-email on
+  //    Request creation, so this is the customer's instant acknowledgment
+  //    until the owner schedules the request in Jobber (Jobber sends the
+  //    confirmed-appointment email at that point).
   try {
     await resend.emails.send({
       from:     fromAddress,
@@ -166,63 +158,40 @@ export async function POST(req: NextRequest) {
     console.error("Resend customer email error:", e);
   }
 
-  // 4. Send owner SMS via Twilio
-  try {
-    const twilioClient = twilio(
-      process.env.TWILIO_ACCOUNT_SID,
-      process.env.TWILIO_AUTH_TOKEN
-    );
-    await twilioClient.messages.create({
-      body: `New Capitol Shine booking!\n${body.name} — ${serviceLabel}\n${body.date} (${String(body.timeWindow ?? "").replace("-", " ")})\n$${price}\nPhone: ${body.phone}`,
-      from: process.env.TWILIO_FROM_NUMBER,
-      to:   process.env.OWNER_PHONE!,
-    });
-  } catch (e) {
-    console.error("Twilio SMS error:", e);
+  // 3. Push to Jobber (Client + Request). Owner notifications happen via
+  //    Jobber's own email + mobile push, so the prior Resend owner email
+  //    and Twilio SMS have been removed. If Jobber sync fails, the booking
+  //    still saved above and the failure is visible at /admin/integrations.
+  if (await isJobberConnected()) {
+    pushBookingToJobber({
+      id:            data.id,
+      customer_name: body.name,
+      email:         body.email,
+      phone:         body.phone,
+      address:       fullAddress,
+      service:       body.service,
+      service_label: serviceLabel,
+      bedrooms:      body.bedrooms,
+      bathrooms:     body.bathrooms ?? null,
+      sqft:          body.sqft ?? null,
+      frequency:     body.frequency ?? null,
+      date:          body.date,
+      time_window:   body.timeWindow ?? null,
+      instructions:  body.instructions ?? null,
+      price,
+    }).catch((err) => console.error("Jobber sync error:", err));
+  } else {
+    await supabaseAdmin
+      .from("bookings")
+      .update({ jobber_sync_status: "skipped" })
+      .eq("id", data.id);
   }
 
   return NextResponse.json({ success: true, id: data.id });
 }
 
 // ── Email Templates ───────────────────────────────────────────────────────────
-
-function ownerEmailHtml(b: z.infer<typeof BookingSchema> & {
-  serviceLabel: string; fullAddress: string; price: number; bookingId: string;
-}) {
-  const rows: [string, string][] = [
-    ["Customer",     esc(b.name)],
-    ["Service",      esc(b.serviceLabel)],
-    ["Date",         `${esc(b.date)} (${esc(String(b.timeWindow ?? "").replace("-", " "))})`],
-    ["Address",      esc(b.fullAddress)],
-    ["Neighborhood", esc(b.neighborhood)],
-    ["Home",         `${esc(b.homeType)}, ${esc(b.bedrooms)} BR`],
-    ["Frequency",    esc(String(b.frequency ?? "").replace("-", " "))],
-    ["Price",        `$${esc(b.price)}`],
-    ["Phone",        `<a href="tel:${esc(b.phone)}">${esc(b.phone)}</a>`],
-    ["Email",        `<a href="mailto:${esc(b.email)}">${esc(b.email)}</a>`],
-    ...(Array.isArray(b.addOns) && b.addOns.length > 0
-      ? [["Add-Ons", esc(b.addOns.join(", "))] as [string, string]]
-      : []),
-  ];
-
-  return `
-<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px;color:#333">
-  <h2 style="color:#1B2A4A;margin-bottom:20px">New Booking Received</h2>
-  <table style="width:100%;border-collapse:collapse">
-    ${rows.map(([label, value]) => `
-    <tr>
-      <td style="padding:8px 12px 8px 0;color:#888;font-size:13px;white-space:nowrap;vertical-align:top">${label}</td>
-      <td style="padding:8px 0;font-size:14px;font-weight:600">${value}</td>
-    </tr>`).join("")}
-  </table>
-  ${b.instructions
-    ? `<div style="margin-top:16px;padding:12px;background:#f5f5f5;border-radius:8px;font-size:13px;color:#555">
-      <strong>Notes:</strong> ${esc(b.instructions)}
-    </div>`
-    : ""}
-  <p style="margin-top:24px;font-size:12px;color:#aaa">Capitol Shine — Admin Notification</p>
-</div>`;
-}
+// Owner-side email removed: Jobber sends its own new-request notification.
 
 function customerEmailHtml(b: z.infer<typeof BookingSchema> & {
   serviceLabel: string; fullAddress: string; price: number;
