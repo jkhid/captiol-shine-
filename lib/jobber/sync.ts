@@ -113,7 +113,10 @@ async function createClient(booking: BookingRow): Promise<string> {
     lastName:  last,
     emails:    booking.email ? [{ description: "MAIN", address: booking.email, primary: true }] : [],
     phones:    booking.phone ? [{ description: "MAIN", number: booking.phone, primary: true }] : [],
-    properties: booking.address ? [{ address: { street: booking.address } }] : [],
+    // AddressAttributes uses street1/street2, not street. We pack the full
+    // booking address string into street1 since the booking form captures
+    // address as a single field and we don't try to parse out city/state/zip.
+    properties: booking.address ? [{ address: { street1: booking.address } }] : [],
   };
 
   const data = await jobberQuery<ClientCreateResp>(CREATE_CLIENT, { input });
