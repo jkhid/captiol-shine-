@@ -3,7 +3,7 @@ import { jobberQuery } from "./client";
 import { getProductIdForServiceType, legacyToV2 } from "./products";
 
 // ─── Booking shape we read from the bookings table ──────────────────────────
-// (We type only the columns we need to keep this loose to schema drift.)
+// (We type only the columns we need to stay loose to schema drift.)
 export interface BookingRow {
   id:             string;
   customer_name:  string;
@@ -30,65 +30,59 @@ function splitName(full: string): { first: string; last: string } {
   return { first: parts[0], last: parts.slice(1).join(" ") };
 }
 
-function normalizePhoneDigits(raw: string): string {
-  return raw.replace(/\D/g, "");
+function digitsOnly(raw: string | null | undefined): string {
+  return (raw ?? "").replace(/\D/g, "");
 }
 
-// ─── Client lookup / create ─────────────────────────────────────────────────
+// ─── Dedupe via Supabase ────────────────────────────────────────────────────
+// Jobber's ClientFilterAttributes doesn't expose email or phone, so we can't
+// query their API for prior clients. Instead, we look up our own bookings
+// table for any past booking that we already pushed to Jobber. If we find
+// a match by email or phone, we reuse that Jobber client ID. Clean, fast,
+// no extra API calls.
 
-interface ClientSearchHit {
-  id: string;
-}
+async function findExistingJobberClientId(
+  bookingId: string,
+  email: string | null,
+  phone: string | null,
+): Promise<{ clientId: string; matchedBy: "email" | "phone" } | null> {
+  const admin = createAdminClient();
 
-const SEARCH_CLIENTS_BY_EMAIL = `
-  query SearchClientsByEmail($email: String!) {
-    clients(filter: { email: { contains: $email } }, first: 5) {
-      nodes { id emails { address } }
+  if (email) {
+    const { data } = await admin
+      .from("bookings")
+      .select("jobber_client_id")
+      .neq("id", bookingId)
+      .ilike("email", email)
+      .not("jobber_client_id", "is", null)
+      .order("created_at", { ascending: false })
+      .limit(1);
+    const hit = data?.[0]?.jobber_client_id as string | null | undefined;
+    if (hit) return { clientId: hit, matchedBy: "email" };
+  }
+
+  if (phone) {
+    const tail = digitsOnly(phone).slice(-10);
+    if (tail.length === 10) {
+      const { data } = await admin
+        .from("bookings")
+        .select("jobber_client_id, phone")
+        .neq("id", bookingId)
+        .not("jobber_client_id", "is", null)
+        .order("created_at", { ascending: false })
+        .limit(30);
+      for (const row of data ?? []) {
+        const rowTail = digitsOnly(row.phone as string | null).slice(-10);
+        const id = (row.jobber_client_id as string | null) ?? null;
+        if (rowTail === tail && id) return { clientId: id, matchedBy: "phone" };
+      }
     }
   }
-`;
 
-const SEARCH_CLIENTS_BY_PHONE = `
-  query SearchClientsByPhone($phone: String!) {
-    clients(filter: { phoneNumber: { contains: $phone } }, first: 5) {
-      nodes { id phones { number } }
-    }
-  }
-`;
-
-interface ClientSearchEmailResp {
-  clients: { nodes: Array<{ id: string; emails: Array<{ address: string }> }> };
-}
-interface ClientSearchPhoneResp {
-  clients: { nodes: Array<{ id: string; phones: Array<{ number: string }> }> };
+  return null;
 }
 
-async function findClientByEmail(email: string): Promise<string | null> {
-  try {
-    const data = await jobberQuery<ClientSearchEmailResp>(SEARCH_CLIENTS_BY_EMAIL, { email });
-    const normalized = email.trim().toLowerCase();
-    const hit = data.clients.nodes.find((c) =>
-      c.emails.some((e) => e.address?.toLowerCase().trim() === normalized),
-    );
-    return hit?.id ?? null;
-  } catch {
-    return null;
-  }
-}
-
-async function findClientByPhone(phone: string): Promise<string | null> {
-  const target = normalizePhoneDigits(phone);
-  if (target.length < 7) return null;
-  try {
-    const data = await jobberQuery<ClientSearchPhoneResp>(SEARCH_CLIENTS_BY_PHONE, { phone: target });
-    const hit = data.clients.nodes.find((c) =>
-      c.phones.some((p) => normalizePhoneDigits(p.number ?? "").endsWith(target.slice(-7))),
-    );
-    return hit?.id ?? null;
-  } catch {
-    return null;
-  }
-}
+// ─── Client create ──────────────────────────────────────────────────────────
 
 const CREATE_CLIENT = `
   mutation CreateClient($input: ClientCreateInput!) {
@@ -109,14 +103,17 @@ interface ClientCreateResp {
 async function createClient(booking: BookingRow): Promise<string> {
   const { first, last } = splitName(booking.customer_name);
   const input = {
-    firstName: first,
+    firstName: first || booking.customer_name,
     lastName:  last,
-    emails:    booking.email ? [{ description: "MAIN", address: booking.email, primary: true }] : [],
-    phones:    booking.phone ? [{ description: "MAIN", number: booking.phone, primary: true }] : [],
-    // AddressAttributes uses street1/street2, not street. We pack the full
-    // booking address string into street1 since the booking form captures
-    // address as a single field and we don't try to parse out city/state/zip.
-    properties: booking.address ? [{ address: { street1: booking.address } }] : [],
+    emails: booking.email
+      ? [{ description: "MAIN", address: booking.email, primary: true }]
+      : [],
+    phones: booking.phone
+      ? [{ description: "MAIN", number: booking.phone, primary: true, smsAllowed: true }]
+      : [],
+    properties: booking.address
+      ? [{ address: { street1: booking.address } }]
+      : [],
   };
 
   const data = await jobberQuery<ClientCreateResp>(CREATE_CLIENT, { input });
@@ -134,19 +131,15 @@ export async function findOrCreateClient(booking: BookingRow): Promise<{
   clientId: string;
   matchedBy: "email" | "phone" | "created";
 }> {
-  if (booking.email) {
-    const byEmail = await findClientByEmail(booking.email);
-    if (byEmail) return { clientId: byEmail, matchedBy: "email" };
-  }
-  if (booking.phone) {
-    const byPhone = await findClientByPhone(booking.phone);
-    if (byPhone) return { clientId: byPhone, matchedBy: "phone" };
-  }
+  const existing = await findExistingJobberClientId(booking.id, booking.email, booking.phone);
+  if (existing) return existing;
   const created = await createClient(booking);
   return { clientId: created, matchedBy: "created" };
 }
 
 // ─── Request create ─────────────────────────────────────────────────────────
+// RequestCreateInput has no `description` field. The only freeform text is
+// `title`. The booking details go into the single line item's description.
 
 const CREATE_REQUEST = `
   mutation CreateRequest($input: RequestCreateInput!) {
@@ -165,24 +158,25 @@ interface RequestCreateResp {
 }
 
 function buildRequestTitle(booking: BookingRow): string {
-  const svc = booking.service_label ?? booking.service ?? "Cleaning";
+  const svc = booking.service_label ?? "Cleaning";
   const size = booking.bedrooms != null && booking.bathrooms
     ? ` (${booking.bedrooms} BR / ${booking.bathrooms} BA)`
     : "";
-  return `${svc}${size}`.slice(0, 200);
+  const date = booking.date ? ` — ${booking.date}` : "";
+  return `${svc}${size}${date}`.slice(0, 200);
 }
 
-function buildRequestNotes(booking: BookingRow): string {
+function buildLineItemDescription(booking: BookingRow): string {
   const lines: string[] = [];
-  if (booking.service_label) lines.push(`Service: ${booking.service_label}`);
   if (booking.bedrooms != null) lines.push(`Bedrooms: ${booking.bedrooms}`);
-  if (booking.bathrooms) lines.push(`Bathrooms: ${booking.bathrooms}`);
-  if (booking.sqft) lines.push(`Square footage: ${booking.sqft}`);
-  if (booking.frequency) lines.push(`Frequency: ${booking.frequency}`);
-  if (booking.date) lines.push(`Requested date: ${booking.date}`);
-  if (booking.time_window) lines.push(`Time window: ${booking.time_window}`);
-  if (booking.price != null) lines.push(`Quoted price: $${booking.price}`);
-  if (booking.instructions) lines.push(`Notes: ${booking.instructions}`);
+  if (booking.bathrooms)        lines.push(`Bathrooms: ${booking.bathrooms}`);
+  if (booking.sqft)             lines.push(`Square footage: ${booking.sqft}`);
+  if (booking.frequency)        lines.push(`Frequency: ${booking.frequency}`);
+  if (booking.date)             lines.push(`Requested date: ${booking.date}`);
+  if (booking.time_window)      lines.push(`Time window: ${booking.time_window}`);
+  if (booking.address)          lines.push(`Address: ${booking.address}`);
+  if (booking.instructions)     lines.push(`Customer notes: ${booking.instructions}`);
+  lines.push("");
   lines.push(`Source: capitolshinecleaners.com booking form`);
   lines.push(`Booking ID: ${booking.id}`);
   return lines.join("\n");
@@ -192,25 +186,23 @@ export async function createRequestForBooking(
   booking: BookingRow,
   clientId: string,
 ): Promise<string> {
-  const productId = getProductIdForServiceType(
-    legacyToV2(booking.service, booking.frequency),
-  );
+  const productId  = getProductIdForServiceType(legacyToV2(booking.service, booking.frequency));
+  const serviceName = booking.service_label ?? "Cleaning";
 
-  const input: Record<string, unknown> = {
-    clientId,
-    title:       buildRequestTitle(booking),
-    description: buildRequestNotes(booking),
+  const lineItem: Record<string, unknown> = {
+    name: serviceName,
+    description: buildLineItemDescription(booking),
+    quantity: 1,
+    saveToProductsAndServices: false,
   };
+  if (productId)               lineItem.productOrServiceId = productId;
+  if (booking.price != null)   lineItem.unitPrice = booking.price;
 
-  if (productId) {
-    input.lineItems = [
-      {
-        productOrServiceId: productId,
-        quantity: 1,
-        ...(booking.price != null ? { unitCost: booking.price } : {}),
-      },
-    ];
-  }
+  const input = {
+    clientId,
+    title: buildRequestTitle(booking),
+    lineItems: [lineItem],
+  };
 
   const data = await jobberQuery<RequestCreateResp>(CREATE_REQUEST, { input });
   if (data.requestCreate.userErrors.length > 0) {
