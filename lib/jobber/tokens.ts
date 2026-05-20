@@ -99,6 +99,37 @@ export async function isConnected(): Promise<boolean> {
   return !!creds;
 }
 
+// Live health check: does the stored credential set actually still work?
+// Calls a lightweight Jobber query that any account can run, which both
+// verifies auth and refreshes the access token if needed. Returns ok=false
+// with the underlying error message if the refresh fails or the call is
+// rejected, so /admin/integrations can show a real status instead of
+// trusting "row exists" as a proxy for "working".
+export async function checkConnectionHealth(): Promise<{ ok: boolean; error?: string }> {
+  const creds = await loadCredentials();
+  if (!creds) return { ok: false, error: "Not connected" };
+
+  try {
+    const token = await getValidAccessToken();
+    const res = await fetch("https://api.getjobber.com/api/graphql", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        "X-JOBBER-GRAPHQL-VERSION": "2025-04-16",
+      },
+      body: JSON.stringify({ query: "{ __typename }" }),
+    });
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      return { ok: false, error: `HTTP ${res.status}: ${text}`.slice(0, 200) };
+    }
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : String(err) };
+  }
+}
+
 export async function disconnect(): Promise<void> {
   const admin = createAdminClient();
   await admin.from("jobber_credentials").delete().not("id", "is", null);

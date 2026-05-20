@@ -1,4 +1,4 @@
-import { loadCredentials } from "@/lib/jobber/tokens";
+import { checkConnectionHealth, loadCredentials } from "@/lib/jobber/tokens";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/admin/ui/card";
 import ConnectionPanel from "./ConnectionPanel";
 
@@ -12,6 +12,14 @@ export default async function IntegrationsPage({
   const creds = await loadCredentials();
   const connected = !!creds;
   const jobberStatus = searchParams.jobber ?? null;
+
+  // Live health check — does the token actually still work? Without this,
+  // a revoked or rotated refresh token would show "Connected" even though
+  // every sync would silently fail.
+  const health = connected
+    ? await checkConnectionHealth()
+    : { ok: false, error: "Not connected" };
+  const isHealthy = connected && health.ok;
 
   return (
     <div className="space-y-6">
@@ -29,12 +37,14 @@ export default async function IntegrationsPage({
             <span
               className={
                 "text-[11px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full border " +
-                (connected
+                (isHealthy
                   ? "bg-green/10 text-green border-green/30"
-                  : "bg-cream text-charcoal border-navy/15")
+                  : connected
+                    ? "bg-amber-50 text-amber-800 border-amber-200"
+                    : "bg-cream text-charcoal border-navy/15")
               }
             >
-              {connected ? "Connected" : "Not connected"}
+              {isHealthy ? "Connected" : connected ? "Token invalid" : "Not connected"}
             </span>
           </div>
         </CardHeader>
@@ -46,6 +56,15 @@ export default async function IntegrationsPage({
           {jobberStatus === "connected" && (
             <div className="bg-green/8 border border-green/30 rounded-lg px-4 py-3 mb-4 text-sm text-green font-medium">
               Jobber connected. New bookings will sync going forward.
+            </div>
+          )}
+          {connected && !health.ok && !jobberStatus && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 mb-4 text-sm text-amber-800">
+              <p className="font-semibold mb-1">Token invalid — bookings will fail to sync.</p>
+              <p className="font-mono text-[12.5px] break-all">{health.error}</p>
+              <p className="mt-2 text-xs">
+                Click <strong>Disconnect</strong> below, then <strong>Connect to Jobber</strong> again to issue a fresh token pair. Common cause: Jobber rotated the refresh token, or access was revoked outside this app.
+              </p>
             </div>
           )}
           {jobberStatus?.startsWith("error:") && (
