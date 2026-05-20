@@ -50,6 +50,14 @@ const BEDROOM_OPTIONS = [
 
 const TIME_SLOTS = ["8:00 AM", "10:00 AM", "12:00 PM", "2:00 PM", "4:00 PM", "6:00 PM"];
 
+const HEAR_ABOUT_OPTIONS = [
+  "Google Search",
+  "Facebook",
+  "NextDoor",
+  "Referral",
+  "Other",
+];
+
 const inputCls =
   "w-full px-4 py-2.5 rounded-xl border border-navy/12 bg-paper text-sm focus:outline-none focus:ring-2 focus:ring-navy/20 focus:border-navy/40 transition-colors";
 
@@ -267,7 +275,7 @@ function Step1({
 // ─── Step 2 ───────────────────────────────────────────────────────────────────
 
 interface Step2Props {
-  contact: { name: string; email: string; phone: string; address: string; notes: string };
+  contact: { name: string; email: string; phone: string; address: string; notes: string; hearAbout: string };
   onChange: (field: string, value: string) => void;
   promoCode: string;
   onPromoChange: (v: string) => void;
@@ -283,7 +291,13 @@ function Step2({
   contact, onChange, promoCode, onPromoChange,
   errors, submitting, submitError, finalPrice, onBack, onSubmit,
 }: Step2Props) {
-  const canSubmit = !submitting && !!contact.name && !!contact.email && !!contact.phone;
+  const canSubmit =
+    !submitting &&
+    !!contact.name &&
+    !!contact.email &&
+    !!contact.phone &&
+    !!contact.address &&
+    !!contact.hearAbout;
 
   return (
     <div className="space-y-4">
@@ -339,6 +353,25 @@ function Step2({
           placeholder="123 Main St, Arlington VA 22201"
           className={`${inputCls} ${errors.address ? "border-red-300" : ""}`}
         />
+      </Field>
+
+      <Field label="How did you hear about us?" required error={errors.hearAbout}>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          {HEAR_ABOUT_OPTIONS.map((opt) => (
+            <button
+              key={opt}
+              type="button"
+              onClick={() => onChange("hearAbout", opt)}
+              className={`px-3 py-2.5 rounded-[10px] border text-[13px] font-semibold text-center transition-all ${
+                contact.hearAbout === opt
+                  ? "bg-navy text-white border-navy"
+                  : "bg-white text-ink border-navy/12 hover:border-navy/30"
+              }`}
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
       </Field>
 
       <Field label="Notes" sublabel="pets, parking, access...">
@@ -424,7 +457,7 @@ function BookingWizardInner() {
   const [date, setDate]               = useState("");
   const [timeSlot, setTimeSlot]       = useState("");
   const [promoCode, setPromoCode]     = useState("FIRST30");
-  const [contact, setContact]         = useState({ name: "", email: "", phone: "", address: "", notes: "" });
+  const [contact, setContact]         = useState({ name: "", email: "", phone: "", address: "", notes: "", hearAbout: "" });
   const [errors, setErrors]           = useState<Record<string, string>>({});
   const [submitting, setSubmitting]   = useState(false);
   const [submitError, setSubmitError] = useState("");
@@ -491,6 +524,7 @@ function BookingWizardInner() {
                                errs.email   = "Valid email required.";
     if (!contact.phone.trim()) errs.phone   = "Phone is required.";
     if (!contact.address.trim()) errs.address = "Address is required.";
+    if (!contact.hearAbout.trim()) errs.hearAbout = "Please tell us how you found us.";
     if (Object.keys(errs).length) { setErrors(errs); return; }
 
     // Map V2 service type back to legacy { service, frequency } for the API/DB.
@@ -522,7 +556,7 @@ function BookingWizardInner() {
           address: contact.address,
           unit: "",
           instructions: contact.notes,
-          hearAbout: "",
+          hearAbout: contact.hearAbout,
           referralCode: "",
           promoCode,
           agreeTerms: true,
