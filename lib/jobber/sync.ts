@@ -87,7 +87,10 @@ async function findExistingJobberClientId(
 const CREATE_CLIENT = `
   mutation CreateClient($input: ClientCreateInput!) {
     clientCreate(input: $input) {
-      client { id }
+      client {
+        id
+        properties { nodes { id } }
+      }
       userErrors { message }
     }
   }
@@ -95,12 +98,12 @@ const CREATE_CLIENT = `
 
 interface ClientCreateResp {
   clientCreate: {
-    client: { id: string } | null;
+    client: { id: string; properties: { nodes: Array<{ id: string }> } } | null;
     userErrors: Array<{ message: string }>;
   };
 }
 
-async function createClient(booking: BookingRow): Promise<string> {
+async function createClient(booking: BookingRow): Promise<{ clientId: string; propertyId: string | null }> {
   const { first, last } = splitName(booking.customer_name);
   const input = {
     firstName: first || booking.customer_name,
@@ -125,19 +128,28 @@ async function createClient(booking: BookingRow): Promise<string> {
       `clientCreate userErrors: ${data.clientCreate.userErrors.map((e) => e.message).join("; ")}`,
     );
   }
-  const id = data.clientCreate.client?.id;
-  if (!id) throw new Error("clientCreate returned no client");
-  return id;
+  const client = data.clientCreate.client;
+  if (!client) throw new Error("clientCreate returned no client");
+  const propertyId = client.properties.nodes[0]?.id ?? null;
+  return { clientId: client.id, propertyId };
 }
 
 export async function findOrCreateClient(booking: BookingRow): Promise<{
   clientId: string;
+  propertyId: string | null;
   matchedBy: "email" | "phone" | "created";
 }> {
   const existing = await findExistingJobberClientId(booking.id, booking.email, booking.phone);
-  if (existing) return existing;
-  const created = await createClient(booking);
-  return { clientId: created, matchedBy: "created" };
+  if (existing) {
+    // For deduped (returning) customers we don't reuse the prior property —
+    // they may have moved or be booking a different address. Leaving
+    // propertyId null is safer than misrouting a cleaner to the wrong place.
+    // The operator can attach the right property manually in Jobber, or we
+    // upgrade later to dedupe by address too.
+    return { clientId: existing.clientId, propertyId: null, matchedBy: existing.matchedBy };
+  }
+  const { clientId, propertyId } = await createClient(booking);
+  return { clientId, propertyId, matchedBy: "created" };
 }
 
 // ─── Request create ─────────────────────────────────────────────────────────
@@ -188,6 +200,7 @@ function buildLineItemDescription(booking: BookingRow): string {
 export async function createRequestForBooking(
   booking: BookingRow,
   clientId: string,
+  propertyId: string | null,
 ): Promise<string> {
   const productId  = getProductIdForServiceType(legacyToV2(booking.service, booking.frequency));
   const serviceName = booking.service_label ?? "Cleaning";
@@ -201,11 +214,12 @@ export async function createRequestForBooking(
   if (productId)               lineItem.productOrServiceId = productId;
   if (booking.price != null)   lineItem.unitPrice = booking.price;
 
-  const input = {
+  const input: Record<string, unknown> = {
     clientId,
     title: buildRequestTitle(booking),
     lineItems: [lineItem],
   };
+  if (propertyId) input.propertyId = propertyId;
 
   const data = await jobberQuery<RequestCreateResp>(CREATE_REQUEST, { input });
   if (data.requestCreate.userErrors.length > 0) {
@@ -236,18 +250,19 @@ export type PushOutcome = PushResult | PushFailure;
 
 export async function pushBookingToJobber(booking: BookingRow): Promise<PushOutcome> {
   try {
-    const { clientId, matchedBy } = await findOrCreateClient(booking);
-    const requestId = await createRequestForBooking(booking, clientId);
+    const { clientId, propertyId, matchedBy } = await findOrCreateClient(booking);
+    const requestId = await createRequestForBooking(booking, clientId, propertyId);
 
     const admin = createAdminClient();
     await admin
       .from("bookings")
       .update({
-        jobber_client_id:   clientId,
-        jobber_request_id:  requestId,
-        jobber_sync_status: "synced",
-        jobber_synced_at:   new Date().toISOString(),
-        jobber_error:       null,
+        jobber_client_id:    clientId,
+        jobber_property_id:  propertyId,
+        jobber_request_id:   requestId,
+        jobber_sync_status:  "synced",
+        jobber_synced_at:    new Date().toISOString(),
+        jobber_error:        null,
       })
       .eq("id", booking.id);
 
