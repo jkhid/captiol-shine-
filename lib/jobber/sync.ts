@@ -89,7 +89,7 @@ const CREATE_CLIENT = `
     clientCreate(input: $input) {
       client {
         id
-        properties { nodes { id } }
+        properties { id }
       }
       userErrors { message }
     }
@@ -98,7 +98,7 @@ const CREATE_CLIENT = `
 
 interface ClientCreateResp {
   clientCreate: {
-    client: { id: string; properties: { nodes: Array<{ id: string }> } } | null;
+    client: { id: string; properties: Array<{ id: string }> } | null;
     userErrors: Array<{ message: string }>;
   };
 }
@@ -130,7 +130,7 @@ async function createClient(booking: BookingRow): Promise<{ clientId: string; pr
   }
   const client = data.clientCreate.client;
   if (!client) throw new Error("clientCreate returned no client");
-  const propertyId = client.properties.nodes[0]?.id ?? null;
+  const propertyId = client.properties[0]?.id ?? null;
   return { clientId: client.id, propertyId };
 }
 
