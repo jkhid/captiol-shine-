@@ -160,10 +160,12 @@ export async function POST(req: NextRequest) {
 
   // 3. Push to Jobber (Client + Request). Owner notifications happen via
   //    Jobber's own email + mobile push, so the prior Resend owner email
-  //    and Twilio SMS have been removed. If Jobber sync fails, the booking
-  //    still saved above and the failure is visible at /admin/integrations.
+  //    and Twilio SMS have been removed. We await inline because Vercel's
+  //    serverless runtime kills any background promise as soon as the
+  //    response is returned. The booking is already saved above, so even
+  //    if Jobber is slow or fails, the customer's confirmation is safe.
   if (await isJobberConnected()) {
-    pushBookingToJobber({
+    const outcome = await pushBookingToJobber({
       id:            data.id,
       customer_name: body.name,
       email:         body.email,
@@ -179,7 +181,10 @@ export async function POST(req: NextRequest) {
       time_window:   body.timeWindow ?? null,
       instructions:  body.instructions ?? null,
       price,
-    }).catch((err) => console.error("Jobber sync error:", err));
+    });
+    if (!outcome.ok) {
+      console.error("Jobber sync failed:", outcome.error);
+    }
   } else {
     await supabaseAdmin
       .from("bookings")
