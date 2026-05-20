@@ -50,7 +50,13 @@ export default async function IntegrationsPage({
           )}
           {jobberStatus?.startsWith("error:") && (
             <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 mb-4 text-sm text-red-700">
-              Connection failed: <code className="font-mono">{jobberStatus.replace("error:", "")}</code>. Try connecting again, and confirm the redirect URI in Jobber matches your env var.
+              <p className="font-semibold mb-1">Connection failed.</p>
+              <p className="font-mono text-[12.5px] break-all">
+                {decodeURIComponent(jobberStatus.replace(/^error:/, ""))}
+              </p>
+              <p className="mt-2 text-xs text-red-600/80">
+                Common causes: redirect URI in Jobber doesn&apos;t match the env var exactly, client secret was rotated, or the authorization code was already used. Click <strong>Connect to Jobber</strong> again to retry with a fresh code.
+              </p>
             </div>
           )}
 

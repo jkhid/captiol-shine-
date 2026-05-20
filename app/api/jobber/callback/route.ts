@@ -52,8 +52,12 @@ export async function GET(req: NextRequest) {
       connected_by:  connectedBy,
     });
   } catch (err) {
-    console.error("Jobber OAuth callback failed:", err);
-    return dest("error:exchange_failed");
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("Jobber OAuth callback failed:", message);
+    // Pass the underlying error to the UI so we can diagnose. Truncate
+    // to keep the URL sane.
+    const trimmed = message.replace(/\s+/g, " ").slice(0, 400);
+    return dest(`error:${encodeURIComponent(trimmed)}`);
   }
 
   const res = dest("connected");
