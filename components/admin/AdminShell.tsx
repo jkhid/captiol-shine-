@@ -16,6 +16,7 @@ import {
   Menu,
   FileSignature,
   Plug,
+  Camera,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -26,6 +27,7 @@ const navLinks = [
   { href: "/admin/jobs", label: "Jobs", icon: Briefcase, exact: false },
   { href: "/admin/leads", label: "Leads", icon: Sparkles, exact: false },
   { href: "/admin/contractor-agreements", label: "Agreements", icon: FileSignature, exact: false },
+  { href: "/admin/photo-sessions", label: "Photo Reports", icon: Camera, exact: false },
   { href: "/admin/integrations", label: "Integrations", icon: Plug, exact: false },
   { href: "/admin/settings", label: "Settings", icon: Settings, exact: false },
 ];
