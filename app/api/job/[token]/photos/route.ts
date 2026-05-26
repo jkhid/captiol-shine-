@@ -136,10 +136,18 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
     .single();
   if (insErr || !inserted) {
     // Roll back storage upload
-    await admin.storage.from(STORAGE_BUCKET).remove([path]);
-    console.error("DB insert error:", insErr);
+    const rm = await admin.storage.from(STORAGE_BUCKET).remove([path]);
+    console.error(
+      `[photo-upload] INSERT FAILED session=${s.id} token=${params.token} ` +
+      `category=${category} path=${path} insErr=${JSON.stringify(insErr)} ` +
+      `rollbackErr=${rm.error ? JSON.stringify(rm.error) : "none"}`,
+    );
     return NextResponse.json({ error: "Could not record photo" }, { status: 500 });
   }
+  console.log(
+    `[photo-upload] OK session=${s.id} token=${params.token} ` +
+    `category=${category} photo=${photoId} path=${path}`,
+  );
 
   // Recompute counts + update session status / lifecycle timestamps
   const [{ count: beforeCount }, { count: afterCount }] = await Promise.all([
