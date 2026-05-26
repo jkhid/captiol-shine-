@@ -16,7 +16,7 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
   if (!sessionRow) return NextResponse.json({ error: "Not found" }, { status: 404 });
   const session = sessionRow as PhotoSession;
 
-  const { data: photoRows } = await admin
+  const { data: photoRows, error: photoErr } = await admin
     .from("photo_session_photos")
     .select("*")
     .eq("session_id", session.id)
@@ -26,6 +26,12 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
 
   const beforePhotos = photos.filter((p) => p.category === "before");
   const afterPhotos  = photos.filter((p) => p.category === "after");
+
+  console.log(
+    `[pdf] session=${session.id} addr=${session.property_address} ` +
+    `rows=${photos.length} before=${beforePhotos.length} after=${afterPhotos.length} ` +
+    `queryErr=${photoErr ? JSON.stringify(photoErr) : "none"}`,
+  );
 
   try {
     const pdfBytes = await generatePhotoReportPdf({ session, beforePhotos, afterPhotos });
