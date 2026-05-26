@@ -62,6 +62,7 @@ export default function UploadClient({
   const [photos, setPhotos] = useState<PhotoView[]>(initialPhotos);
   const [status, setStatus] = useState<PhotoSessionStatus>(initialStatus);
   const [busyCategory, setBusyCategory] = useState<PhotoCategory | null>(null);
+  const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const beforeInputRef = useRef<HTMLInputElement>(null);
   const afterInputRef = useRef<HTMLInputElement>(null);
@@ -99,7 +100,13 @@ export default function UploadClient({
     setError(null);
     setBusyCategory(category);
 
-    for (const file of Array.from(files)) {
+    const fileList = Array.from(files);
+    setProgress({ done: 0, total: fileList.length });
+
+    let doneCount = 0;
+    const errors: string[] = [];
+
+    async function uploadOne(file: File): Promise<PhotoView | null> {
       try {
         const blob = await resizeImage(file);
         const fd = new FormData();
@@ -109,17 +116,31 @@ export default function UploadClient({
         const res = await fetch(`/api/job/${token}/photos`, { method: "POST", body: fd });
         const data = await res.json();
         if (!res.ok) {
-          setError(data.error ?? "Upload failed");
-          continue;
+          errors.push(data.error ?? "Upload failed");
+          return null;
         }
-        setPhotos((prev) => [...prev, data.photo]);
         setStatus(data.status);
+        return data.photo as PhotoView;
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Upload failed");
+        errors.push(err instanceof Error ? err.message : "Upload failed");
+        return null;
+      } finally {
+        doneCount += 1;
+        setProgress({ done: doneCount, total: fileList.length });
       }
     }
 
+    const results = await Promise.all(fileList.map(uploadOne));
+    const newPhotos = results.filter((p): p is PhotoView => p !== null);
+    if (newPhotos.length > 0) {
+      setPhotos((prev) => [...prev, ...newPhotos]);
+    }
+    if (errors.length > 0) {
+      setError(errors[0]); // Surface the first error; rest are usually the same cause.
+    }
+
     setBusyCategory(null);
+    setProgress(null);
     if (category === "before" && beforeInputRef.current) beforeInputRef.current.value = "";
     if (category === "after" && afterInputRef.current) afterInputRef.current.value = "";
   }
@@ -198,6 +219,7 @@ export default function UploadClient({
           photos={beforePhotos}
           locked={isLocked}
           busy={busyCategory === "before"}
+          progress={busyCategory === "before" ? progress : null}
           onAdd={(files) => handleFiles("before", files)}
           onDelete={deletePhoto}
           inputRef={beforeInputRef}
@@ -210,6 +232,7 @@ export default function UploadClient({
           photos={afterPhotos}
           locked={isLocked}
           busy={busyCategory === "after"}
+          progress={busyCategory === "after" ? progress : null}
           onAdd={(files) => handleFiles("after", files)}
           onDelete={deletePhoto}
           inputRef={afterInputRef}
@@ -247,12 +270,13 @@ interface SectionProps {
   photos: PhotoView[];
   locked: boolean;
   busy: boolean;
+  progress: { done: number; total: number } | null;
   onAdd: (files: FileList | null) => void;
   onDelete: (photoId: string) => void;
   inputRef: React.RefObject<HTMLInputElement | null>;
 }
 
-function PhotoSection({ title, subtitle, photos, locked, busy, onAdd, onDelete, inputRef }: SectionProps) {
+function PhotoSection({ title, subtitle, photos, locked, busy, progress, onAdd, onDelete, inputRef }: SectionProps) {
   return (
     <div className="bg-white border border-navy/10 rounded-2xl p-5 mb-4">
       <div className="flex items-center justify-between mb-1">
@@ -306,7 +330,11 @@ function PhotoSection({ title, subtitle, photos, locked, busy, onAdd, onDelete, 
                 : "bg-navy text-white hover:bg-ink"
             }`}
           >
-            {busy ? "Uploading…" : `Add ${title.toLowerCase()} photos`}
+            {busy
+              ? progress
+                ? `Adding photos… ${progress.done} of ${progress.total}`
+                : "Adding photos…"
+              : `Add ${title.toLowerCase()} photos`}
           </label>
         </>
       )}
