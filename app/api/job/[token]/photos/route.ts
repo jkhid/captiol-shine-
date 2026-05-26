@@ -104,7 +104,11 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
   });
   if (upload.error) {
     console.error("Storage upload error:", upload.error);
-    return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+    const msg = upload.error.message ?? "Storage upload failed";
+    // Surface the specific problem to the client. The most common cause is
+    // a missing "job-photos" bucket in Supabase Storage — that error reads
+    // "Bucket not found" verbatim.
+    return NextResponse.json({ error: `Storage: ${msg}` }, { status: 500 });
   }
 
   // Sort order = current max + 1
