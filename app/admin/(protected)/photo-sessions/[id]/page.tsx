@@ -27,10 +27,14 @@ export default async function PhotoSessionDetailPage({ params }: { params: { id:
   const { data: photoRows } = await admin
     .from("photo_session_photos")
     .select("*")
-    .eq("session_id", session.id)
-    .order("category")
-    .order("sort_order");
-  const photos = (photoRows ?? []) as SessionPhoto[];
+    .eq("session_id", session.id);
+  const photos = ((photoRows ?? []) as SessionPhoto[])
+    .slice()
+    .sort((a, b) =>
+      a.category === b.category
+        ? a.sort_order - b.sort_order
+        : a.category.localeCompare(b.category),
+    );
 
   const paths = photos.map((p) => p.storage_path);
   const signed = paths.length

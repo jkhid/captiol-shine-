@@ -24,10 +24,14 @@ export async function GET(_req: NextRequest, { params }: { params: { token: stri
   const { data: photoRows } = await admin
     .from("photo_session_photos")
     .select("*")
-    .eq("session_id", s.id)
-    .order("category")
-    .order("sort_order");
-  const photos = (photoRows ?? []) as SessionPhoto[];
+    .eq("session_id", s.id);
+  const photos = ((photoRows ?? []) as SessionPhoto[])
+    .slice()
+    .sort((a, b) =>
+      a.category === b.category
+        ? a.sort_order - b.sort_order
+        : a.category.localeCompare(b.category),
+    );
 
   // Generate signed URLs (60-minute expiry) so the cleaner can see thumbnails
   // without making the bucket public.
